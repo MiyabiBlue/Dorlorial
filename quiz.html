@@ -95,7 +95,34 @@ body.light-mode #embers { opacity: 0.3; }
   padding: 8px 12px;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  transition: all 0.3s;
+  transition: all 0.35s cubic-bezier(0.34,1.2,0.64,1);
+}
+#global-toolbar.collapsed {
+  left: auto;
+  right: 16px;
+  bottom: 16px;
+  transform: none;
+  padding: 8px 10px;
+  gap: 0;
+  border-color: rgba(200,149,42,0.25);
+}
+#global-toolbar.collapsed .toolbar-btn:not(#toggleToolbarBtn),
+#global-toolbar.collapsed .toolbar-divider {
+  display: none;
+}
+#global-toolbar.collapsed #toggleToolbarBtn {
+  border-color: transparent;
+}
+#toggleToolbarBtn {
+  font-size: 0.7rem;
+  color: var(--gold-dark);
+  opacity: 0.6;
+  transition: opacity 0.2s, transform 0.3s;
+}
+#toggleToolbarBtn:hover { opacity: 1; color: var(--gold); }
+#global-toolbar.collapsed #toggleToolbarBtn {
+  opacity: 0.5;
+  transform: rotate(180deg);
 }
 body.light-mode #global-toolbar {
   background: rgba(245,240,232,0.95);
@@ -517,63 +544,29 @@ function spawnEmber(init){let x,y;if(init){x=rand(0,canvas.width);y=rand(0,canva
 const MAX=80;const embers=[];for(let i=0;i<MAX;i++)embers.push(spawnEmber(true));
 function drawEmber(e){const fl=0.6+Math.sin(e.age*e.flicker*80)*0.4;const al=Math.min(e.life,1)*e.bright*fl;const g=ctx.createRadialGradient(e.x,e.y,0,e.x,e.y,e.size*3);g.addColorStop(0,`rgba(255,210,70,${al*0.9})`);g.addColorStop(0.5,`rgba(200,120,15,${al*0.35})`);g.addColorStop(1,`rgba(140,50,0,0)`);ctx.beginPath();ctx.arc(e.x,e.y,e.size*3,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();ctx.beginPath();ctx.arc(e.x,e.y,e.size*0.5,0,Math.PI*2);ctx.fillStyle=`rgba(255,245,200,${al})`;ctx.fill();}
 let fr=0;(function loop(){requestAnimationFrame(loop);fr++;ctx.clearRect(0,0,canvas.width,canvas.height);for(let i=embers.length-1;i>=0;i--){const e=embers[i];e.age++;e.life-=e.decay;e.x+=e.drift+Math.sin(e.age*e.wobble+e.wOff)*0.7;e.y-=e.speed;drawEmber(e);if(e.life<=0||e.y<-20||e.x<-20||e.x>canvas.width+20){embers.splice(i,1);embers.push(spawnEmber(false));}}if(fr%45===0&&embers.length<MAX+15){for(let j=0;j<3;j++)embers.push(spawnEmber(false));}})();
-</script>
 
-<!-- ══ GLOBAL TOOLBAR ══ -->
-<div id="global-toolbar">
-  <!-- Quick Nav -->
-  <button class="toolbar-btn" id="quickNavBtn" onclick="toggleQuickNav()" title="Quick Navigation">
-    <span class="toolbar-tooltip">Quick Nav</span>
-    ☰
-  </button>
-  <div class="toolbar-divider"></div>
-  <!-- Sound -->
-  <button class="toolbar-btn" id="soundBtn" onclick="toggleSound()" title="Toggle Ambient Sound">
-    <span class="toolbar-tooltip">Ambient Sound</span>
-    <div id="sound-wave">
-      <span></span><span></span><span></span><span></span><span></span>
-    </div>
-  </button>
-  <!-- Theme -->
-  <button class="toolbar-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle Theme">
-    <span class="toolbar-tooltip">Toggle Theme</span>
-    🌙
-  </button>
-  <!-- Back to top (if on a long page) -->
-  <div class="toolbar-divider"></div>
-  <button class="toolbar-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to Top">
-    <span class="toolbar-tooltip">Back to Top</span>
-    ▲
-  </button>
-</div>
-
-<!-- ══ QUICK NAV PANEL ══ -->
-<div id="quick-nav">
-  <div class="qn-title">Navigate to...</div>
-  <div class="qn-grid">
-    <a href="hub.html" class="qn-item"><span class="qn-icon">🏠</span><span class="qn-name">Hub</span></a>
-    <a href="map.html" class="qn-item"><span class="qn-icon">🗺️</span><span class="qn-name">Map</span></a>
-    <a href="deities.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deities</span></a>
-    <a href="factions.html" class="qn-item"><span class="qn-icon">⚔️</span><span class="qn-name">Factions</span></a>
-    <a href="characters.html" class="qn-item"><span class="qn-icon">◉</span><span class="qn-name">Characters</span></a>
-    <a href="locations.html" class="qn-item"><span class="qn-icon">📍</span><span class="qn-name">Locations</span></a>
-    <a href="lore.html" class="qn-item"><span class="qn-icon">📜</span><span class="qn-name">Lore</span></a>
-    <a href="timeline.html" class="qn-item"><span class="qn-icon">⏳</span><span class="qn-name">Timeline</span></a>
-    <a href="bestiary.html" class="qn-item"><span class="qn-icon">📖</span><span class="qn-name">Bestiary</span></a>
-    <a href="campaigns.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Campaigns</span></a>
-    <a href="community.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Community</span></a>
-    <a href="quiz.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deity Quiz</span></a>
-    <a href="alignment.html" class="qn-item"><span class="qn-icon">⚖️</span><span class="qn-name">Alignment</span></a>
-  </div>
-</div>
-
-<!-- ══ AMBIENT AUDIO ══ -->
-<audio id="ambient-audio" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_8e2d4a6a71.mp3" type="audio/mpeg">
-</audio>
-
-<script>
 // ══ GLOBAL WIDGETS ══
+// ── Toolbar collapse ──
+function toggleToolbar() {
+  const tb = document.getElementById('global-toolbar');
+  const qn = document.getElementById('quick-nav');
+  const collapsed = tb.classList.toggle('collapsed');
+  localStorage.setItem('dorlorial-toolbar', collapsed ? 'collapsed' : 'open');
+  // Close quick nav when collapsing
+  if (collapsed && qnOpen) {
+    qnOpen = false;
+    qn.classList.remove('open');
+  }
+}
+// Restore toolbar state
+(function() {
+  if (localStorage.getItem('dorlorial-toolbar') === 'collapsed') {
+    document.addEventListener('DOMContentLoaded', () => {
+      const tb = document.getElementById('global-toolbar');
+      if (tb) tb.classList.add('collapsed');
+    });
+  }
+})();
 
 // ── Theme ──
 function applyTheme(theme) {
@@ -658,6 +651,69 @@ if (localStorage.getItem('dorlorial-sound') === '1') {
     if (btn) btn.classList.add('active');
   });
 }
+
 </script>
-</body>
+
+<!-- ══ GLOBAL TOOLBAR ══ -->
+<div id="global-toolbar">
+  <!-- Quick Nav -->
+  <button class="toolbar-btn" id="quickNavBtn" onclick="toggleQuickNav()" title="Quick Navigation">
+    <span class="toolbar-tooltip">Quick Nav</span>
+    ☰
+  </button>
+  <div class="toolbar-divider"></div>
+  <!-- Sound -->
+  <button class="toolbar-btn" id="soundBtn" onclick="toggleSound()" title="Toggle Ambient Sound">
+    <span class="toolbar-tooltip">Ambient Sound</span>
+    <div id="sound-wave">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </button>
+  <!-- Theme -->
+  <button class="toolbar-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle Theme">
+    <span class="toolbar-tooltip">Toggle Theme</span>
+    🌙
+  </button>
+  <!-- Back to top -->
+  <div class="toolbar-divider"></div>
+  <button class="toolbar-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to Top">
+    <span class="toolbar-tooltip">Back to Top</span>
+    ▲
+  </button>
+  <div class="toolbar-divider"></div>
+  <!-- Collapse -->
+  <button class="toolbar-btn" id="toggleToolbarBtn" onclick="toggleToolbar()" title="Hide toolbar">
+    <span class="toolbar-tooltip">Hide Toolbar</span>
+    ◀◀
+  </button>
+</div>
+
+<!-- ══ QUICK NAV PANEL ══ -->
+<div id="quick-nav">
+  <div class="qn-title">Navigate to...</div>
+  <div class="qn-grid">
+    <a href="hub.html" class="qn-item"><span class="qn-icon">🏠</span><span class="qn-name">Hub</span></a>
+    <a href="map.html" class="qn-item"><span class="qn-icon">🗺️</span><span class="qn-name">Map</span></a>
+    <a href="deities.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deities</span></a>
+    <a href="factions.html" class="qn-item"><span class="qn-icon">⚔️</span><span class="qn-name">Factions</span></a>
+    <a href="characters.html" class="qn-item"><span class="qn-icon">◉</span><span class="qn-name">Characters</span></a>
+    <a href="locations.html" class="qn-item"><span class="qn-icon">📍</span><span class="qn-name">Locations</span></a>
+    <a href="lore.html" class="qn-item"><span class="qn-icon">📜</span><span class="qn-name">Lore</span></a>
+    <a href="timeline.html" class="qn-item"><span class="qn-icon">⏳</span><span class="qn-name">Timeline</span></a>
+    <a href="bestiary.html" class="qn-item"><span class="qn-icon">📖</span><span class="qn-name">Bestiary</span></a>
+    <a href="campaigns.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Campaigns</span></a>
+    <a href="community.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Community</span></a>
+    <a href="quiz.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deity Quiz</span></a>
+    <a href="alignment.html" class="qn-item"><span class="qn-icon">⚖️</span><span class="qn-name">Alignment</span></a>
+  </div>
+</div>
+
+<!-- ══ AMBIENT AUDIO ══ -->
+<audio id="ambient-audio" loop preload="none">
+  <source src="https://opengameart.org/sites/default/files/Tavern-Loop-1.mp3" type="audio/mpeg">
+  <source src="https://assets.mixkit.co/music/preview/mixkit-medieval-tavern-244.mp3" type="audio/mpeg">
+</audio>
+
+
+</html></body>
 </html>
