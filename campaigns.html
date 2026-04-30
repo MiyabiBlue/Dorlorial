@@ -176,7 +176,34 @@ body.light-mode #embers { opacity: 0.3; }
   padding: 8px 12px;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  transition: all 0.3s;
+  transition: all 0.35s cubic-bezier(0.34,1.2,0.64,1);
+}
+#global-toolbar.collapsed {
+  left: auto;
+  right: 16px;
+  bottom: 16px;
+  transform: none;
+  padding: 8px 10px;
+  gap: 0;
+  border-color: rgba(200,149,42,0.25);
+}
+#global-toolbar.collapsed .toolbar-btn:not(#toggleToolbarBtn),
+#global-toolbar.collapsed .toolbar-divider {
+  display: none;
+}
+#global-toolbar.collapsed #toggleToolbarBtn {
+  border-color: transparent;
+}
+#toggleToolbarBtn {
+  font-size: 0.7rem;
+  color: var(--gold-dark);
+  opacity: 0.6;
+  transition: opacity 0.2s, transform 0.3s;
+}
+#toggleToolbarBtn:hover { opacity: 1; color: var(--gold); }
+#global-toolbar.collapsed #toggleToolbarBtn {
+  opacity: 0.5;
+  transform: rotate(180deg);
 }
 body.light-mode #global-toolbar {
   background: rgba(245,240,232,0.95);
@@ -902,63 +929,29 @@ window.addEventListener('scroll', () => {
   const btn = document.getElementById('backToTop');
   if (btn) btn.classList.toggle('visible', window.scrollY > 400);
 });
-</script>
 
-<!-- ══ GLOBAL TOOLBAR ══ -->
-<div id="global-toolbar">
-  <!-- Quick Nav -->
-  <button class="toolbar-btn" id="quickNavBtn" onclick="toggleQuickNav()" title="Quick Navigation">
-    <span class="toolbar-tooltip">Quick Nav</span>
-    ☰
-  </button>
-  <div class="toolbar-divider"></div>
-  <!-- Sound -->
-  <button class="toolbar-btn" id="soundBtn" onclick="toggleSound()" title="Toggle Ambient Sound">
-    <span class="toolbar-tooltip">Ambient Sound</span>
-    <div id="sound-wave">
-      <span></span><span></span><span></span><span></span><span></span>
-    </div>
-  </button>
-  <!-- Theme -->
-  <button class="toolbar-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle Theme">
-    <span class="toolbar-tooltip">Toggle Theme</span>
-    🌙
-  </button>
-  <!-- Back to top (if on a long page) -->
-  <div class="toolbar-divider"></div>
-  <button class="toolbar-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to Top">
-    <span class="toolbar-tooltip">Back to Top</span>
-    ▲
-  </button>
-</div>
-
-<!-- ══ QUICK NAV PANEL ══ -->
-<div id="quick-nav">
-  <div class="qn-title">Navigate to...</div>
-  <div class="qn-grid">
-    <a href="hub.html" class="qn-item"><span class="qn-icon">🏠</span><span class="qn-name">Hub</span></a>
-    <a href="map.html" class="qn-item"><span class="qn-icon">🗺️</span><span class="qn-name">Map</span></a>
-    <a href="deities.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deities</span></a>
-    <a href="factions.html" class="qn-item"><span class="qn-icon">⚔️</span><span class="qn-name">Factions</span></a>
-    <a href="characters.html" class="qn-item"><span class="qn-icon">◉</span><span class="qn-name">Characters</span></a>
-    <a href="locations.html" class="qn-item"><span class="qn-icon">📍</span><span class="qn-name">Locations</span></a>
-    <a href="lore.html" class="qn-item"><span class="qn-icon">📜</span><span class="qn-name">Lore</span></a>
-    <a href="timeline.html" class="qn-item"><span class="qn-icon">⏳</span><span class="qn-name">Timeline</span></a>
-    <a href="bestiary.html" class="qn-item"><span class="qn-icon">📖</span><span class="qn-name">Bestiary</span></a>
-    <a href="campaigns.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Campaigns</span></a>
-    <a href="community.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Community</span></a>
-    <a href="quiz.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deity Quiz</span></a>
-    <a href="alignment.html" class="qn-item"><span class="qn-icon">⚖️</span><span class="qn-name">Alignment</span></a>
-  </div>
-</div>
-
-<!-- ══ AMBIENT AUDIO ══ -->
-<audio id="ambient-audio" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_8e2d4a6a71.mp3" type="audio/mpeg">
-</audio>
-
-<script>
 // ══ GLOBAL WIDGETS ══
+// ── Toolbar collapse ──
+function toggleToolbar() {
+  const tb = document.getElementById('global-toolbar');
+  const qn = document.getElementById('quick-nav');
+  const collapsed = tb.classList.toggle('collapsed');
+  localStorage.setItem('dorlorial-toolbar', collapsed ? 'collapsed' : 'open');
+  // Close quick nav when collapsing
+  if (collapsed && qnOpen) {
+    qnOpen = false;
+    qn.classList.remove('open');
+  }
+}
+// Restore toolbar state
+(function() {
+  if (localStorage.getItem('dorlorial-toolbar') === 'collapsed') {
+    document.addEventListener('DOMContentLoaded', () => {
+      const tb = document.getElementById('global-toolbar');
+      if (tb) tb.classList.add('collapsed');
+    });
+  }
+})();
 
 // ── Theme ──
 function applyTheme(theme) {
@@ -1043,6 +1036,70 @@ if (localStorage.getItem('dorlorial-sound') === '1') {
     if (btn) btn.classList.add('active');
   });
 }
+
 </script>
+
+<!-- ══ GLOBAL TOOLBAR ══ -->
+<div id="global-toolbar">
+  <!-- Quick Nav -->
+  <button class="toolbar-btn" id="quickNavBtn" onclick="toggleQuickNav()" title="Quick Navigation">
+    <span class="toolbar-tooltip">Quick Nav</span>
+    ☰
+  </button>
+  <div class="toolbar-divider"></div>
+  <!-- Sound -->
+  <button class="toolbar-btn" id="soundBtn" onclick="toggleSound()" title="Toggle Ambient Sound">
+    <span class="toolbar-tooltip">Ambient Sound</span>
+    <div id="sound-wave">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </button>
+  <!-- Theme -->
+  <button class="toolbar-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle Theme">
+    <span class="toolbar-tooltip">Toggle Theme</span>
+    🌙
+  </button>
+  <!-- Back to top -->
+  <div class="toolbar-divider"></div>
+  <button class="toolbar-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to Top">
+    <span class="toolbar-tooltip">Back to Top</span>
+    ▲
+  </button>
+  <div class="toolbar-divider"></div>
+  <!-- Collapse -->
+  <button class="toolbar-btn" id="toggleToolbarBtn" onclick="toggleToolbar()" title="Hide toolbar">
+    <span class="toolbar-tooltip">Hide Toolbar</span>
+    ◀◀
+  </button>
+</div>
+
+<!-- ══ QUICK NAV PANEL ══ -->
+<div id="quick-nav">
+  <div class="qn-title">Navigate to...</div>
+  <div class="qn-grid">
+    <a href="hub.html" class="qn-item"><span class="qn-icon">🏠</span><span class="qn-name">Hub</span></a>
+    <a href="map.html" class="qn-item"><span class="qn-icon">🗺️</span><span class="qn-name">Map</span></a>
+    <a href="deities.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deities</span></a>
+    <a href="factions.html" class="qn-item"><span class="qn-icon">⚔️</span><span class="qn-name">Factions</span></a>
+    <a href="characters.html" class="qn-item"><span class="qn-icon">◉</span><span class="qn-name">Characters</span></a>
+    <a href="locations.html" class="qn-item"><span class="qn-icon">📍</span><span class="qn-name">Locations</span></a>
+    <a href="lore.html" class="qn-item"><span class="qn-icon">📜</span><span class="qn-name">Lore</span></a>
+    <a href="timeline.html" class="qn-item"><span class="qn-icon">⏳</span><span class="qn-name">Timeline</span></a>
+    <a href="bestiary.html" class="qn-item"><span class="qn-icon">📖</span><span class="qn-name">Bestiary</span></a>
+    <a href="campaigns.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Campaigns</span></a>
+    <a href="community.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Community</span></a>
+    <a href="quiz.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deity Quiz</span></a>
+    <a href="alignment.html" class="qn-item"><span class="qn-icon">⚖️</span><span class="qn-name">Alignment</span></a>
+  </div>
+</div>
+
+<!-- ══ AMBIENT AUDIO ══ -->
+<audio id="ambient-audio" loop preload="none">
+  <source src="https://opengameart.org/sites/default/files/Tavern-Loop-1.mp3" type="audio/mpeg">
+  <source src="https://assets.mixkit.co/music/preview/mixkit-medieval-tavern-244.mp3" type="audio/mpeg">
+</audio>
+
+
+</html>
 </body>
 </html>
