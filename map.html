@@ -255,6 +255,179 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--ink);font-fami
     .topbar-title{ display:none; }
   }
   * { -webkit-tap-highlight-color: transparent; }
+
+/* ═══ GLOBAL WIDGETS ═══ */
+
+/* ── THEME ── */
+body.light-mode {
+  --ink: #f5f0e8;
+  --text: #2a1f0e;
+  --text-dim: #6b5535;
+  --gold: #8A6010;
+  --gold-light: #A07820;
+  --gold-pale: #6A4808;
+  --gold-dark: #C8952A;
+}
+body.light-mode header {
+  background: linear-gradient(180deg, #ede6d6 0%, transparent 100%);
+  border-bottom-color: rgba(138,96,16,0.25);
+}
+body.light-mode #embers { opacity: 0.3; }
+
+/* ── FLOATING TOOLBAR ── */
+#global-toolbar {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(6,4,2,0.92);
+  border: 1px solid rgba(200,149,42,0.35);
+  padding: 8px 12px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.3s;
+}
+body.light-mode #global-toolbar {
+  background: rgba(245,240,232,0.95);
+  border-color: rgba(138,96,16,0.3);
+}
+.toolbar-btn {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent;
+  border: 1px solid rgba(200,149,42,0.2);
+  color: var(--gold-dark);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+  position: relative;
+}
+.toolbar-btn:hover { background: rgba(200,149,42,0.1); border-color: var(--gold); color: var(--gold); }
+.toolbar-btn.active { background: rgba(200,149,42,0.15); border-color: var(--gold); color: var(--gold); }
+.toolbar-divider { width: 1px; height: 24px; background: rgba(200,149,42,0.2); margin: 0 2px; }
+.toolbar-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0e0a04;
+  border: 1px solid rgba(200,149,42,0.3);
+  font-family: 'Cinzel', serif;
+  font-size: 0.42rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  padding: 4px 8px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+body.light-mode .toolbar-tooltip { background: #f0e8d0; }
+.toolbar-btn:hover .toolbar-tooltip { opacity: 1; }
+
+/* ── QUICK NAV PANEL ── */
+#quick-nav {
+  position: fixed;
+  bottom: 82px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  z-index: 149;
+  background: rgba(6,4,2,0.97);
+  border: 1px solid rgba(200,149,42,0.35);
+  padding: 20px;
+  min-width: 320px;
+  max-width: 480px;
+  width: 90vw;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+body.light-mode #quick-nav {
+  background: rgba(245,240,232,0.97);
+  border-color: rgba(138,96,16,0.3);
+}
+#quick-nav.open {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateX(-50%) translateY(0);
+}
+.qn-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  margin-bottom: 14px;
+  text-align: center;
+}
+.qn-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.qn-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 6px;
+  background: rgba(200,149,42,0.04);
+  border: 1px solid rgba(200,149,42,0.12);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  color: inherit;
+}
+.qn-item:hover {
+  background: rgba(200,149,42,0.1);
+  border-color: rgba(200,149,42,0.4);
+}
+.qn-item .qn-icon { font-size: 1.2rem; }
+.qn-item .qn-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.4rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  text-align: center;
+  line-height: 1.3;
+}
+.qn-item:hover .qn-name { color: var(--gold); }
+
+/* ── SOUND TOGGLE indicator ── */
+#sound-wave {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 16px;
+  pointer-events: none;
+}
+#sound-wave span {
+  display: block;
+  width: 3px;
+  background: var(--gold-dark);
+  border-radius: 1px;
+  animation: soundWave 1s ease-in-out infinite;
+}
+#sound-wave span:nth-child(1) { height: 6px; animation-delay: 0s; }
+#sound-wave span:nth-child(2) { height: 12px; animation-delay: 0.15s; }
+#sound-wave span:nth-child(3) { height: 8px; animation-delay: 0.3s; }
+#sound-wave span:nth-child(4) { height: 14px; animation-delay: 0.1s; }
+#sound-wave span:nth-child(5) { height: 6px; animation-delay: 0.25s; }
+@keyframes soundWave {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.4); }
+}
+.toolbar-btn.sound-off #sound-wave { display: none; }
+.toolbar-btn.sound-off::after { content: '🔇'; font-size: 0.85rem; }
+
 </style>
 </head>
 <body>
@@ -978,6 +1151,147 @@ function showEntries(region, cat) {
 
 
 window.addEventListener('resize', () => { fitMap(); renderPins(); });
+</script>
+
+<!-- ══ GLOBAL TOOLBAR ══ -->
+<div id="global-toolbar">
+  <!-- Quick Nav -->
+  <button class="toolbar-btn" id="quickNavBtn" onclick="toggleQuickNav()" title="Quick Navigation">
+    <span class="toolbar-tooltip">Quick Nav</span>
+    ☰
+  </button>
+  <div class="toolbar-divider"></div>
+  <!-- Sound -->
+  <button class="toolbar-btn" id="soundBtn" onclick="toggleSound()" title="Toggle Ambient Sound">
+    <span class="toolbar-tooltip">Ambient Sound</span>
+    <div id="sound-wave">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </button>
+  <!-- Theme -->
+  <button class="toolbar-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle Theme">
+    <span class="toolbar-tooltip">Toggle Theme</span>
+    🌙
+  </button>
+  <!-- Back to top (if on a long page) -->
+  <div class="toolbar-divider"></div>
+  <button class="toolbar-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to Top">
+    <span class="toolbar-tooltip">Back to Top</span>
+    ▲
+  </button>
+</div>
+
+<!-- ══ QUICK NAV PANEL ══ -->
+<div id="quick-nav">
+  <div class="qn-title">Navigate to...</div>
+  <div class="qn-grid">
+    <a href="hub.html" class="qn-item"><span class="qn-icon">🏠</span><span class="qn-name">Hub</span></a>
+    <a href="map.html" class="qn-item"><span class="qn-icon">🗺️</span><span class="qn-name">Map</span></a>
+    <a href="deities.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deities</span></a>
+    <a href="factions.html" class="qn-item"><span class="qn-icon">⚔️</span><span class="qn-name">Factions</span></a>
+    <a href="characters.html" class="qn-item"><span class="qn-icon">◉</span><span class="qn-name">Characters</span></a>
+    <a href="locations.html" class="qn-item"><span class="qn-icon">📍</span><span class="qn-name">Locations</span></a>
+    <a href="lore.html" class="qn-item"><span class="qn-icon">📜</span><span class="qn-name">Lore</span></a>
+    <a href="timeline.html" class="qn-item"><span class="qn-icon">⏳</span><span class="qn-name">Timeline</span></a>
+    <a href="bestiary.html" class="qn-item"><span class="qn-icon">📖</span><span class="qn-name">Bestiary</span></a>
+    <a href="campaigns.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Campaigns</span></a>
+    <a href="community.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Community</span></a>
+    <a href="quiz.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deity Quiz</span></a>
+    <a href="alignment.html" class="qn-item"><span class="qn-icon">⚖️</span><span class="qn-name">Alignment</span></a>
+  </div>
+</div>
+
+<!-- ══ AMBIENT AUDIO ══ -->
+<audio id="ambient-audio" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_8e2d4a6a71.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+// ══ GLOBAL WIDGETS ══
+
+// ── Theme ──
+function applyTheme(theme) {
+  if (theme === 'light') {
+    document.body.classList.add('light-mode');
+    document.getElementById('themeBtn').textContent = '☀️';
+  } else {
+    document.body.classList.remove('light-mode');
+    const btn = document.getElementById('themeBtn');
+    if (btn) btn.innerHTML = '<span class="toolbar-tooltip">Toggle Theme</span>🌙';
+  }
+}
+function toggleTheme() {
+  const isLight = document.body.classList.contains('light-mode');
+  const newTheme = isLight ? 'dark' : 'light';
+  localStorage.setItem('dorlorial-theme', newTheme);
+  applyTheme(newTheme);
+}
+// Apply saved theme on load
+applyTheme(localStorage.getItem('dorlorial-theme') || 'dark');
+
+// ── Quick Nav ──
+let qnOpen = false;
+function toggleQuickNav() {
+  qnOpen = !qnOpen;
+  document.getElementById('quick-nav').classList.toggle('open', qnOpen);
+  document.getElementById('quickNavBtn').classList.toggle('active', qnOpen);
+}
+// Close quick nav on outside click
+document.addEventListener('click', e => {
+  if (qnOpen && !e.target.closest('#quick-nav') && !e.target.closest('#quickNavBtn')) {
+    qnOpen = false;
+    document.getElementById('quick-nav').classList.remove('open');
+    document.getElementById('quickNavBtn').classList.remove('active');
+  }
+});
+// Quick nav links use page transition
+document.querySelectorAll('.qn-item').forEach(item => {
+  item.addEventListener('click', e => {
+    const href = item.getAttribute('href');
+    if (!href || href === '#') return;
+    // Check if we're already on this page
+    if (window.location.pathname.endsWith(href) || window.location.href.endsWith(href)) return;
+    e.preventDefault();
+    const overlay = document.getElementById('overlay');
+    if (overlay) {
+      overlay.classList.add('active');
+      setTimeout(() => { window.location.href = href; }, 700);
+    } else {
+      window.location.href = href;
+    }
+  });
+});
+
+// ── Sound ──
+let soundOn = false;
+let audioEl = null;
+function toggleSound() {
+  audioEl = audioEl || document.getElementById('ambient-audio');
+  const btn = document.getElementById('soundBtn');
+  if (!soundOn) {
+    audioEl.volume = 0.18;
+    audioEl.play().then(() => {
+      soundOn = true;
+      btn.classList.remove('sound-off');
+      btn.classList.add('active');
+      localStorage.setItem('dorlorial-sound', '1');
+    }).catch(() => {});
+  } else {
+    audioEl.pause();
+    soundOn = false;
+    btn.classList.add('sound-off');
+    btn.classList.remove('active');
+    localStorage.setItem('dorlorial-sound', '0');
+  }
+}
+// Don't auto-play on load (browser blocks it) — just restore button state
+if (localStorage.getItem('dorlorial-sound') === '1') {
+  // User had sound on — show indicator but don't auto-play (browser policy)
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('soundBtn');
+    if (btn) btn.classList.add('active');
+  });
+}
 </script>
 </body>
 </html>
