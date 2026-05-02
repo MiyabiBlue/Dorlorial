@@ -260,9 +260,9 @@ body.light-mode #quick-nav {
 
   /* ── BESTIARY LOADING ── */
   #bestiary-loader{
-    position:fixed;inset:0;z-index:500;background:#060402;
+    position:fixed;inset:0;z-index:9999;background:#060402;
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
-    transition:opacity 0.6s ease;
+    opacity:1;transition:opacity 0.5s ease;
   }
   #bestiary-loader.fade-out{opacity:0;pointer-events:none;}
   .bl-icon{font-size:3rem;animation:blPulse 1.2s ease-in-out infinite;}
@@ -743,14 +743,16 @@ document.querySelector('.back-link').addEventListener('click', function(e) {
 });
 
 renderCreatures();
-// Hide loader after creatures render
-(function() {
-  const loader = document.getElementById('bestiary-loader');
-  if (loader) {
-    loader.classList.add('fade-out');
-    setTimeout(() => { if(loader.parentNode) loader.remove(); }, 700);
-  }
-})();
+// Hide loader after creatures render — use rAF so browser paints grid first
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
+    const loader = document.getElementById('bestiary-loader');
+    if (loader) {
+      loader.classList.add('fade-out');
+      setTimeout(() => { if(loader.parentNode) loader.remove(); }, 700);
+    }
+  });
+});
 
 // EMBERS
 const canvas=document.getElementById('embers');const ctx=canvas.getContext('2d');
@@ -909,6 +911,10 @@ document.querySelectorAll('.qn-item').forEach(item => {
     <a href="community.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Community</span></a>
     <a href="quiz.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deity Quiz</span></a>
     <a href="alignment.html" class="qn-item"><span class="qn-icon">⚖️</span><span class="qn-name">Alignment</span></a>
+    <a href="class-quiz.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Class Quiz</span></a>
+    <a href="roller.html" class="qn-item"><span class="qn-icon">⚀</span><span class="qn-name">Stat Roller</span></a>
+    <a href="quizzes.html" class="qn-item"><span class="qn-icon">🎯</span><span class="qn-name">All Quizzes</span></a>
+    <a href="social.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Social Hub</span></a>
   </div>
 </div>
 
