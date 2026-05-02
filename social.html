@@ -370,16 +370,32 @@ function postfetch(path,body){
 }
 
 function loadArt(){
+  var g=document.getElementById('agrid');
+  g.innerHTML='<p class="empty">Loading...</p>';
   apifetch('art_submissions?order=created_at.desc')
     .then(function(r){return r.json();})
     .then(function(data){
-      var g=document.getElementById('agrid');
+      g.innerHTML='';
       if(!Array.isArray(data)||!data.length){g.innerHTML='<p class="empty">No art yet — be the first to submit!</p>';return;}
-      g.innerHTML=data.map(function(a){
-        return '<div class="acard"><img src="'+a.image_url+'" alt="'+escHtml(a.title)+'" loading="lazy" onclick="openLb(''+a.image_url.replace(/\/g,'\\').replace(/'/g,'\'')+'')" onerror="this.parentElement.style.display='none'"><div class="acard-body"><div class="acard-title">'+escHtml(a.title)+'</div><div class="acard-user">by '+escHtml(a.username)+'</div></div></div>';
-      }).join('');
+      for(var i=0;i<data.length;i++){
+        var a=data[i];
+        var card=document.createElement('div');
+        card.className='acard';
+        var img=document.createElement('img');
+        img.src=a.image_url;
+        img.alt=a.title||'';
+        img.loading='lazy';
+        (function(url){img.onclick=function(){openLb(url);};})(a.image_url);
+        img.onerror=function(){this.parentElement.style.display='none';};
+        var body=document.createElement('div');
+        body.className='acard-body';
+        body.innerHTML='<div class="acard-title">'+escHtml(a.title)+'</div><div class="acard-user">by '+escHtml(a.username)+'</div>';
+        card.appendChild(img);
+        card.appendChild(body);
+        g.appendChild(card);
+      }
     })
-    .catch(function(e){document.getElementById('agrid').innerHTML='<p class="empty">Could not load art. Try refreshing.</p>';console.error('Art:',e);});
+    .catch(function(e){g.innerHTML='<p class="empty">Could not load art.</p>';console.error('Art error:',e);});
 }
 
 function loadChat(){
