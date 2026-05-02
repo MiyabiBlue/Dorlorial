@@ -431,7 +431,7 @@ body.light-mode #quick-nav {
   <!-- SEARCH -->
   <div class="search-wrap">
     <input type="text" id="searchInput" placeholder="Search the realm..." autocomplete="off"
-      oninput="doSearch(this.value)" id="searchInput"
+      oninput="doSearch(this.value)"
       onfocus="this.style.borderColor='#C8952A';if(this.value.length>1)doSearch(this.value);"
       onblur="setTimeout(()=>{document.getElementById('searchResults').style.display='none'},250);this.style.borderColor='rgba(200,149,42,0.3)'"
       onkeydown="if(event.key==='Escape'){document.getElementById('searchResults').style.display='none';}">
@@ -569,9 +569,9 @@ body.light-mode #quick-nav {
 
 
   <!-- ══ DM VAULT STRIP ══ -->
-  <div id="vaultBtn" style="margin-top:40px;display:flex;align-items:center;gap:16px;padding:16px 24px;background:linear-gradient(145deg,#0a0702,#080500);border:1px solid rgba(200,149,42,0.15);cursor:pointer;transition:all 0.3s;" 
-    onmouseover="this.style.borderColor='rgba(200,149,42,0.4)'" 
-    onmouseout="this.style.borderColor='rgba(200,149,42,0.15)'">
+  <div id="vaultBtn" style="margin-top:40px;display:flex;align-items:center;gap:16px;padding:16px 24px;background:rgba(200,149,42,0.05);border:1px solid rgba(200,149,42,0.25);cursor:pointer;transition:all 0.3s;border-radius:0;" 
+    onmouseover="this.style.background='rgba(200,149,42,0.1)';this.style.borderColor='rgba(200,149,42,0.5)'" 
+    onmouseout="this.style.background='rgba(200,149,42,0.05)';this.style.borderColor='rgba(200,149,42,0.25)'">
     <span style="font-size:1.2rem;">🔒</span>
     <div style="flex:1;">
       <div style="font-family:'Cinzel',serif;font-size:0.65rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-dark);">DM Vault</div>
@@ -735,6 +735,38 @@ SEARCH_INDEX=[
   {title:'Deity Quiz',type:'Page',page:'quiz.html',desc:'Which deity of Dorlorial are you?'},
   {title:'Echoes Without Names',type:'Campaign',page:'campaigns.html',desc:'Active campaign'},
   {title:'The Ascended Rage',type:'Campaign',page:'campaigns.html',desc:'Completed 2-year campaign'},
+];
+
+
+const G_SEARCH_INDEX = [
+  {title:'Deities',desc:'The gods who created Dorlorial — creation, nature, hungering, chaos.',type:'Lore',url:'deities.html'},
+  {title:'Factions',desc:'Holy orders, crime syndicates, military empires, ancient cults.',type:'Lore',url:'factions.html'},
+  {title:'Characters',desc:'Party members, villains, legends, wanderers.',type:'Lore',url:'characters.html'},
+  {title:'Locations',desc:'Seventeen regions, hundreds of cities, villages, and points of interest.',type:'Lore',url:'locations.html'},
+  {title:'Lore',desc:'Creation myths, magic systems, sacred artifacts, deep history.',type:'Lore',url:'lore.html'},
+  {title:'Timeline',desc:'Six eras from the first breath of Mythlane to Year 7241.',type:'Lore',url:'timeline.html'},
+  {title:'Campaigns',desc:'Echoes Without Names — active campaign, session logs.',type:'Lore',url:'campaigns.html'},
+  {title:'Bestiary',desc:'Every beast, monster, and entity that haunts Dorlorial.',type:'Lore',url:'bestiary.html'},
+  {title:'World Map',desc:'Interactive map of Dorlorial — click any region pin.',type:'Tool',url:'map.html'},
+  {title:'Social Hub',desc:'Community art, comments, and general chat.',type:'Community',url:'social.html'},
+  {title:'Quizzes & Tools',desc:'Deity quiz, alignment quiz, class quiz, stat roller.',type:'Tool',url:'quizzes.html'},
+  {title:'Encounter Generator',desc:'Random encounters with creatures, hooks, and complications.',type:'Tool',url:'encounter.html'},
+  {title:'The Shattered Seal',desc:'Text adventure game set in Dorlorial.',type:'Tool',url:'game.html'},
+  {title:'Stat Roller',desc:'Roll stats with 4d6 drop lowest.',type:'Tool',url:'roller.html'},
+  {title:'Nyxus',desc:'God of Mystery and Balance.',type:'Deity',url:'deities.html'},
+  {title:'Solaris',desc:'God of Light and Justice.',type:'Deity',url:'deities.html'},
+  {title:'Vethkarn',desc:'The Endless Frost, God of Stasis and Grief. Symbol: Shattered Hourglass.',type:'Deity',url:'deities.html'},
+  {title:'Glorath',desc:'The Hungering Maw.',type:'Deity',url:'deities.html'},
+  {title:'Ska-Waas',desc:'The Golden Frog, Lord of Fortune.',type:'Deity',url:'deities.html'},
+  {title:'Echoes Without Names',desc:'Active campaign — Session 3. Party heading to Aetherwyn.',type:'Campaign',url:'campaigns.html'},
+  {title:'Aetherwyn',desc:'The Deep City — destination for the first crystal.',type:'Location',url:'locations.html'},
+  {title:'Sunbright',desc:'Capital city taken by Karst and the Red Sun.',type:'Location',url:'locations.html'},
+  {title:'Dusk Harbor',desc:'The fog port where the party crashed and Vash was taken.',type:'Location',url:'locations.html'},
+  {title:'Verglaze',desc:'The frozen north — home of the Frozen Choir and Vethkarn.',type:'Location',url:'locations.html'},
+  {title:'Karst',desc:'Commander who took Sunbright. Needs three crystals.',type:'Character',url:'characters.html'},
+  {title:'Cassian Dreadmoor',desc:'Mysterious operative — met on the airship.',type:'Character',url:'characters.html'},
+  {title:'Vash Ironhide',desc:'Party member. Fighter. Lost memory of his sister. Magnus Vex speaks to him.',type:'Character',url:'characters.html'},
+  {title:'Creed',desc:'Party member.',type:'Character',url:'characters.html'},
 ];
 
 function doSearch(query) {

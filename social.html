@@ -109,7 +109,7 @@ header{position:relative;z-index:10;text-align:center;padding:55px 20px 32px;bor
 body.light-mode{background:#f0e8d0;}
 body.light-mode header{background:linear-gradient(180deg,#e8d8b0 0%,transparent 100%);border-bottom-color:rgba(100,70,20,0.2);}
 body.light-mode #embers{opacity:0.12;}
-body.light-mode{--ink:#f0e8d0;--text:#2a1a06;--text-dim:#6b4820;--gold:#7a4e08;--gold-light:#8A5a10;--gold-pale:#5a3806;--gold-dark:#A07020;}
+body.light-mode{--ink:#e8d5a3;--text:#2a1a06;--text-dim:#6b4820;--gold:#7a4e08;--gold-light:#8A5a10;--gold-pale:#5a3806;--gold-dark:#A07020;}
 body.light-mode .hero-card,body.light-mode .nav-card{background:linear-gradient(145deg,#ede0c0,#e8d8b0)!important;border-color:rgba(100,70,20,0.25)!important;}
 body.light-mode .hero-card:hover,body.light-mode .nav-card:hover{background:linear-gradient(145deg,#e8d8b0,#e0ccA0)!important;border-color:rgba(100,70,20,0.5)!important;}
 body.light-mode .campaign-banner{background:linear-gradient(135deg,#e8d8b0,#ede0c0)!important;}
@@ -443,12 +443,20 @@ async function loadAll() {
     renderFeed();
     renderMainChat();
   } catch(e) {
-    document.getElementById('art-feed').innerHTML = '<div class="empty-state">Could not load. Please refresh.</div>';
+    console.error('Social load error:', e);
+    const feed = document.getElementById('art-feed');
+    if(feed) feed.innerHTML = '<div class="empty-state">Could not load content. Please refresh.</div>';
+    const wrap = document.getElementById('sidebar-comments-wrap');
+    if(wrap) wrap.innerHTML = '<div class="empty-state" style="padding:20px 0;">Chat unavailable. Please refresh.</div>';
   } finally {
-    requestAnimationFrame(() => requestAnimationFrame(() => {
+    // Always remove loader no matter what
+    function removeLoader() {
       const loader = document.getElementById('social-loader');
-      if (loader) { loader.classList.add('fade-out'); setTimeout(() => loader.remove(), 600); }
-    }));
+      if (loader) { loader.classList.add('fade-out'); setTimeout(() => { if(loader.parentNode) loader.remove(); }, 600); }
+    }
+    requestAnimationFrame(() => requestAnimationFrame(removeLoader));
+    // Backup: force remove after 3s
+    setTimeout(removeLoader, 3000);
   }
 }
 
