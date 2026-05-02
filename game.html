@@ -304,34 +304,25 @@ body.light-mode #quick-nav {
     <div class="stats-bar" id="stats-bar">
       <div class="stat-pip">
         <div class="stat-pip-label">HP</div>
-        <div class="stat-pip-val" id="stat-hp">10</div>
+        <div class="stat-pip-val" id="stat-hp">12</div>
         <div class="hp-bar-wrap"><div class="hp-bar safe" id="hp-bar" style="width:100%"></div></div>
       </div>
       <div class="stat-pip">
-        <div class="stat-pip-label">Gold</div>
-        <div class="stat-pip-val" id="stat-gold">5</div>
+        <div class="stat-pip-label">Score</div>
+        <div class="stat-pip-val" id="stat-score">0</div>
       </div>
       <div class="stat-pip">
-        <div class="stat-pip-label">Favour</div>
-        <div class="stat-pip-val" id="stat-favour">0</div>
-      </div>
-      <div class="stat-pip">
-        <div class="stat-pip-label">Scene</div>
+        <div class="stat-pip-label">Move</div>
         <div class="stat-pip-val" id="stat-scene">1</div>
       </div>
-    </div>
-    <!-- SAVE ROW -->
-    <div id="save-row" style="display:none;padding:10px 16px;background:rgba(200,149,42,0.04);border-bottom:1px solid rgba(200,149,42,0.1);display:flex;align-items:center;justify-content:space-between;gap:10px;">
-      <span style="font-family:'Cinzel',serif;font-size:0.5rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-dark);">Saved game found</span>
-      <div style="display:flex;gap:8px;">
-        <button onclick="loadGame();renderScene();" style="font-family:'Cinzel',serif;font-size:0.48rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);background:transparent;border:1px solid rgba(200,149,42,0.35);padding:6px 12px;cursor:pointer;">Continue</button>
-        <button onclick="newGame();" style="font-family:'Cinzel',serif;font-size:0.48rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);background:transparent;border:1px solid rgba(200,149,42,0.15);padding:6px 12px;cursor:pointer;">New Game</button>
+      <div class="stat-pip" style="flex:2;">
+        <div class="stat-pip-label">Carrying</div>
+        <div class="stat-pip-val" id="stat-inv" style="font-size:0.55rem;font-family:'EB Garamond',serif;color:var(--text-dim);">Nothing</div>
       </div>
-      <span id="save-indicator" style="font-family:'EB Garamond',serif;font-style:italic;font-size:0.78rem;color:#4be87a;opacity:0;transition:opacity 0.5s;"></span>
     </div>
     <!-- SCENE -->
     <div class="scene-area">
-      <div class="scene-location" id="scene-location">The Road to Sunbright</div>
+      <div class="scene-location" id="scene-location">Loading...</div>
       <div class="scene-text" id="scene-text"></div>
     </div>
     <div class="choices" id="choices"></div>
@@ -1034,32 +1025,9 @@ function updateSaveIndicator() {
 }
 
 // Store original HTML for restart
-let originalGameHTML = '';
 
 // Save indicator in stats
 document.addEventListener('DOMContentLoaded', () => {
-  const statsBar = document.getElementById('stats-bar');
-  if (statsBar) {
-    statsBar.innerHTML = `
-      <div class="stat-pip">
-        <div class="stat-pip-label">HP</div>
-        <div class="stat-pip-val" id="stat-hp">12</div>
-        <div class="hp-bar-wrap"><div class="hp-bar safe" id="hp-bar" style="width:100%"></div></div>
-      </div>
-      <div class="stat-pip">
-        <div class="stat-pip-label">Score</div>
-        <div class="stat-pip-val" id="stat-score">0</div>
-      </div>
-      <div class="stat-pip">
-        <div class="stat-pip-label">Move</div>
-        <div class="stat-pip-val" id="stat-scene">1</div>
-      </div>
-      <div class="stat-pip" style="flex:2;">
-        <div class="stat-pip-label">Carrying</div>
-        <div class="stat-pip-val" id="stat-inv" style="font-size:0.55rem;font-family:'EB Garamond',serif;color:var(--text-dim);">Nothing</div>
-      </div>`;
-  }
-  originalGameHTML = document.getElementById('game-wrap').innerHTML;
   deleteSave();
   startGame(false);
 });
@@ -1087,95 +1055,6 @@ function navigate(url) {
   overlay.classList.add('active');
   setTimeout(() => { window.location.href = url; }, 800);
 }
-
-// ══ GLOBAL WIDGETS ══
-
-
-// ── Theme ──
-function applyTheme(theme) {
-  if (theme === 'light') {
-    document.body.classList.add('light-mode');
-    const btn = document.getElementById('themeBtn');
-    if (btn) btn.textContent = '☀️';
-  } else {
-    document.body.classList.remove('light-mode');
-    const btn = document.getElementById('themeBtn');
-    if (btn) btn.innerHTML = '<span class="toolbar-tooltip">Toggle Theme</span>🌙';
-  }
-}
-function toggleTheme() {
-  const isLight = document.body.classList.contains('light-mode');
-  const newTheme = isLight ? 'dark' : 'light';
-  localStorage.setItem('dorlorial-theme', newTheme);
-  applyTheme(newTheme);
-}
-// Apply saved theme on load - after DOM ready to avoid crashes
-(function() {
-  const saved = localStorage.getItem('dorlorial-theme') || 'dark';
-  // Apply body class immediately (no DOM needed)
-  if (saved === 'light') document.body.classList.add('light-mode');
-  // Apply button text after DOM loads
-  document.addEventListener('DOMContentLoaded', function() {
-    applyTheme(saved);
-  });
-})();
-
-// ── Quick Nav ──
-let qnOpen = false;
-
-// ── Toolbar collapse ──
-function toggleToolbar() {
-  const tb = document.getElementById('global-toolbar');
-  const qn = document.getElementById('quick-nav');
-  const collapsed = tb.classList.toggle('collapsed');
-  localStorage.setItem('dorlorial-toolbar', collapsed ? 'collapsed' : 'open');
-  // Close quick nav when collapsing
-  if (collapsed && qnOpen) {
-    qnOpen = false;
-    qn.classList.remove('open');
-  }
-}
-// Restore toolbar state
-(function() {
-  if (localStorage.getItem('dorlorial-toolbar') === 'collapsed') {
-    document.addEventListener('DOMContentLoaded', () => {
-      const tb = document.getElementById('global-toolbar');
-      if (tb) tb.classList.add('collapsed');
-    });
-  }
-})();
-function toggleQuickNav() {
-  qnOpen = !qnOpen;
-  document.getElementById('quick-nav').classList.toggle('open', qnOpen);
-  document.getElementById('quickNavBtn').classList.toggle('active', qnOpen);
-}
-// Close quick nav on outside click
-document.addEventListener('click', e => {
-  if (qnOpen && !e.target.closest('#quick-nav') && !e.target.closest('#quickNavBtn')) {
-    qnOpen = false;
-    document.getElementById('quick-nav').classList.remove('open');
-    document.getElementById('quickNavBtn').classList.remove('active');
-  }
-});
-// Quick nav links use page transition
-document.querySelectorAll('.qn-item').forEach(item => {
-  item.addEventListener('click', e => {
-    const href = item.getAttribute('href');
-    if (!href || href === '#') return;
-    // Check if we're already on this page
-    if (window.location.pathname.endsWith(href) || window.location.href.endsWith(href)) return;
-    e.preventDefault();
-    const overlay = document.getElementById('overlay');
-    if (overlay) {
-      overlay.classList.add('active');
-      setTimeout(() => { window.location.href = href; }, 700);
-    } else {
-      window.location.href = href;
-    }
-  });
-});
-
-
 
 // ══ GLOBAL WIDGETS ══
 
