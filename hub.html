@@ -13,7 +13,7 @@ body{background:var(--ink);color:var(--text);font-family:'EB Garamond',serif;min
 #embers{position:fixed;inset:0;z-index:0;pointer-events:none;}
 
 /* ══ HEADER ══ */
-header{position:relative;z-index:10;text-align:center;padding:50px 20px 36px;background:linear-gradient(180deg,#0e0a04 0%,transparent 100%);}
+header{position:relative;z-index:10;text-align:center;padding:80px 20px 36px;background:linear-gradient(180deg,#0e0a04 0%,transparent 100%);}
 .header-symbol{width:56px;height:auto;margin:0 auto 16px;filter:drop-shadow(0 0 14px rgba(200,149,42,0.45));animation:symbolPulse 4s ease-in-out infinite;display:block;}
 @keyframes symbolPulse{0%,100%{filter:drop-shadow(0 0 10px rgba(200,149,42,0.35));}50%{filter:drop-shadow(0 0 24px rgba(232,184,75,0.7));}}
 .header-eyebrow{font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:0.5em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:8px;}
@@ -41,7 +41,7 @@ main{position:relative;z-index:10;max-width:1240px;margin:0 auto;padding:0 24px 
 .section-label::after{background:linear-gradient(90deg,rgba(200,149,42,0.25),transparent);}
 
 /* ══ HERO ROW — Map + Community + DM ══ */
-.hero-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+.hero-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
 .hero-card{position:relative;display:flex;flex-direction:column;background:linear-gradient(160deg,#110b02,#080500);border:1px solid rgba(200,149,42,0.25);padding:28px 24px;cursor:pointer;transition:all 0.35s;overflow:hidden;text-decoration:none;color:inherit;}
 .hero-card::before{content:'';position:absolute;top:0;left:0;width:36px;height:36px;border-top:1px solid rgba(200,149,42,0.45);border-left:1px solid rgba(200,149,42,0.45);transition:all 0.35s;}
 .hero-card::after{content:'';position:absolute;bottom:0;right:0;width:36px;height:36px;border-bottom:1px solid rgba(200,149,42,0.45);border-right:1px solid rgba(200,149,42,0.45);transition:all 0.35s;}
@@ -296,10 +296,10 @@ body.light-mode #quick-nav {
 
 
   /* ── TOP CORNER BUTTONS ── */
-  .corner-btns{position:absolute;top:0;left:0;right:0;z-index:20;display:flex;justify-content:space-between;padding:16px 20px;pointer-events:none;}
-  .corner-btn{font-family:'Cinzel',serif;font-size:0.52rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold-dark);background:rgba(6,4,2,0.7);border:1px solid rgba(200,149,42,0.22);padding:8px 14px;cursor:pointer;transition:all 0.25s;text-decoration:none;display:flex;align-items:center;gap:6px;pointer-events:all;backdrop-filter:blur(8px);}
-  .corner-btn:hover{color:var(--gold);border-color:rgba(200,149,42,0.5);background:rgba(14,10,4,0.9);}
-  body.light-mode .corner-btn{background:rgba(245,240,232,0.85);border-color:rgba(138,96,16,0.3);}
+  .corner-btns{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;padding:14px 18px;pointer-events:none;background:linear-gradient(180deg,rgba(6,4,2,0.9) 0%,transparent 100%);}
+  .corner-btn{font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold);background:rgba(6,4,2,0.85);border:1px solid rgba(200,149,42,0.4);padding:11px 20px;cursor:pointer;transition:all 0.25s;text-decoration:none;display:flex;align-items:center;gap:8px;pointer-events:all;backdrop-filter:blur(12px);box-shadow:0 2px 12px rgba(0,0,0,0.5);}
+  .corner-btn:hover{color:var(--gold-pale);border-color:var(--gold);background:rgba(14,10,4,0.95);transform:translateY(-1px);box-shadow:0 4px 20px rgba(200,149,42,0.15);}
+  body.light-mode .corner-btn{background:rgba(245,240,232,0.95);border-color:rgba(138,96,16,0.4);color:var(--gold-dark);}
 </style>
 </head>
 <body>
@@ -371,20 +371,13 @@ body.light-mode #quick-nav {
       <div class="hero-desc">Explore the interactive map of Dorlorial. Click any region pin to discover kingdoms, cities, factions, and lore.</div>
       <div class="hero-arrow">Open Map →</div>
     </a>
-    <a href="community.html" id="communityCardLink" class="hero-card">
+    <a href="social.html" id="socialHeroCard" class="hero-card">
       <div class="hero-glow"></div>
       <span class="hero-icon">🎨</span>
-      <div class="hero-name">Community</div>
-      <div class="hero-desc">Share fan art, leave comments, and discuss the world. A space for everyone who walks in Dorlorial.</div>
-      <div class="hero-arrow">Visit Community →</div>
+      <div class="hero-name">Social Hub</div>
+      <div class="hero-desc">Browse community art, read comments, and reply to other fans. The heart of the Dorlorial community.</div>
+      <div class="hero-arrow">Visit Social Hub →</div>
     </a>
-    <div class="hero-card" id="vaultBtn">
-      <div class="hero-glow"></div>
-      <span class="hero-icon">🔒</span>
-      <div class="hero-name">DM Vault</div>
-      <div class="hero-desc">Restricted access. Secrets, plot threads, entry editor, and community management. Password required.</div>
-      <div class="hero-arrow">Enter Vault →</div>
-    </div>
   </div>
 
   <!-- ══ LORE GRID ══ -->
@@ -457,37 +450,17 @@ body.light-mode #quick-nav {
 
   </div>
 
-  <!-- ══ FUN ROW ══ -->
-  <div class="section-label">Discover Yourself</div>
-  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;">
-    <a href="quiz.html" class="hero-card">
-      <div class="hero-glow"></div>
-      <span class="hero-icon">✦</span>
-      <div class="hero-name">Which Deity Are You?</div>
-      <div class="hero-desc">Twelve questions. Fourteen deities. The gods are watching.</div>
-      <div class="hero-arrow">Take the Quiz →</div>
-    </a>
-    <a href="alignment.html" class="hero-card">
-      <div class="hero-glow"></div>
-      <span class="hero-icon">⚖️</span>
-      <div class="hero-name">What's Your Alignment?</div>
-      <div class="hero-desc">Nine possible alignments. Find out where you truly stand.</div>
-      <div class="hero-arrow">Find Out →</div>
-    </a>
-    <a href="class-quiz.html" class="hero-card">
-      <div class="hero-glow"></div>
-      <span class="hero-icon">🎲</span>
-      <div class="hero-name">What Class Are You? <span class="hero-badge badge-new">New</span></div>
-      <div class="hero-desc">Ten questions. Twelve D&D classes. Your destiny was always in the dice.</div>
-      <div class="hero-arrow">Find Out →</div>
-    </a>
-    <a href="roller.html" class="hero-card">
-      <div class="hero-glow"></div>
-      <span class="hero-icon">⚀</span>
-      <div class="hero-name">Stat Roller <span class="hero-badge badge-new">New</span></div>
-      <div class="hero-desc">4d6, reroll the lowest, keep the top 3. Assign to your six stats and see your modifiers.</div>
-      <div class="hero-arrow">Roll Stats →</div>
-    </a>
+
+  <!-- ══ DM VAULT STRIP ══ -->
+  <div id="vaultBtn" style="margin-top:40px;display:flex;align-items:center;gap:16px;padding:16px 24px;background:linear-gradient(145deg,#0a0702,#080500);border:1px solid rgba(200,149,42,0.15);cursor:pointer;transition:all 0.3s;" 
+    onmouseover="this.style.borderColor='rgba(200,149,42,0.4)'" 
+    onmouseout="this.style.borderColor='rgba(200,149,42,0.15)'">
+    <span style="font-size:1.2rem;">🔒</span>
+    <div style="flex:1;">
+      <div style="font-family:'Cinzel',serif;font-size:0.65rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-dark);">DM Vault</div>
+      <div style="font-family:'EB Garamond',serif;font-style:italic;font-size:0.82rem;color:var(--text-dim);">Restricted access — password required</div>
+    </div>
+    <span style="font-family:'Cinzel',serif;font-size:0.52rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold-dark);">Enter →</span>
   </div>
 
 </main>
@@ -678,6 +651,11 @@ document.addEventListener('click', e => {
 });
 
 
+// Social hero card transition
+document.getElementById('socialHeroCard').addEventListener('click',function(e){
+  e.preventDefault(); document.getElementById('overlay').classList.add('active');
+  setTimeout(()=>{window.location.href=this.getAttribute('href');},700);
+});
 // Corner button transitions
 document.getElementById('socialCornerBtn').addEventListener('click',function(e){
   e.preventDefault(); document.getElementById('overlay').classList.add('active');
