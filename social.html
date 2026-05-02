@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Social Hub — Dorlorial</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -361,7 +364,7 @@ function submitArt() {
         document.getElementById('sub-desc').value='';
         setTimeout(function(){document.getElementById('submit-modal').style.display='none';ok.style.display='none';},2000);
         // Reload art
-        api('art_submissions?order=created_at.desc').then(function(r2){return r2.json();}).then(function(data){
+        api('art_submissions?order=created_at.desc&_t='+Date.now()).then(function(r2){return r2.json();}).then(function(data){
           if(!Array.isArray(data)||!data.length){document.getElementById('art-grid').innerHTML='<p class="empty">No art yet.</p>';return;}
           document.getElementById('art-grid').innerHTML=data.map(function(a){return '<div class="art-card"><img src="'+a.image_url+'" alt="'+a.title+'" loading="lazy" onclick="openLb(''+a.image_url.replace(/'/g,"\'")+'')" onerror="this.parentElement.style.display='none'"><div class="art-card-body"><div class="art-card-title">'+a.title+'</div><div class="art-card-user">by '+a.username+'</div></div></div>';}).join('');
         });
@@ -374,7 +377,7 @@ function submitArt() {
 
 
 // Load art
-api('art_submissions?order=created_at.desc')
+api('art_submissions?order=created_at.desc&_t='+Date.now())
   .then(r=>r.json())
   .then(data=>{
     const grid = document.getElementById('art-grid');
@@ -392,7 +395,7 @@ api('art_submissions?order=created_at.desc')
 
 // Load chat
 function loadChat() {
-  api('comments?entry_link=eq.general-chat&order=created_at.asc&limit=100')
+  api('comments?entry_link=eq.general-chat&order=created_at.asc&limit=100&_t='+Date.now())
     .then(r=>r.json())
     .then(data=>{
       const box = document.getElementById('chat-messages');
