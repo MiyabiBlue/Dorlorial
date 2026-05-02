@@ -102,6 +102,187 @@ header{position:relative;z-index:10;text-align:center;padding:55px 20px 32px;bor
 .transition-overlay.active{opacity:1;pointer-events:all;}
 @media(max-width:900px){.page-layout{grid-template-columns:1fr;}.comments-col{position:fixed;bottom:0;left:0;right:0;height:320px;border-top:1px solid rgba(200,149,42,0.2);z-index:50;display:none;}.comments-col.mobile-open{display:flex;}.art-feed{columns:1;}}
 @media(max-width:580px){header{padding:44px 14px 24px;}}
+/* ═══ GLOBAL WIDGETS ═══ */
+
+/* ── THEME ── */
+body.light-mode {
+  --ink: #f5f0e8;
+  --text: #2a1f0e;
+  --text-dim: #6b5535;
+  --gold: #8A6010;
+  --gold-light: #A07820;
+  --gold-pale: #6A4808;
+  --gold-dark: #C8952A;
+}
+body.light-mode header {
+  background: linear-gradient(180deg, #ede6d6 0%, transparent 100%);
+  border-bottom-color: rgba(138,96,16,0.25);
+}
+body.light-mode #embers { opacity: 0.3; }
+
+/* ── FLOATING TOOLBAR ── */
+#global-toolbar {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(6,4,2,0.92);
+  border: 1px solid rgba(200,149,42,0.35);
+  padding: 8px 12px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.35s cubic-bezier(0.34,1.2,0.64,1);
+}
+#global-toolbar.collapsed {
+  left: auto;
+  right: 16px;
+  bottom: 16px;
+  transform: none;
+  padding: 8px 10px;
+  gap: 0;
+  border-color: rgba(200,149,42,0.25);
+}
+#global-toolbar.collapsed .toolbar-btn:not(#toggleToolbarBtn),
+#global-toolbar.collapsed .toolbar-divider {
+  display: none;
+}
+#global-toolbar.collapsed #toggleToolbarBtn {
+  border-color: transparent;
+}
+#toggleToolbarBtn {
+  font-size: 0.7rem;
+  color: var(--gold-dark);
+  opacity: 0.6;
+  transition: opacity 0.2s, transform 0.3s;
+}
+#toggleToolbarBtn:hover { opacity: 1; color: var(--gold); }
+#global-toolbar.collapsed #toggleToolbarBtn {
+  opacity: 0.5;
+  transform: rotate(180deg);
+}
+body.light-mode #global-toolbar {
+  background: rgba(245,240,232,0.95);
+  border-color: rgba(138,96,16,0.3);
+}
+.toolbar-btn {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent;
+  border: 1px solid rgba(200,149,42,0.2);
+  color: var(--gold-dark);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+  position: relative;
+}
+.toolbar-btn:hover { background: rgba(200,149,42,0.1); border-color: var(--gold); color: var(--gold); }
+.toolbar-btn.active { background: rgba(200,149,42,0.15); border-color: var(--gold); color: var(--gold); }
+.toolbar-divider { width: 1px; height: 24px; background: rgba(200,149,42,0.2); margin: 0 2px; }
+.toolbar-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0e0a04;
+  border: 1px solid rgba(200,149,42,0.3);
+  font-family: 'Cinzel', serif;
+  font-size: 0.42rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  padding: 4px 8px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+body.light-mode .toolbar-tooltip { background: #f0e8d0; }
+.toolbar-btn:hover .toolbar-tooltip { opacity: 1; }
+
+/* ── QUICK NAV PANEL ── */
+#quick-nav {
+  position: fixed;
+  bottom: 82px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  z-index: 149;
+  background: rgba(6,4,2,0.97);
+  border: 1px solid rgba(200,149,42,0.35);
+  padding: 20px;
+  min-width: 320px;
+  max-width: 480px;
+  width: 90vw;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+body.light-mode #quick-nav {
+  background: rgba(245,240,232,0.97);
+  border-color: rgba(138,96,16,0.3);
+}
+#quick-nav.open {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateX(-50%) translateY(0);
+}
+.qn-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  margin-bottom: 14px;
+  text-align: center;
+}
+.qn-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.qn-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 6px;
+  background: rgba(200,149,42,0.04);
+  border: 1px solid rgba(200,149,42,0.12);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  color: inherit;
+}
+.qn-item:hover {
+  background: rgba(200,149,42,0.1);
+  border-color: rgba(200,149,42,0.4);
+}
+.qn-item .qn-icon { font-size: 1.2rem; }
+.qn-item .qn-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.4rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  text-align: center;
+  line-height: 1.3;
+}
+.qn-item:hover .qn-name { color: var(--gold); }
+
+
+
+
+  /* ── TOP CORNER BUTTONS ── */
+  .corner-btns{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;padding:14px 18px;pointer-events:none;background:linear-gradient(180deg,rgba(6,4,2,0.9) 0%,transparent 100%);}
+  .corner-btn{font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold);background:rgba(6,4,2,0.85);border:1px solid rgba(200,149,42,0.4);padding:11px 20px;cursor:pointer;transition:all 0.25s;text-decoration:none;display:flex;align-items:center;gap:8px;pointer-events:all;backdrop-filter:blur(12px);box-shadow:0 2px 12px rgba(0,0,0,0.5);}
+  .corner-btn:hover{color:var(--gold-pale);border-color:var(--gold);background:rgba(14,10,4,0.95);transform:translateY(-1px);box-shadow:0 4px 20px rgba(200,149,42,0.15);}
+  body.light-mode .corner-btn{background:rgba(245,240,232,0.95);border-color:rgba(138,96,16,0.4);color:var(--gold-dark);}
+
 </style>
 </head>
 <body>
@@ -345,5 +526,149 @@ function drawEmber(e){const fl=0.6+Math.sin(e.age*e.flicker*80)*0.4;const al=Mat
 let fr=0;(function loop(){requestAnimationFrame(loop);fr++;ctx.clearRect(0,0,canvas.width,canvas.height);for(let i=embers.length-1;i>=0;i--){const e=embers[i];e.age++;e.life-=e.decay;e.x+=e.drift+Math.sin(e.age*e.wobble+e.wOff)*0.7;e.y-=e.speed;drawEmber(e);if(e.life<=0||e.y<-20||e.x<-20||e.x>canvas.width+20){embers.splice(i,1);embers.push(spawnEmber(false));}}if(fr%45===0&&embers.length<MAX+10){for(let j=0;j<3;j++)embers.push(spawnEmber(false));}})();
 
 </script>
+
+<!-- ══ GLOBAL TOOLBAR ══ -->
+<div id="global-toolbar">
+  <!-- Quick Nav -->
+  <button class="toolbar-btn" id="quickNavBtn" onclick="toggleQuickNav()" title="Quick Navigation">
+    <span class="toolbar-tooltip">Quick Nav</span>
+    ☰
+  </button>
+  <div class="toolbar-divider"></div>
+  <!-- Theme -->
+  <button class="toolbar-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle Theme">
+    <span class="toolbar-tooltip">Toggle Theme</span>
+    🌙
+  </button>
+  <!-- Back to top -->
+  <div class="toolbar-divider"></div>
+  <button class="toolbar-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to Top">
+    <span class="toolbar-tooltip">Back to Top</span>
+    ▲
+  </button>
+  <div class="toolbar-divider"></div>
+  <!-- Collapse -->
+  <button class="toolbar-btn" id="toggleToolbarBtn" onclick="toggleToolbar()" title="Hide toolbar">
+    <span class="toolbar-tooltip">Hide Toolbar</span>
+    ◀◀
+  </button>
+</div>
+
+<!-- ══ QUICK NAV PANEL ══ -->
+<div id="quick-nav">
+      <div class="qn-title">Navigate to...</div>
+  <div class="qn-grid">
+    <a href="hub.html" class="qn-item"><span class="qn-icon">🏠</span><span class="qn-name">Hub</span></a>
+    <a href="map.html" class="qn-item"><span class="qn-icon">🗺️</span><span class="qn-name">Map</span></a>
+    <a href="social.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Social Hub</span></a>
+    <a href="quizzes.html" class="qn-item"><span class="qn-icon">🎯</span><span class="qn-name">Quizzes</span></a>
+    <a href="deities.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deities</span></a>
+    <a href="factions.html" class="qn-item"><span class="qn-icon">⚔️</span><span class="qn-name">Factions</span></a>
+    <a href="characters.html" class="qn-item"><span class="qn-icon">◉</span><span class="qn-name">Characters</span></a>
+    <a href="locations.html" class="qn-item"><span class="qn-icon">📍</span><span class="qn-name">Locations</span></a>
+    <a href="lore.html" class="qn-item"><span class="qn-icon">📜</span><span class="qn-name">Lore</span></a>
+    <a href="timeline.html" class="qn-item"><span class="qn-icon">⏳</span><span class="qn-name">Timeline</span></a>
+    <a href="bestiary.html" class="qn-item"><span class="qn-icon">📖</span><span class="qn-name">Bestiary</span></a>
+    <a href="campaigns.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Campaigns</span></a>
+    <a href="roller.html" class="qn-item"><span class="qn-icon">⚀</span><span class="qn-name">Stat Roller</span></a>
+    <a href="dmvault.html" class="qn-item"><span class="qn-icon">🔒</span><span class="qn-name">DM Vault</span></a>
+  </div></div>
+</div>
+
+
+
+<script>
+// ══ GLOBAL WIDGETS ══
+
+
+// ── Theme ──
+function applyTheme(theme) {
+  if (theme === 'light') {
+    document.body.classList.add('light-mode');
+    const btn = document.getElementById('themeBtn');
+    if (btn) btn.textContent = '☀️';
+  } else {
+    document.body.classList.remove('light-mode');
+    const btn = document.getElementById('themeBtn');
+    if (btn) btn.innerHTML = '<span class="toolbar-tooltip">Toggle Theme</span>🌙';
+  }
+}
+function toggleTheme() {
+  const isLight = document.body.classList.contains('light-mode');
+  const newTheme = isLight ? 'dark' : 'light';
+  localStorage.setItem('dorlorial-theme', newTheme);
+  applyTheme(newTheme);
+}
+// Apply saved theme on load - after DOM ready to avoid crashes
+(function() {
+  const saved = localStorage.getItem('dorlorial-theme') || 'dark';
+  // Apply body class immediately (no DOM needed)
+  if (saved === 'light') document.body.classList.add('light-mode');
+  // Apply button text after DOM loads
+  document.addEventListener('DOMContentLoaded', function() {
+    applyTheme(saved);
+  });
+})();
+
+// ── Quick Nav ──
+let qnOpen = false;
+
+// ── Toolbar collapse ──
+function toggleToolbar() {
+  const tb = document.getElementById('global-toolbar');
+  const qn = document.getElementById('quick-nav');
+  const collapsed = tb.classList.toggle('collapsed');
+  localStorage.setItem('dorlorial-toolbar', collapsed ? 'collapsed' : 'open');
+  // Close quick nav when collapsing
+  if (collapsed && qnOpen) {
+    qnOpen = false;
+    qn.classList.remove('open');
+  }
+}
+// Restore toolbar state
+(function() {
+  if (localStorage.getItem('dorlorial-toolbar') === 'collapsed') {
+    document.addEventListener('DOMContentLoaded', () => {
+      const tb = document.getElementById('global-toolbar');
+      if (tb) tb.classList.add('collapsed');
+    });
+  }
+})();
+function toggleQuickNav() {
+  qnOpen = !qnOpen;
+  document.getElementById('quick-nav').classList.toggle('open', qnOpen);
+  document.getElementById('quickNavBtn').classList.toggle('active', qnOpen);
+}
+// Close quick nav on outside click
+document.addEventListener('click', e => {
+  if (qnOpen && !e.target.closest('#quick-nav') && !e.target.closest('#quickNavBtn')) {
+    qnOpen = false;
+    document.getElementById('quick-nav').classList.remove('open');
+    document.getElementById('quickNavBtn').classList.remove('active');
+  }
+});
+// Quick nav links use page transition
+document.querySelectorAll('.qn-item').forEach(item => {
+  item.addEventListener('click', e => {
+    const href = item.getAttribute('href');
+    if (!href || href === '#') return;
+    // Check if we're already on this page
+    if (window.location.pathname.endsWith(href) || window.location.href.endsWith(href)) return;
+    e.preventDefault();
+    const overlay = document.getElementById('overlay');
+    if (overlay) {
+      overlay.classList.add('active');
+      setTimeout(() => { window.location.href = href; }, 700);
+    } else {
+      window.location.href = href;
+    }
+  });
+});
+
+
+</script>
+</body>
+</html>
+<div class="transition-overlay" id="overlay"></div>
 </body>
 </html>
