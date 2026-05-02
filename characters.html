@@ -396,7 +396,7 @@ body.light-mode #quick-nav {
   </div>
 </main>
 
-<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">▲</button>
+
 <div class="transition-overlay" id="overlay"></div>
 
 <script>
@@ -1169,11 +1169,7 @@ function gSearch(query){
 }
 
 
-// Back to top
-window.addEventListener('scroll', () => {
-  const btn = document.getElementById('backToTop');
-  if (btn) btn.classList.toggle('visible', window.scrollY > 400);
-});
+
 
 // ── QOL: ESC closes modals ──
 document.addEventListener('keydown', e => {
@@ -1314,10 +1310,12 @@ document.querySelectorAll('.qn-item').forEach(item => {
 
 <!-- ══ QUICK NAV PANEL ══ -->
 <div id="quick-nav">
-  <div class="qn-title">Navigate to...</div>
+    <div class="qn-title">Navigate to...</div>
   <div class="qn-grid">
     <a href="hub.html" class="qn-item"><span class="qn-icon">🏠</span><span class="qn-name">Hub</span></a>
     <a href="map.html" class="qn-item"><span class="qn-icon">🗺️</span><span class="qn-name">Map</span></a>
+    <a href="social.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Social Hub</span></a>
+    <a href="quizzes.html" class="qn-item"><span class="qn-icon">🎯</span><span class="qn-name">Quizzes</span></a>
     <a href="deities.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deities</span></a>
     <a href="factions.html" class="qn-item"><span class="qn-icon">⚔️</span><span class="qn-name">Factions</span></a>
     <a href="characters.html" class="qn-item"><span class="qn-icon">◉</span><span class="qn-name">Characters</span></a>
@@ -1326,10 +1324,9 @@ document.querySelectorAll('.qn-item').forEach(item => {
     <a href="timeline.html" class="qn-item"><span class="qn-icon">⏳</span><span class="qn-name">Timeline</span></a>
     <a href="bestiary.html" class="qn-item"><span class="qn-icon">📖</span><span class="qn-name">Bestiary</span></a>
     <a href="campaigns.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Campaigns</span></a>
-    <a href="community.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Community</span></a>
-    <a href="quiz.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deity Quiz</span></a>
-    <a href="alignment.html" class="qn-item"><span class="qn-icon">⚖️</span><span class="qn-name">Alignment</span></a>
-  </div>
+    <a href="roller.html" class="qn-item"><span class="qn-icon">⚀</span><span class="qn-name">Stat Roller</span></a>
+    <a href="dmvault.html" class="qn-item" onclick="event.preventDefault();document.getElementById('vaultModal')?.classList.add('open') || window.location.href='dmvault.html'"><span class="qn-icon">🔒</span><span class="qn-name">DM Vault</span></a>
+  </div></div>
 </div>
 
 
