@@ -327,6 +327,12 @@ let fr=0;(function loop(){requestAnimationFrame(loop);fr++;ctx.clearRect(0,0,can
 
 
 
+function navigate(url) {
+  const overlay = document.getElementById('overlay');
+  overlay.classList.add('active');
+  setTimeout(() => { window.location.href = url; }, 800);
+}
+
 // ══ GLOBAL WIDGETS ══
 
 

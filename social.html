@@ -601,6 +601,103 @@ document.querySelector('.back-link').addEventListener('click', function(e) {
 
 loadAll();
 
+function navigate(url) {
+  const overlay = document.getElementById('overlay');
+  overlay.classList.add('active');
+  setTimeout(() => { window.location.href = url; }, 800);
+}
+
+// ══ GLOBAL WIDGETS ══
+
+
+// ── Theme ──
+function applyTheme(theme) {
+  if (theme === 'light') {
+    document.body.classList.add('light-mode');
+    const btn = document.getElementById('themeBtn');
+    if (btn) btn.textContent = '☀️';
+  } else {
+    document.body.classList.remove('light-mode');
+    const btn = document.getElementById('themeBtn');
+    if (btn) btn.innerHTML = '<span class="toolbar-tooltip">Toggle Theme</span>🌙';
+  }
+}
+function toggleTheme() {
+  const isLight = document.body.classList.contains('light-mode');
+  const newTheme = isLight ? 'dark' : 'light';
+  localStorage.setItem('dorlorial-theme', newTheme);
+  applyTheme(newTheme);
+}
+// Apply saved theme on load - after DOM ready to avoid crashes
+(function() {
+  const saved = localStorage.getItem('dorlorial-theme') || 'dark';
+  // Apply body class immediately (no DOM needed)
+  if (saved === 'light') document.body.classList.add('light-mode');
+  // Apply button text after DOM loads
+  document.addEventListener('DOMContentLoaded', function() {
+    applyTheme(saved);
+  });
+})();
+
+// ── Quick Nav ──
+let qnOpen = false;
+
+// ── Toolbar collapse ──
+function toggleToolbar() {
+  const tb = document.getElementById('global-toolbar');
+  const qn = document.getElementById('quick-nav');
+  const collapsed = tb.classList.toggle('collapsed');
+  localStorage.setItem('dorlorial-toolbar', collapsed ? 'collapsed' : 'open');
+  // Close quick nav when collapsing
+  if (collapsed && qnOpen) {
+    qnOpen = false;
+    qn.classList.remove('open');
+  }
+}
+// Restore toolbar state
+(function() {
+  if (localStorage.getItem('dorlorial-toolbar') === 'collapsed') {
+    document.addEventListener('DOMContentLoaded', () => {
+      const tb = document.getElementById('global-toolbar');
+      if (tb) tb.classList.add('collapsed');
+    });
+  }
+})();
+function toggleQuickNav() {
+  qnOpen = !qnOpen;
+  document.getElementById('quick-nav').classList.toggle('open', qnOpen);
+  document.getElementById('quickNavBtn').classList.toggle('active', qnOpen);
+}
+// Close quick nav on outside click
+document.addEventListener('click', e => {
+  if (qnOpen && !e.target.closest('#quick-nav') && !e.target.closest('#quickNavBtn')) {
+    qnOpen = false;
+    document.getElementById('quick-nav').classList.remove('open');
+    document.getElementById('quickNavBtn').classList.remove('active');
+  }
+});
+// Quick nav links use page transition
+document.querySelectorAll('.qn-item').forEach(item => {
+  item.addEventListener('click', e => {
+    const href = item.getAttribute('href');
+    if (!href || href === '#') return;
+    // Check if we're already on this page
+    if (window.location.pathname.endsWith(href) || window.location.href.endsWith(href)) return;
+    e.preventDefault();
+    const overlay = document.getElementById('overlay');
+    if (overlay) {
+      overlay.classList.add('active');
+      setTimeout(() => { window.location.href = href; }, 700);
+    } else {
+      window.location.href = href;
+    }
+  });
+});
+
+
+
+
+
 const canvas=document.getElementById('embers');const ctx=canvas.getContext('2d');
 function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
 resize();window.addEventListener('resize',resize);
