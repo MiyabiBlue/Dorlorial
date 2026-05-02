@@ -66,16 +66,20 @@ main{position:relative;z-index:10;max-width:720px;margin:0 auto;padding:50px 24p
 
 /* ── THEME ── */
 
-body.light-mode{background:#f2ebe0;}
-body.light-mode header{background:linear-gradient(180deg,#e8dcc8 0%,transparent 100%);border-bottom-color:rgba(138,96,16,0.2);}
-body.light-mode #embers{opacity:0.15;}
-body.light-mode main,body.light-mode .profile-panel,body.light-mode .entry-panel{background:#f2ebe0;}
-body.light-mode .nav-card,.light-mode .lore-card,.light-mode .char-card,.light-mode .deity-card{background:linear-gradient(145deg,#ede4d0,#e8dcc8)!important;border-color:rgba(138,96,16,0.2)!important;}
-body.light-mode .modal-overlay .profile-card,.light-mode .creature-modal,.light-mode .char-modal{background:#ede4d0!important;border-color:rgba(138,96,16,0.3)!important;}
-body.light-mode #global-toolbar{background:rgba(242,235,224,0.96)!important;border-color:rgba(138,96,16,0.3)!important;}
-body.light-mode #quick-nav{background:rgba(242,235,224,0.98)!important;border-color:rgba(138,96,16,0.3)!important;}
-body.light-mode .qn-item{background:rgba(138,96,16,0.05)!important;border-color:rgba(138,96,16,0.15)!important;}
-body.light-mode input,body.light-mode textarea,body.light-mode select{background:#e8dcc8!important;border-color:rgba(138,96,16,0.25)!important;color:#2a1a08!important;}
+body.light-mode{background:#f0e8d0;}
+body.light-mode header{background:linear-gradient(180deg,#e8d8b0 0%,transparent 100%);border-bottom-color:rgba(100,70,20,0.2);}
+body.light-mode #embers{opacity:0.12;}
+body.light-mode{--ink:#f0e8d0;--text:#2a1a06;--text-dim:#6b4820;--gold:#7a4e08;--gold-light:#8A5a10;--gold-pale:#5a3806;--gold-dark:#A07020;}
+body.light-mode .hero-card,body.light-mode .nav-card{background:linear-gradient(145deg,#ede0c0,#e8d8b0)!important;border-color:rgba(100,70,20,0.25)!important;}
+body.light-mode .hero-card:hover,body.light-mode .nav-card:hover{background:linear-gradient(145deg,#e8d8b0,#e0ccA0)!important;border-color:rgba(100,70,20,0.5)!important;}
+body.light-mode .campaign-banner{background:linear-gradient(135deg,#e8d8b0,#ede0c0)!important;}
+body.light-mode 
+body.light-mode #quick-nav{background:rgba(240,232,208,0.98)!important;border-color:rgba(100,70,20,0.3)!important;}
+body.light-mode .qn-item{background:rgba(100,70,20,0.06)!important;border-color:rgba(100,70,20,0.18)!important;}
+body.light-mode input,body.light-mode textarea,body.light-mode select{background:#e8d8b0!important;border-color:rgba(100,70,20,0.25)!important;color:#2a1a06!important;}
+body.light-mode .search-wrap input{background:#e8d8b0!important;}
+body.light-mode #searchResults{background:#ede0c0!important;border-color:rgba(100,70,20,0.3)!important;}
+body.light-mode .corner-btn{background:rgba(240,232,208,0.96)!important;border-color:rgba(100,70,20,0.4)!important;color:#7a4e08!important;}
 
 body.light-mode {
   --ink: #f5f0e8;
@@ -266,11 +270,11 @@ body.light-mode #quick-nav {
     <!-- QUESTION VIEW -->
     <div id="question-view">
       <div class="quiz-progress">
-        <div class="progress-label">Question <span id="q-num">1</span> of 8</div>
+        <div class="progress-label">Question <span id="q-num">1</span> of <span id="q-total">?</span></div>
         <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar" style="width:12.5%"></div></div>
       </div>
-      <div class="question-num" id="question-num">Question 1</div>
-      <div class="question-text" id="question-text"></div>
+      <div class="question-num" id="question-num"></div>
+      <div class="question-text" id="question-text" style="min-height:60px;"></div>
       <div class="options" id="options"></div>
     </div>
 
@@ -580,7 +584,6 @@ const DEITIES = {
   vexara:    { name:'Vexara', domain:'The Hollow Queen', icon:'👑', link:'deities.html?cat=hungering&id=vexara',
     desc:"You feel everything deeply — and somewhere along the way you began to wonder if that depth is a burden others should share. There is something in you that hungers. Not for food or wealth but for connection, for significance, for proof that what you experience matters. That hunger is worth examining carefully.",
     traits:['Intense','Hungry','Perceptive','Complex'] },
-,
   glorath:   { name:'Glorath', domain:'The Hungering Maw', icon:'🕳️', link:'deities.html?cat=hungering&id=glorath',
     desc:"You want more. Not out of cruelty — out of a need that sits so deep you stopped questioning it. You consume experiences, relationships, knowledge, food, sensation — and the wanting doesn't stop when you have it. Glorath is not evil in the way cruelty is evil. Glorath is the honest acknowledgment that something in you is never full. That is worth sitting with.",
     traits:['Consuming','Insatiable','Honest','Visceral'] },
@@ -613,6 +616,7 @@ function renderQuestion() {
   const q = QUESTIONS[currentQ];
   const letters = ['A','B','C','D','E','F'];
   document.getElementById('q-num').textContent = currentQ + 1;
+  const qtotal = document.getElementById('q-total'); if(qtotal) qtotal.textContent = QUESTIONS.length;
   document.getElementById('question-num').textContent = `Question ${currentQ + 1} of ${QUESTIONS.length}`;
   document.getElementById('question-text').textContent = q.text;
   document.getElementById('progress-bar').style.width = `${((currentQ + 1) / QUESTIONS.length) * 100}%`;
