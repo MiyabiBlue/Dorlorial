@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Social Hub — Dorlorial</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -707,26 +710,7 @@ function sbFetch(path, opts) {
 }
 
 // Load everything in parallel
-async function loadAll() {
-  try {
-    const [artRes, chatRes] = await Promise.all([
-      sbFetch('art_submissions?status=eq.approved&order=created_at.desc'),
-      sbFetch('comments?entry_link=eq.general-chat&order=created_at.asc&limit=100')
-    ]);
-    allArt = await artRes.json();
-    mainComments = await chatRes.json();
-    if (!Array.isArray(allArt)) allArt = [];
-    if (!Array.isArray(mainComments)) mainComments = [];
-    renderArt();
-    renderMainChat();
-  } catch(e) {
-    document.getElementById('art-feed').innerHTML='<div class="empty-state">Could not load. Refresh to try again.</div>';
-  } finally {
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      
-    }));
-  }
-}
+
 
 // ── ART FEED ──
 function renderArt() {
@@ -871,7 +855,6 @@ document.querySelector('.back-link').addEventListener('click',function(e){
   e.preventDefault();document.getElementById('overlay').classList.add('active');
   setTimeout(()=>{window.location.href=this.getAttribute('href');},700);
 });
-loadAll();
 
 
 

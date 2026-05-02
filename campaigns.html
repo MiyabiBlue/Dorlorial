@@ -67,11 +67,11 @@ main{position:relative;z-index:10;max-width:1100px;margin:0 auto;padding:50px 24
 
 /* PARTY SECTION */
 .party-section{margin-bottom:48px;}
-.party-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;}
-.party-card{background:rgba(200,149,42,0.04);border:1px solid rgba(200,149,42,0.15);padding:18px 16px;text-align:center;}
-.party-icon{font-size:1.8rem;margin-bottom:10px;display:block;}
-.party-name{font-family:'Cinzel',serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold-light);margin-bottom:4px;}
-.party-class{font-family:'EB Garamond',serif;font-style:italic;font-size:0.82rem;color:var(--text-dim);margin-bottom:6px;}
+
+
+
+
+
 .party-status-badge{font-family:'Cinzel',serif;font-size:0.4rem;letter-spacing:0.18em;text-transform:uppercase;padding:2px 7px;border-radius:2px;}
 .ps-active{color:#4be87a;background:rgba(75,232,122,0.08);border:1px solid rgba(75,232,122,0.2);}
 .ps-fallen{color:#e84b4b;background:rgba(232,75,75,0.08);border:1px solid rgba(232,75,75,0.2);}
@@ -108,7 +108,7 @@ main{position:relative;z-index:10;max-width:1100px;margin:0 auto;padding:50px 24
 
 .transition-overlay{position:fixed;inset:0;z-index:300;background:#060402;pointer-events:none;opacity:0;transition:opacity 0.7s ease;}
 .transition-overlay.active{opacity:1;pointer-events:all;}
-@media(max-width:640px){header{padding:50px 16px 32px;}main{padding:36px 16px 60px;}.campaign-grid{grid-template-columns:1fr;}.party-grid{grid-template-columns:repeat(2,1fr);}.campaign-banner{padding:28px 20px;}.banner-stats{gap:16px;}}
+@media(max-width:640px){header{padding:50px 16px 32px;}main{padding:36px 16px 60px;}.campaign-grid{grid-template-columns:1fr;}.campaign-banner{padding:28px 20px;}.banner-stats{gap:16px;}}
 
   /* ── READABILITY IMPROVEMENTS ── */
   .back-link{ font-size:0.75rem !important; color:#9A7020 !important; }
@@ -125,7 +125,7 @@ main{position:relative;z-index:10;max-width:1100px;margin:0 auto;padding:50px 24
   .stat-value, .bstat-val{ font-size:1rem !important; }
   .entry-preview, .campaign-desc{ font-size:clamp(0.88rem,1.8vw,0.98rem) !important; color:#8a7050 !important; }
   .npc-desc{ font-size:0.92rem !important; color:#8a7050 !important; }
-  .party-class{ font-size:0.88rem !important; }
+  
   .cat-arrow, .card-arrow, .region-arrow, .campaign-arrow{ font-size:0.68rem !important; }
   .profile-domain, .article-subtitle, .banner-tagline{ font-size:clamp(0.92rem,2vw,1.1rem) !important; }
   .era-label{ font-size:0.58rem !important; color:#9A7020 !important; }
@@ -334,14 +334,24 @@ body.light-mode #quick-nav {
 
 
 
-.party-portrait{width:100%;height:140px;object-fit:cover;object-position:top;display:block;margin-bottom:10px;border:1px solid rgba(200,149,42,0.2);}
-.party-card{overflow:hidden;padding:0 0 14px 0 !important;}
-.party-card .party-name,.party-card .party-class,.party-card .party-status-badge{padding:0 14px;}
-.party-card .party-name{margin-top:10px;}
 
-.party-card{cursor:pointer;transition:border-color 0.25s,transform 0.25s;}
-.party-card:hover{border-color:rgba(200,149,42,0.45);transform:translateY(-2px);}
+
+.party-card .party-name,.party-card .party-class,.party-card .party-status-badge{padding:0 14px;}
+.party-card 
+
+
+
+
+
+.party-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;}
 .party-card-link{display:block;text-decoration:none;color:inherit;}
+.party-card{background:rgba(200,149,42,0.04);border:1px solid rgba(200,149,42,0.15);text-align:center;overflow:hidden;cursor:pointer;transition:border-color 0.25s,transform 0.25s;}
+.party-card:hover{border-color:rgba(200,149,42,0.45);transform:translateY(-2px);}
+.party-portrait{width:100%;height:140px;object-fit:cover;object-position:top center;display:block;}
+.party-icon{font-size:1.8rem;margin:14px 0 6px;display:block;}
+.party-name{font-family:'Cinzel',serif;font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold-light);padding:0 10px 2px;}
+.party-class{font-family:'EB Garamond',serif;font-style:italic;font-size:0.82rem;color:var(--text-dim);padding:0 10px 8px;}
+.party-status-badge{font-family:'Cinzel',serif;font-size:0.38rem;letter-spacing:0.18em;text-transform:uppercase;padding:3px 8px;margin-bottom:12px;display:inline-block;}
 </style>
 </head>
 <body>

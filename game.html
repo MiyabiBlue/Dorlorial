@@ -1028,8 +1028,20 @@ function updateSaveIndicator() {
 
 // Save indicator in stats
 // Start game - script is at end of body so DOM is ready
-deleteSave();
-startGame(false);
+try {
+  deleteSave();
+  startGame(false);
+  // Verify it worked
+  const st = document.getElementById('scene-text');
+  if (st && !st.innerHTML) {
+    // Retry after a tick
+    setTimeout(() => { startGame(false); }, 100);
+  }
+} catch(err) {
+  document.getElementById('scene-text').innerHTML = '<span style="color:#e84b4b;">Game error: ' + err.message + '</span>';
+  document.getElementById('scene-location').textContent = 'Error';
+  console.error('Game error:', err);
+}
 
 document.querySelector('.back-link').addEventListener('click',function(e){
   e.preventDefault();
