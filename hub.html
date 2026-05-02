@@ -13,7 +13,7 @@ body{background:var(--ink);color:var(--text);font-family:'EB Garamond',serif;min
 #embers{position:fixed;inset:0;z-index:0;pointer-events:none;}
 
 /* ══ HEADER ══ */
-header{position:relative;z-index:10;text-align:center;padding:80px 20px 36px;background:linear-gradient(180deg,#0e0a04 0%,transparent 100%);}
+header{position:relative;z-index:10;text-align:center;padding:90px 20px 36px;background:linear-gradient(180deg,#0e0a04 0%,transparent 100%);}
 .header-symbol{width:56px;height:auto;margin:0 auto 16px;filter:drop-shadow(0 0 14px rgba(200,149,42,0.45));animation:symbolPulse 4s ease-in-out infinite;display:block;}
 @keyframes symbolPulse{0%,100%{filter:drop-shadow(0 0 10px rgba(200,149,42,0.35));}
 }
@@ -374,12 +374,13 @@ body.light-mode #quick-nav {
   </div>
 </header>
 
+<!-- ══ TOP CORNER BUTTONS ══ -->
+<div class="corner-btns">
+  <a href="social.html" class="corner-btn" id="socialCornerBtn">🎨 Social Hub</a>
+  <a href="quizzes.html" class="corner-btn" id="quizzesCornerBtn">🎲 Quizzes & Tools</a>
+</div>
+
 <main>
-  <!-- ══ TOP CORNER BUTTONS ══ -->
-  <div class="corner-btns">
-    <a href="social.html" class="corner-btn" id="socialCornerBtn">🎨 Social Hub</a>
-    <a href="quizzes.html" class="corner-btn" id="quizzesCornerBtn">🎲 Quizzes & Tools</a>
-  </div>
 
 
   <!-- CAMPAIGN BANNER -->
@@ -547,6 +548,7 @@ body.light-mode #quick-nav {
 <div class="transition-overlay" id="overlay"></div>
 
 <script>
+
 const VAULT_PASSWORD = 'Twilight';
 
 // ══ NAVIGATION ══
@@ -806,59 +808,9 @@ function spawnEmber(init){let x,y;if(init){x=rand(0,canvas.width);y=rand(0,canva
 const MAX=100;const embers=[];for(let i=0;i<MAX;i++)embers.push(spawnEmber(true));
 function drawEmber(e){const fl=0.6+Math.sin(e.age*e.flicker*80)*0.4;const al=Math.min(e.life,1)*e.bright*fl;const g=ctx.createRadialGradient(e.x,e.y,0,e.x,e.y,e.size*3);g.addColorStop(0,`rgba(255,210,70,${al*0.9})`);g.addColorStop(0.5,`rgba(200,120,15,${al*0.35})`);g.addColorStop(1,`rgba(140,50,0,0)`);ctx.beginPath();ctx.arc(e.x,e.y,e.size*3,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();ctx.beginPath();ctx.arc(e.x,e.y,e.size*0.5,0,Math.PI*2);ctx.fillStyle=`rgba(255,245,200,${al})`;ctx.fill();}
 let fr=0;(function loop(){requestAnimationFrame(loop);fr++;ctx.clearRect(0,0,canvas.width,canvas.height);for(let i=embers.length-1;i>=0;i--){const e=embers[i];e.age++;e.life-=e.decay;e.x+=e.drift+Math.sin(e.age*e.wobble+e.wOff)*0.7;e.y-=e.speed;drawEmber(e);if(e.life<=0||e.y<-20||e.x<-20||e.x>canvas.width+20){embers.splice(i,1);embers.push(spawnEmber(false));}}if(fr%45===0&&embers.length<MAX+15){for(let j=0;j<3;j++)embers.push(spawnEmber(false));}})();
-</script>
-
-<!-- ══ GLOBAL TOOLBAR ══ -->
-<div id="global-toolbar">
-  <!-- Quick Nav -->
-  <button class="toolbar-btn" id="quickNavBtn" onclick="toggleQuickNav()" title="Quick Navigation">
-    <span class="toolbar-tooltip">Quick Nav</span>
-    ☰
-  </button>
-  <div class="toolbar-divider"></div>
-  <!-- Theme -->
-  <button class="toolbar-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle Theme">
-    <span class="toolbar-tooltip">Toggle Theme</span>
-    🌙
-  </button>
-  <!-- Back to top -->
-  <div class="toolbar-divider"></div>
-  <button class="toolbar-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to Top">
-    <span class="toolbar-tooltip">Back to Top</span>
-    ▲
-  </button>
-  <div class="toolbar-divider"></div>
-  <!-- Collapse -->
-  <button class="toolbar-btn" id="toggleToolbarBtn" onclick="toggleToolbar()" title="Hide toolbar">
-    <span class="toolbar-tooltip">Hide Toolbar</span>
-    ◀◀
-  </button>
-</div>
-
-<!-- ══ QUICK NAV PANEL ══ -->
-<div id="quick-nav">
-    <div class="qn-title">Navigate to...</div>
-  <div class="qn-grid">
-    <a href="hub.html" class="qn-item"><span class="qn-icon">🏠</span><span class="qn-name">Hub</span></a>
-    <a href="map.html" class="qn-item"><span class="qn-icon">🗺️</span><span class="qn-name">Map</span></a>
-    <a href="social.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Social Hub</span></a>
-    <a href="quizzes.html" class="qn-item"><span class="qn-icon">🎯</span><span class="qn-name">Quizzes</span></a>
-    <a href="deities.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deities</span></a>
-    <a href="factions.html" class="qn-item"><span class="qn-icon">⚔️</span><span class="qn-name">Factions</span></a>
-    <a href="characters.html" class="qn-item"><span class="qn-icon">◉</span><span class="qn-name">Characters</span></a>
-    <a href="locations.html" class="qn-item"><span class="qn-icon">📍</span><span class="qn-name">Locations</span></a>
-    <a href="lore.html" class="qn-item"><span class="qn-icon">📜</span><span class="qn-name">Lore</span></a>
-    <a href="timeline.html" class="qn-item"><span class="qn-icon">⏳</span><span class="qn-name">Timeline</span></a>
-    <a href="bestiary.html" class="qn-item"><span class="qn-icon">📖</span><span class="qn-name">Bestiary</span></a>
-    <a href="campaigns.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Campaigns</span></a>
-    <a href="roller.html" class="qn-item"><span class="qn-icon">⚀</span><span class="qn-name">Stat Roller</span></a>
-    <a href="dmvault.html" class="qn-item" onclick="event.preventDefault();document.getElementById('vaultModal')?.classList.add('open') || window.location.href='dmvault.html'"><span class="qn-icon">🔒</span><span class="qn-name">DM Vault</span></a>
-  </div></div>
-</div>
 
 
 
-<script>
 // ══ GLOBAL WIDGETS ══
 
 
@@ -947,6 +899,59 @@ document.querySelectorAll('.qn-item').forEach(item => {
 });
 
 
+
 </script>
+
+<!-- ══ GLOBAL TOOLBAR ══ -->
+<div id="global-toolbar">
+  <!-- Quick Nav -->
+  <button class="toolbar-btn" id="quickNavBtn" onclick="toggleQuickNav()" title="Quick Navigation">
+    <span class="toolbar-tooltip">Quick Nav</span>
+    ☰
+  </button>
+  <div class="toolbar-divider"></div>
+  <!-- Theme -->
+  <button class="toolbar-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle Theme">
+    <span class="toolbar-tooltip">Toggle Theme</span>
+    🌙
+  </button>
+  <!-- Back to top -->
+  <div class="toolbar-divider"></div>
+  <button class="toolbar-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to Top">
+    <span class="toolbar-tooltip">Back to Top</span>
+    ▲
+  </button>
+  <div class="toolbar-divider"></div>
+  <!-- Collapse -->
+  <button class="toolbar-btn" id="toggleToolbarBtn" onclick="toggleToolbar()" title="Hide toolbar">
+    <span class="toolbar-tooltip">Hide Toolbar</span>
+    ◀◀
+  </button>
+</div>
+
+<!-- ══ QUICK NAV PANEL ══ -->
+<div id="quick-nav">
+    <div class="qn-title">Navigate to...</div>
+  <div class="qn-grid">
+    <a href="hub.html" class="qn-item"><span class="qn-icon">🏠</span><span class="qn-name">Hub</span></a>
+    <a href="map.html" class="qn-item"><span class="qn-icon">🗺️</span><span class="qn-name">Map</span></a>
+    <a href="social.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Social Hub</span></a>
+    <a href="quizzes.html" class="qn-item"><span class="qn-icon">🎯</span><span class="qn-name">Quizzes</span></a>
+    <a href="deities.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deities</span></a>
+    <a href="factions.html" class="qn-item"><span class="qn-icon">⚔️</span><span class="qn-name">Factions</span></a>
+    <a href="characters.html" class="qn-item"><span class="qn-icon">◉</span><span class="qn-name">Characters</span></a>
+    <a href="locations.html" class="qn-item"><span class="qn-icon">📍</span><span class="qn-name">Locations</span></a>
+    <a href="lore.html" class="qn-item"><span class="qn-icon">📜</span><span class="qn-name">Lore</span></a>
+    <a href="timeline.html" class="qn-item"><span class="qn-icon">⏳</span><span class="qn-name">Timeline</span></a>
+    <a href="bestiary.html" class="qn-item"><span class="qn-icon">📖</span><span class="qn-name">Bestiary</span></a>
+    <a href="campaigns.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Campaigns</span></a>
+    <a href="roller.html" class="qn-item"><span class="qn-icon">⚀</span><span class="qn-name">Stat Roller</span></a>
+    <a href="dmvault.html" class="qn-item" onclick="event.preventDefault();document.getElementById('vaultModal')?.classList.add('open') || window.location.href='dmvault.html'"><span class="qn-icon">🔒</span><span class="qn-name">DM Vault</span></a>
+  </div></div>
+</div>
+
+
+
+
 </body>
 </html>
