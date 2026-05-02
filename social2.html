@@ -357,7 +357,8 @@ const SB='https://rczesfxgzuhixhinyarc.supabase.co',KEY='eyJhbGciOiJIUzI1NiIsInR
 let imgData=null; // base64 image from file picker
 
 function apifetch(path){
-  return fetch(SB+'/rest/v1/'+path+'&_cb='+Date.now(),{
+  return fetch(SB+'/rest/v1/'+path,{
+    cache:'no-store',
     headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=representation'}
   });
 }
