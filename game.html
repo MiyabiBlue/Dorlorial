@@ -382,6 +382,7 @@ body.light-mode #quick-nav {
 
 
 
+
 <script>
 
 // ══════════════════════════════════════════════════════════
@@ -900,6 +901,15 @@ function startGame(fromSave) {
     gameState = {hp:12,maxHp:12,lantern:true,gold:3,items:[],flags:{},score:0,moves:0};
     currentSceneId = 'intro';
   }
+  // Direct test first
+  const testEl = document.getElementById('scene-location');
+  if (testEl) testEl.textContent = 'Starting...';
+  const testScene = SCENES[currentSceneId];
+  if (!testScene) {
+    const el = document.getElementById('scene-text');
+    if (el) el.innerHTML = '<span style="color:#e84b4b;">Error: Scene not found for id: ' + currentSceneId + '</span>';
+    return;
+  }
   renderScene();
 }
 
@@ -1027,20 +1037,16 @@ function updateSaveIndicator() {
 // Store original HTML for restart
 
 // Save indicator in stats
-// Start game - script is at end of body so DOM is ready
-try {
+// Use DOMContentLoaded to ensure DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    deleteSave();
+    startGame(false);
+  });
+} else {
+  // DOM already ready
   deleteSave();
   startGame(false);
-  // Verify it worked
-  const st = document.getElementById('scene-text');
-  if (st && !st.innerHTML) {
-    // Retry after a tick
-    setTimeout(() => { startGame(false); }, 100);
-  }
-} catch(err) {
-  document.getElementById('scene-text').innerHTML = '<span style="color:#e84b4b;">Game error: ' + err.message + '</span>';
-  document.getElementById('scene-location').textContent = 'Error';
-  console.error('Game error:', err);
 }
 
 document.querySelector('.back-link').addEventListener('click',function(e){

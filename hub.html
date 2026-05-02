@@ -823,7 +823,16 @@ async function initCarousel() {
         headers: { 'apikey': CAR_ANON_KEY, 'Authorization': 'Bearer ' + CAR_ANON_KEY, 'Prefer': 'return=representation' }
       });
     const data = await res.json();
-    if (!Array.isArray(data) || !data.length) return;
+    if (!Array.isArray(data) || !data.length) {
+      // Show a placeholder message in the carousel
+      const carousel = document.getElementById('art-carousel');
+      const placeholder = document.getElementById('carousel-placeholder');
+      if (placeholder) {
+        placeholder.innerHTML = '<div style="font-family:\'Cinzel\',serif;font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-dark);text-align:center;padding:20px;">No community art yet — be the first to submit on the Social Hub</div>';
+      }
+      document.getElementById('art-carousel-wrap').style.display = 'block';
+      return;
+    }
     carSlides = data;
     const carousel = document.getElementById('art-carousel');
     data.forEach((art, i) => {
