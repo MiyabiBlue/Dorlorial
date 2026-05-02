@@ -308,7 +308,7 @@ const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZi
 
 function api(path) {
   return fetch(SB+'/rest/v1/'+path, {
-    headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=representation'}
+    headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=representation'}
   });
 }
 

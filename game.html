@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>The Shattered Seal — Dorlorial</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -278,7 +280,8 @@ body.light-mode #quick-nav {
   <p class="header-sub">Navigate the ancient vault beneath Aetherwyn — your choices decide what is sealed</p>
 </header>
 <main>
-  <div class="game" id="game">
+  <!-- v3 -->
+<div class="game" id="game">
     <div class="stats" id="stats">
       <div class="stat"><div class="stat-label">HP</div><div class="stat-val" id="s-hp">12</div><div class="hp-bar-wrap"><div class="hp-bar" id="hp-bar" style="width:100%"></div></div></div>
       <div class="stat"><div class="stat-label">Score</div><div class="stat-val" id="s-score">0</div></div>
@@ -474,6 +477,11 @@ function restart(){
 }
 const originalHTML = document.getElementById('game').innerHTML;
 upd();
+
+// Belt and suspenders - also call on DOMContentLoaded in case of timing
+if (document.readyState !== 'complete') {
+  window.addEventListener('load', upd);
+}
 
 document.getElementById('backBtn').addEventListener('click',function(e){
   e.preventDefault();document.getElementById('overlay').classList.add('active');
