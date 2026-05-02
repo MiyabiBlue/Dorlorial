@@ -278,6 +278,27 @@ body.light-mode #quick-nav {
   <h1 class="header-title">Social Hub</h1>
   <p class="header-sub">Community art on the left — general chat on the right</p>
 </header>
+<div style="position:relative;z-index:10;background:rgba(10,7,2,0.8);border-bottom:1px solid rgba(200,149,42,0.15);padding:10px 24px;display:flex;justify-content:flex-end;gap:10px;">
+  <button onclick="document.getElementById('submit-modal').style.display='flex'" style="font-family:'Cinzel',serif;font-size:0.55rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);background:transparent;border:1px solid rgba(200,149,42,0.38);padding:9px 20px;cursor:pointer;transition:all 0.25s;" onmouseover="this.style.background='rgba(200,149,42,0.09)'" onmouseout="this.style.background='transparent'">+ Submit Art</button>
+</div>
+
+<!-- SUBMIT ART MODAL -->
+<div id="submit-modal" style="display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.88);align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:#0a0702;border:1px solid rgba(200,149,42,0.3);padding:32px;max-width:480px;width:100%;position:relative;">
+    <button onclick="document.getElementById('submit-modal').style.display='none'" style="position:absolute;top:12px;right:12px;background:none;border:1px solid rgba(200,149,42,0.2);color:var(--text-dim);width:30px;height:30px;cursor:pointer;font-size:0.9rem;">✕</button>
+    <div style="font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Submit Community Art</div>
+    <div style="font-family:'EB Garamond',serif;font-style:italic;font-size:0.85rem;color:var(--text-dim);margin-bottom:22px;">Share your Dorlorial fan art with the community. Paste a direct image URL (imgur, etc).</div>
+    <input id="sub-name" placeholder="Your name..." style="width:100%;background:#060402;border:1px solid rgba(200,149,42,0.2);color:var(--text);font-family:'EB Garamond',serif;font-size:0.9rem;padding:9px 12px;outline:none;margin-bottom:10px;display:block;box-sizing:border-box;">
+    <input id="sub-title" placeholder="Title of your art..." style="width:100%;background:#060402;border:1px solid rgba(200,149,42,0.2);color:var(--text);font-family:'EB Garamond',serif;font-size:0.9rem;padding:9px 12px;outline:none;margin-bottom:10px;display:block;box-sizing:border-box;">
+    <input id="sub-url" placeholder="Image URL (e.g. https://i.imgur.com/...)" style="width:100%;background:#060402;border:1px solid rgba(200,149,42,0.2);color:var(--text);font-family:'EB Garamond',serif;font-size:0.9rem;padding:9px 12px;outline:none;margin-bottom:10px;display:block;box-sizing:border-box;">
+    <textarea id="sub-desc" placeholder="Description (optional)..." rows="2" style="width:100%;background:#060402;border:1px solid rgba(200,149,42,0.2);color:var(--text);font-family:'EB Garamond',serif;font-size:0.9rem;padding:9px 12px;outline:none;resize:none;margin-bottom:16px;display:block;box-sizing:border-box;"></textarea>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button onclick="submitArt()" style="font-family:'Cinzel',serif;font-size:0.55rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);background:transparent;border:1px solid rgba(200,149,42,0.4);padding:10px 22px;cursor:pointer;transition:all 0.25s;" onmouseover="this.style.background='rgba(200,149,42,0.09)'" onmouseout="this.style.background='transparent'">Submit</button>
+      <span id="sub-ok" style="font-family:'EB Garamond',serif;font-style:italic;font-size:0.85rem;color:#4be87a;display:none;">✓ Submitted! It will appear shortly.</span>
+      <span id="sub-err" style="font-family:'EB Garamond',serif;font-style:italic;font-size:0.85rem;color:#e84b4b;display:none;"></span>
+    </div>
+  </div>
+</div>
 <div class="layout">
   <div class="art-col">
     <div class="col-label">Community Art</div>
@@ -320,8 +341,40 @@ function post(path, body) {
   });
 }
 
+function submitArt() {
+  var name = document.getElementById('sub-name').value.trim();
+  var title = document.getElementById('sub-title').value.trim();
+  var url = document.getElementById('sub-url').value.trim();
+  var desc = document.getElementById('sub-desc').value.trim();
+  var err = document.getElementById('sub-err');
+  var ok = document.getElementById('sub-ok');
+  err.style.display='none'; ok.style.display='none';
+  if(!name||!title||!url){err.textContent='Please fill in name, title and image URL.';err.style.display='inline';return;}
+  if(!url.startsWith('http')){err.textContent='Please enter a valid URL starting with http.';err.style.display='inline';return;}
+  post('art_submissions',{username:name,title:title,image_url:url,description:desc,status:'approved'})
+    .then(function(r){
+      if(r.ok||r.status===201){
+        ok.style.display='inline';
+        document.getElementById('sub-name').value='';
+        document.getElementById('sub-title').value='';
+        document.getElementById('sub-url').value='';
+        document.getElementById('sub-desc').value='';
+        setTimeout(function(){document.getElementById('submit-modal').style.display='none';ok.style.display='none';},2000);
+        // Reload art
+        api('art_submissions?order=created_at.desc').then(function(r2){return r2.json();}).then(function(data){
+          if(!Array.isArray(data)||!data.length){document.getElementById('art-grid').innerHTML='<p class="empty">No art yet.</p>';return;}
+          document.getElementById('art-grid').innerHTML=data.map(function(a){return '<div class="art-card"><img src="'+a.image_url+'" alt="'+a.title+'" loading="lazy" onclick="openLb(''+a.image_url.replace(/'/g,"\'")+'')" onerror="this.parentElement.style.display='none'"><div class="art-card-body"><div class="art-card-title">'+a.title+'</div><div class="art-card-user">by '+a.username+'</div></div></div>';}).join('');
+        });
+      } else {
+        r.text().then(function(t){err.textContent='Error: '+t;err.style.display='inline';});
+      }
+    })
+    .catch(function(e){err.textContent='Could not submit. Try again.';err.style.display='inline';});
+}
+
+
 // Load art
-api('art_submissions?status=eq.approved&order=created_at.desc')
+api('art_submissions?order=created_at.desc')
   .then(r=>r.json())
   .then(data=>{
     const grid = document.getElementById('art-grid');
@@ -335,7 +388,7 @@ api('art_submissions?status=eq.approved&order=created_at.desc')
         </div>
       </div>`).join('');
   })
-  .catch(()=>document.getElementById('art-grid').innerHTML='<p class="empty">Could not load art.</p>');
+  .catch(err=>{ console.error('Art error:',err); document.getElementById('art-grid').innerHTML='<p class="empty">Could not load art: '+err+'</p>'; });
 
 // Load chat
 function loadChat() {

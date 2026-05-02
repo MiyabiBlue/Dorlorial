@@ -279,6 +279,10 @@ body.light-mode #quick-nav {
   <h1 class="header-title">The Shattered Seal</h1>
   <p class="header-sub">Navigate the ancient vault beneath Aetherwyn — your choices decide what is sealed</p>
 </header>
+<div style="position:relative;z-index:10;background:rgba(232,75,75,0.08);border-bottom:2px solid rgba(232,75,75,0.3);padding:14px 24px;text-align:center;">
+  <span style="font-family:'Cinzel',serif;font-size:0.55rem;letter-spacing:0.3em;text-transform:uppercase;color:#e84b4b;">⚠ Work in Progress</span>
+  <span style="font-family:'EB Garamond',serif;font-style:italic;font-size:0.88rem;color:var(--text-dim);margin-left:12px;">This game is currently being developed — some features may not work correctly.</span>
+</div>
 <main>
   <!-- v3 -->
 <div class="game" id="game">
@@ -476,12 +480,38 @@ function restart(){
   upd();
 }
 const originalHTML = document.getElementById('game').innerHTML;
-upd();
 
-// Belt and suspenders - also call on DOMContentLoaded in case of timing
-if (document.readyState !== 'complete') {
-  window.addEventListener('load', upd);
-}
+// Direct init - no function call
+(function() {
+  var locEl = document.getElementById('s-loc');
+  var bodyEl = document.getElementById('s-body');
+  var choicesEl = document.getElementById('s-choices');
+  
+  if (!locEl || !bodyEl || !choicesEl) {
+    console.error('Game elements not found!', locEl, bodyEl, choicesEl);
+    return;
+  }
+  
+  var sc = S[cid];
+  if (!sc) {
+    locEl.textContent = 'Error: scene not found';
+    console.error('Scene not found:', cid, 'S keys:', Object.keys(S));
+    return;
+  }
+  
+  locEl.textContent = sc.loc;
+  bodyEl.innerHTML = sc.text.replace(/\n/g,'<br><br>');
+  
+  var keys = ['A','B','C','D','E','F'];
+  var avail = (sc.c||[]);
+  choicesEl.innerHTML = avail.map(function(ch,i) {
+    return '<button class="choice" onclick="pick(' + i + ')"><span class="choice-key">' + keys[i] + '</span><span class="choice-text">' + ch.t + '</span></button>';
+  }).join('');
+  
+  document.getElementById('s-hp').textContent = gs.hp;
+  document.getElementById('s-score').textContent = gs.score;
+  document.getElementById('s-move').textContent = gs.moves + 1;
+})();
 
 document.getElementById('backBtn').addEventListener('click',function(e){
   e.preventDefault();document.getElementById('overlay').classList.add('active');
