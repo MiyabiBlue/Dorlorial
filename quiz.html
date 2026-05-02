@@ -289,128 +289,190 @@ body.light-mode #quick-nav {
 // Deities: nyxus, solaris, lumina, thalor, sylvara, crystolas, gondwan, chaos, furius, duskyre, vexara, rhaegal
 const QUESTIONS = [
   {
-    text: "A traveller arrives at your door in the middle of the night. They are injured, and clearly hiding something. What do you do?",
+    text: "A traveller arrives at your door, injured and hiding something. What do you do?",
     options: [
-      { text: "Heal them without asking questions. What they carry is their business.", scores: {thalor:2, lumina:1, gondwan:1} },
-      { text: "Help them — but you want to know what they're running from.", scores: {nyxus:2, sylvara:1} },
-      { text: "Study them carefully first. People are interesting puzzles.", scores: {crystolas:2, lumina:1} },
-      { text: "Turn them away. You don't invite danger in.", scores: {furius:1, duskyre:1} },
-      { text: "Help them, and use what they owe you later.", scores: {rhaegal:2, vexara:1} }
+      { text: "Heal them — their secrets are their own.", scores: {thalor:2,lumina:1,gondwan:1} },
+      { text: "Help, but you want to know what they're running from.", scores: {nyxus:2,sylvara:1} },
+      { text: "Study them carefully. People are interesting puzzles.", scores: {crystolas:2,lumina:1} },
+      { text: "Turn them away. You don't invite danger in.", scores: {furius:1,duskyre:1} },
+      { text: "Help them, and remember the debt.", scores: {rhaegal:2,vexara:1} },
     ]
   },
   {
-    text: "You discover a beautiful garden that no one else knows about. What do you do with the knowledge?",
+    text: "You find a beautiful hidden garden no one else knows about. What do you do?",
     options: [
-      { text: "Keep it secret. Some things are better left undisturbed.", scores: {nyxus:2, duskyre:1} },
-      { text: "Share it with everyone. Beauty is meant to be seen.", scores: {solaris:2, lumina:1} },
-      { text: "Tend it carefully and visit often.", scores: {sylvara:2, gondwan:1} },
-      { text: "Study what makes it grow. There's something to learn here.", scores: {crystolas:2, lumina:1} },
-      { text: "Mark it as yours. You found it first.", scores: {rhaegal:2, furius:1} }
-    ]
-  },
-  {
-    text: "A great injustice is done to someone who cannot defend themselves. You have the power to intervene. The cost to you is significant.",
-    options: [
-      { text: "Intervene without hesitation. There is no real choice here.", scores: {solaris:2, thalor:2} },
-      { text: "Intervene — but find a way to make it cost you as little as possible.", scores: {nyxus:1, rhaegal:1, duskyre:1} },
-      { text: "Step back. The balance must be maintained, even when it hurts.", scores: {nyxus:2} },
-      { text: "Tear the injustice apart. Completely and permanently.", scores: {furius:2, chaos:1} },
-      { text: "Watch. Understanding why it happened matters more than stopping it.", scores: {crystolas:1, lumina:1, nyxus:1} }
+      { text: "Keep it secret. Some things are better undisturbed.", scores: {nyxus:2,duskyre:1} },
+      { text: "Share it with everyone. Beauty is meant to be seen.", scores: {solaris:2,lumina:1} },
+      { text: "Tend it carefully and visit often.", scores: {sylvara:3,gondwan:1} },
+      { text: "Study what makes it grow. There's something to learn here.", scores: {crystolas:2,lumina:1} },
+      { text: "Mark it as yours. You found it first.", scores: {rhaegal:3,furius:1} },
     ]
   },
   {
     text: "What does power mean to you?",
     options: [
-      { text: "The ability to protect those who cannot protect themselves.", scores: {solaris:2, thalor:1} },
-      { text: "The freedom to become whatever you want to be.", scores: {chaos:2, lumina:1} },
-      { text: "Understanding. The more you know, the more you can do.", scores: {crystolas:2, lumina:1} },
-      { text: "Presence. The ability to make others feel what you want them to feel.", scores: {vexara:2, duskyre:1} },
-      { text: "Strength. You either have it or you don't.", scores: {furius:2, rhaegal:1} },
-      { text: "Having more than everyone else.", scores: {rhaegal:2} }
-    ]
-  },
-  {
-    text: "You are at the end of a long journey. The destination has changed from what you expected. How do you respond?",
-    options: [
-      { text: "The journey itself was the point. The destination was never the answer.", scores: {nyxus:2, sylvara:1} },
-      { text: "Adapt. New circumstances call for new approaches.", scores: {thalor:2, chaos:1} },
-      { text: "Feel the grief of what you expected, then keep moving.", scores: {lumina:2, gondwan:1} },
-      { text: "Decide the original destination was wrong anyway. This is better.", scores: {furius:1, rhaegal:1} },
-      { text: "Record what changed and why. This is valuable information.", scores: {crystolas:2} }
+      { text: "The ability to protect those who cannot protect themselves.", scores: {solaris:3,thalor:2} },
+      { text: "Freedom — the ability to become whatever you choose.", scores: {chaos:3,lumina:1} },
+      { text: "Understanding. Knowledge is the truest power.", scores: {crystolas:3,lumina:1} },
+      { text: "Presence. The ability to be feared and felt.", scores: {vexara:3,duskyre:1} },
+      { text: "Strength. Having more than anyone else.", scores: {furius:2,rhaegal:3} },
+      { text: "Balance — neither extreme serves anyone.", scores: {nyxus:3,helumbra:1} },
     ]
   },
   {
     text: "What does the dark mean to you?",
     options: [
-      { text: "Rest. The world is quieter in the dark and that is welcome.", scores: {nyxus:2, gondwan:1} },
-      { text: "Danger that the light hasn't reached yet.", scores: {solaris:2} },
-      { text: "A canvas. Things become possible in the dark that daylight forbids.", scores: {duskyre:2, chaos:1} },
-      { text: "A place to think. Clarity comes when the noise fades.", scores: {crystolas:2, lumina:1} },
-      { text: "Where the true nature of things is revealed.", scores: {vexara:2, nyxus:1} },
-      { text: "Home.", scores: {duskyre:2, vexara:1} }
+      { text: "Rest. The world is quieter in the dark.", scores: {nyxus:2,gondwan:2} },
+      { text: "Danger the light hasn't reached yet.", scores: {solaris:3} },
+      { text: "A canvas. Things become possible the light forbids.", scores: {duskyre:3,chaos:1} },
+      { text: "Clarity. The noise fades and thinking becomes easier.", scores: {crystolas:2,lumina:1} },
+      { text: "Where the true nature of things is revealed.", scores: {vexara:3,nyxus:1} },
+      { text: "Home.", scores: {duskyre:2,vexara:2} },
     ]
   },
   {
-    text: "Someone offers you everything you ever wanted — in exchange for something you have not yet decided has a price. Do you take it?",
+    text: "A great injustice is done to someone powerless. You can intervene at significant cost. What do you do?",
     options: [
-      { text: "No. Things without cost are traps.", scores: {nyxus:2, thalor:1} },
-      { text: "Yes — and you'll find a way to make the cost worth bearing.", scores: {chaos:2, furius:1} },
-      { text: "You ask what the cost is first. Always.", scores: {crystolas:2, lumina:1} },
-      { text: "Yes. You deserve it.", scores: {rhaegal:2, vexara:1} },
-      { text: "You consider it seriously, then decline. Some things shouldn't be rushed.", scores: {sylvara:2, gondwan:1} }
+      { text: "Intervene without hesitation. There is no real choice.", scores: {solaris:3,thalor:2} },
+      { text: "Intervene — but minimise the cost to yourself.", scores: {nyxus:1,rhaegal:2} },
+      { text: "Step back. Balance must be maintained even when it hurts.", scores: {nyxus:3,helumbra:1} },
+      { text: "Tear the injustice apart completely and permanently.", scores: {furius:3,chaos:1} },
+      { text: "Watch and understand why it happened.", scores: {crystolas:2,lumina:1} },
+      { text: "Use the moment to gain something for yourself.", scores: {vexara:2,rhaegal:1} },
     ]
   },
   {
-    text: "If you could leave one thing behind in the world after you are gone, what would it be?",
+    text: "Someone offers you everything you've ever wanted — at an unstated price. Do you take it?",
     options: [
-      { text: "A truth that outlasts you.", scores: {nyxus:2, lumina:1} },
-      { text: "People who are better off for having known you.", scores: {solaris:2, thalor:1} },
-      { text: "Something beautiful that still grows.", scores: {sylvara:2, gondwan:1} },
-      { text: "A body of work that advances what was known.", scores: {crystolas:2, lumina:1} },
-      { text: "A mark that cannot be erased.", scores: {furius:2, rhaegal:1} },
-      { text: "Nothing. Let the world forget you cleanly.", scores: {duskyre:2, nyxus:1} }
+      { text: "No. Things without named costs are traps.", scores: {nyxus:3,thalor:1} },
+      { text: "Yes — and find a way to make the cost bearable.", scores: {chaos:2,furius:1} },
+      { text: "Ask what the price is first. Always.", scores: {crystolas:3,lumina:1} },
+      { text: "Yes. You deserve it.", scores: {rhaegal:3,vexara:1} },
+      { text: "Consider it seriously, then decline. Some things can't be rushed.", scores: {sylvara:2,gondwan:2} },
+      { text: "The price is part of the bargain. Name it.", scores: {duskyre:3} },
+    ]
+  },
+  {
+    text: "What would you leave behind after you're gone?",
+    options: [
+      { text: "A truth that outlasts you.", scores: {nyxus:3,lumina:1} },
+      { text: "People who are better off for knowing you.", scores: {solaris:3,thalor:1} },
+      { text: "Something beautiful that still grows.", scores: {sylvara:3,gondwan:2} },
+      { text: "A body of work that advances what was known.", scores: {crystolas:3,lumina:1} },
+      { text: "A mark that cannot be erased.", scores: {furius:3,rhaegal:1} },
+      { text: "Nothing. Let the world forget you cleanly.", scores: {duskyre:3,nyxus:1} },
+    ]
+  },
+  {
+    text: "Which landscape calls to you most?",
+    options: [
+      { text: "A still lake at twilight — neither day nor night.", scores: {nyxus:3,helumbra:2} },
+      { text: "An open plain at dawn, light spreading in every direction.", scores: {solaris:3} },
+      { text: "A deep forest where roots and mycelium connect everything.", scores: {sylvara:2,gondwan:3} },
+      { text: "A crystal cavern where the walls hold light from within.", scores: {crystolas:3} },
+      { text: "A stormy ocean — vast, dangerous, and alive.", scores: {thalor:3,chaos:1} },
+      { text: "The ruins of something ancient and mostly forgotten.", scores: {duskyre:2,vexara:2} },
+      { text: "A volcano — raw power with no pretense.", scores: {furius:3,malachar:2} },
+    ]
+  },
+  {
+    text: "What is your relationship with other living things?",
+    options: [
+      { text: "Every living thing is part of the same web. You feel that web.", scores: {sylvara:3,gondwan:2} },
+      { text: "They are interesting. You observe more than you connect.", scores: {crystolas:3,nyxus:1} },
+      { text: "They need protecting. That is your purpose.", scores: {solaris:2,thalor:3} },
+      { text: "They are resources, allies, or obstacles.", scores: {rhaegal:2,vexara:2} },
+      { text: "You prefer depth over breadth. A few, deeply.", scores: {duskyre:2,nyxus:2} },
+      { text: "They keep surprising you. That's why you stay curious.", scores: {lumina:3,chaos:1} },
+    ]
+  },
+  {
+    text: "What feeling do you chase most in life?",
+    options: [
+      { text: "Peace — the stillness when everything is in balance.", scores: {nyxus:3,helumbra:2} },
+      { text: "Purpose — knowing exactly why you are here.", scores: {solaris:3,lumina:1} },
+      { text: "Wonder — the moment something becomes larger than you expected.", scores: {crystolas:2,lumina:3} },
+      { text: "Power — the feeling of being completely unchained.", scores: {chaos:3,furius:2} },
+      { text: "Connection — being known, truly, by something else.", scores: {thalor:2,gondwan:2} },
+      { text: "Hunger — the ache that means you're still alive and wanting.", scores: {vexara:3,rhaegal:2} },
+    ]
+  },
+  {
+    text: "If the world ended tomorrow, what would your last act be?",
+    options: [
+      { text: "Make sure as many people as possible know the truth of what happened.", scores: {lumina:3,nyxus:1} },
+      { text: "Stand between the destruction and someone who can't protect themselves.", scores: {solaris:3,thalor:2} },
+      { text: "Sit beneath the oldest tree you can find and be still.", scores: {sylvara:3,gondwan:2} },
+      { text: "Burn something beautiful and magnificent on your way out.", scores: {furius:3,chaos:2} },
+      { text: "Disappear into the dark and watch the last light go out.", scores: {duskyre:3,vexara:1} },
+      { text: "Take everything you can carry.", scores: {rhaegal:3} },
+    ]
+  },
+  {
+    text: "What do you think of rules and laws?",
+    options: [
+      { text: "They reflect a deeper order that exists whether written down or not.", scores: {nyxus:3,helumbra:1} },
+      { text: "They exist to protect the weak from the strong. Defend them.", scores: {solaris:2,thalor:2} },
+      { text: "They are obstacles. Interesting to study, easy to ignore.", scores: {rhaegal:2,chaos:2} },
+      { text: "Nature has its own laws. Those are the only ones worth following.", scores: {sylvara:3,gondwan:2} },
+      { text: "They should reflect wisdom. If they don't, they aren't worth keeping.", scores: {crystolas:2,lumina:2} },
+      { text: "They are chains others make. You don't wear chains.", scores: {chaos:3,duskyre:1} },
     ]
   },
 ];
 
 const DEITIES = {
-  nyxus:    { name:'Nyxus', domain:'God of Mystery & Balance', icon:'⚖️', link:'deities.html?cat=creation&id=nyxus',
-    desc:'You are drawn to balance and hidden truths. You understand that some things exist best in the space between knowing and not knowing. You are patient, deliberate, and you trust the process even when others cannot see it. The gods of Dorlorial answer to you — which is not the same as saying you answer to them.',
-    traits:['Patient','Mysterious','Deliberate','Balanced'] },
-  solaris:  { name:'Solaris', domain:'God of Radiance & Harmony', icon:'☀️', link:'deities.html?cat=creation&id=solaris',
-    desc:'You carry light into dark places and you do it because it is simply the right thing to do. You believe in people. You believe the world can be better. You are not naive — you have seen what darkness does — but you choose radiance anyway. That is not weakness. That takes more courage than most people possess.',
+  nyxus:     { name:'Nyxus', domain:'God of Mystery & Balance', icon:'⚖️', link:'deities.html?cat=creation&id=nyxus',
+    desc:"You are drawn to the space between things — between knowing and not knowing, between action and stillness. You understand that some truths are better held than spoken, and that balance isn't compromise but precision. You are patient, deliberate, and trusted by people who don't always know why.",
+    traits:['Patient','Mysterious','Precise','Balanced'] },
+  solaris:   { name:'Solaris', domain:'God of Radiance & Harmony', icon:'☀️', link:'deities.html?cat=creation&id=solaris',
+    desc:"You carry light into dark places not because it's dramatic but because it's simply the right thing to do. You believe in people. You believe the world can be better. You have seen what darkness does and you choose radiance anyway. That is not weakness — it takes more courage than most people will ever have.",
     traits:['Generous','Courageous','Principled','Warm'] },
-  lumina:   { name:'Lumina', domain:'Goddess of Wisdom & Creativity', icon:'📖', link:'deities.html?cat=creation&id=lumina',
-    desc:'You create. You learn. You believe knowledge shared multiplies rather than divides. There is something in you that cannot resist understanding how things work — and once you understand, you cannot resist making something with that understanding. Dorlorial itself carries your fingerprints.',
+  lumina:    { name:'Lumina', domain:'Goddess of Wisdom & Creativity', icon:'📖', link:'deities.html?cat=creation&id=lumina',
+    desc:"You create. You learn. You believe that knowledge shared multiplies rather than diminishes. There is something in you that cannot resist understanding how things work, and once you understand, you cannot resist making something with that understanding. The world is better because curious people like you exist.",
     traits:['Creative','Wise','Curious','Generous'] },
-  thalor:   { name:'Thalor', domain:'God of the Seas & Waters', icon:'🌊', link:'deities.html?cat=nature&id=thalor',
-    desc:"You move like water — around obstacles, through cracks, with absolute persistence. You are protective without being possessive. You are quiet in calm and overwhelming in storm. People misread you as passive until you move, and then they understand they were never seeing your true nature.",
+  thalor:    { name:'Thalor', domain:'God of the Seas & Waters', icon:'🌊', link:'deities.html?cat=nature&id=thalor',
+    desc:"You move like water — around obstacles, through cracks, with absolute patience. You are protective without being possessive. You are quiet in calm and overwhelming in storm. People mistake you for passive until you move. Then they understand they were never seeing your true nature.",
     traits:['Persistent','Protective','Deep','Adaptable'] },
-  sylvara:  { name:'Sylvara', domain:'Goddess of Forests & Nature', icon:'🌿', link:'deities.html?cat=nature&id=sylvara',
-    desc:"You grow toward the light and root yourself in what matters. You understand cycles. You know that death feeds life and that loss makes room for something new. You are not gentle in the way people misunderstand the word — you are patient and deeply strong and you will outlast almost everything.",
+  sylvara:   { name:'Sylvara', domain:'Goddess of Forests & Nature', icon:'🌿', link:'deities.html?cat=nature&id=sylvara',
+    desc:"You understand that people are not separate from the world — they are part of it. You know that death feeds life and loss makes room for something new. You are not gentle in the way people misunderstand that word. You are patient and deeply strong, and you will outlast almost everything.",
     traits:['Rooted','Patient','Cyclical','Strong'] },
-  crystolas:{ name:'Crystolas', domain:'God of Aether & Crystals', icon:'💎', link:'deities.html?cat=nature&id=crystolas',
-    desc:'You seek clarity in all things. You are uncomfortable with ambiguity not because it frightens you but because you believe every question has an answer if you are precise enough in how you ask it. You are methodical, perceptive, and you notice things other people miss. Your mind is your greatest asset and your most demanding master.',
+  crystolas: { name:'Crystolas', domain:'God of Aether & Crystals', icon:'💎', link:'deities.html?cat=nature&id=crystolas',
+    desc:"You seek clarity in all things. You believe every question has an answer if you are precise enough in how you ask it. You are methodical, perceptive, and you notice things others miss entirely. Your mind is your greatest gift and your most demanding master.",
     traits:['Precise','Perceptive','Analytical','Patient'] },
-  gondwan:  { name:'Gondwan Petri', domain:'Lord of the Fungi', icon:'🍄', link:'deities.html?cat=nature&id=gondwan-petri',
-    desc:"You are more content than most people will ever be. You know what you love, you tend it, and you have made peace with the fact that not everything needs to be a battle. You find meaning in small things. You are more connected to the world around you than you probably admit. Pete chose to stay among his creation — and honestly, that was the wisest decision any god ever made.",
+  gondwan:   { name:'Gondwan Petri', domain:'Lord of the Fungi', icon:'🍄', link:'deities.html?cat=nature&id=gondwan-petri',
+    desc:"You are more content than most people will ever be. You know what you love, you tend it, and you have made peace with that. You find meaning in small things. You are more connected to the world around you than you usually admit. Pete chose to stay among his creation — and honestly, that was the wisest decision any god ever made.",
     traits:['Content','Connected','Earthy','Patient'] },
-  chaos:    { name:'Chaos', domain:'God of Absolute Chaos', icon:'⚡', link:'deities.html?cat=chaos&id=chaos',
-    desc:"You cannot be contained. You have never fit neatly into what other people wanted you to be and you stopped trying a long time ago. There is something in you that breaks rules not out of spite but because the rules were never built for someone like you. This is terrifying to some people. To others it is the most liberating thing they have ever encountered.",
+  thalor_sea: null, // placeholder removed
+  helumbra:  { name:'Helumbra', domain:'God of the Sun & Moon', icon:'🌗', link:'deities.html?cat=creation&id=helumbra',
+    desc:"You live in the between. You understand both light and darkness not as opposites but as partners — each defining the other. You are capable of great warmth and deep stillness. You move through the world in cycles, and those who know you learn to read which side of you is rising.",
+    traits:['Dual','Cyclical','Illuminating','Vast'] },
+  chaos:     { name:'Chaos', domain:'God of Absolute Chaos', icon:'⚡', link:'deities.html?cat=chaos&id=chaos',
+    desc:"You cannot be contained. You have never fit what other people wanted you to be and you stopped trying. There is something in you that breaks rules not out of spite but because they were never built for someone like you. To some this is terrifying. To others it is the most liberating thing they have ever encountered.",
     traits:['Untameable','Transformative','Disruptive','Free'] },
-  furius:   { name:'Furius', domain:'God of Rage & Destruction', icon:'🔥', link:'deities.html?cat=chaos&id=furius',
-    desc:"You feel things completely. When you love something you love it with everything you have. When something wrongs you or someone you care about, the anger that rises in you is not a flaw — it is a fire that has purpose if you can learn to direct it. You are more powerful than you know and that power needs an outlet that does not consume you.",
+  furius:    { name:'Furius', domain:'God of Rage & Destruction', icon:'🔥', link:'deities.html?cat=chaos&id=furius',
+    desc:"You feel things completely. When you love something you love it with everything. When something wrongs you or someone you care about, the fire that rises is not a flaw — it is purpose, if you can learn to direct it. You are more powerful than you know and that power needs an outlet that does not consume you.",
     traits:['Passionate','Fierce','Loyal','Intense'] },
-  rhaegal:  { name:'Rhaegal', domain:'Dragon God of Envy', icon:'🐲', link:'deities.html?cat=chaos&id=rhaegal',
-    desc:"You know what you want and you have not always been honest with yourself about why you want it. There is something in you that measures your worth against what others have — and that comparison is quietly costing you. Rhaegal's power is real. So is his tragedy. You have more to offer than what you can take.",
+  malachar:  { name:'Malachar', domain:'The Devouring Flame', icon:'💀', link:'deities.html?cat=hungering&id=malachar',
+    desc:"You understand hunger in its purest form — not for food or power but for consumption itself. You are drawn to extremes. What you care about, you care about completely. What you don't, you discard without ceremony. The world you want is one that has burned clean. You are still figuring out what survives the fire.",
+    traits:['Consuming','Absolute','Intense','Uncompromising'] },
+  rhaegal:   { name:'Rhaegal', domain:'Dragon God of Envy', icon:'🐲', link:'deities.html?cat=chaos&id=rhaegal',
+    desc:"You know what you want and you haven't always been honest with yourself about why you want it. There is something in you that measures worth against what others have. That comparison is quietly costing you. Rhaegal's power is real. So is his tragedy. You have more to offer than what you can take.",
     traits:['Ambitious','Competitive','Perceptive','Hungry'] },
-  duskyre:  { name:'Duskyre', domain:'Deity of Shadows & the Umbra', icon:'🌑', link:'deities.html?cat=shadow&id=duskyre',
-    desc:"You operate in the space between things. You are comfortable with what others find uncomfortable — silence, ambiguity, the parts of the world that don't catch the light. You are not cruel, but you understand that kindness and honesty are not always the same thing. You have made choices that looked wrong from the outside. Only you know the full picture.",
+  duskyre:   { name:'Duskyre', domain:'Deity of Shadows & the Umbra', icon:'🌑', link:'deities.html?cat=shadow&id=duskyre',
+    desc:"You operate in the space between things. You are comfortable with what others find uncomfortable — silence, ambiguity, the parts of the world that don't catch the light. You are not cruel, but you understand that kindness and honesty are not always the same thing. Only you know the full picture.",
     traits:['Complex','Shadowed','Strategic','Private'] },
-  vexara:   { name:'Vexara', domain:'The Hollow Queen', icon:'👑', link:'deities.html?cat=hungering&id=vexara',
-    desc:"You feel everything deeply — and somewhere along the way you began to wonder if that depth was a burden others should share. There is something in you that hungers. Not for food or wealth but for connection, for significance, for proof that what you experience matters. That hunger is worth examining carefully. What feeds it, and at what cost?",
+  vexara:    { name:'Vexara', domain:'The Hollow Queen', icon:'👑', link:'deities.html?cat=hungering&id=vexara',
+    desc:"You feel everything deeply — and somewhere along the way you began to wonder if that depth is a burden others should share. There is something in you that hungers. Not for food or wealth but for connection, for significance, for proof that what you experience matters. That hunger is worth examining carefully.",
     traits:['Intense','Hungry','Perceptive','Complex'] },
 };
+
+// Remove null entry
+delete DEITIES.thalor_sea;
+
+};
+
+
 
 let currentQ = 0;
 let scores = {};
@@ -418,7 +480,7 @@ let scores = {};
 function initQuiz() {
   currentQ = 0;
   scores = {};
-  Object.keys(DEITIES).forEach(d => scores[d] = 0);
+  Object.keys(DEITIES).filter(k=>DEITIES[k]).forEach(d => scores[d] = 0);
   document.getElementById('question-view').style.display = 'block';
   document.getElementById('result-view').style.display = 'none';
   renderQuestion();
@@ -463,7 +525,7 @@ function selectOption(idx) {
 
 function showResult() {
   // Find top deity
-  const topDeity = Object.entries(scores).sort((a,b) => b[1]-a[1])[0][0];
+  const topDeity = Object.entries(scores).filter(([k])=>DEITIES[k]).sort((a,b) => b[1]-a[1])[0][0];
   const deity = DEITIES[topDeity];
   document.getElementById('result-icon').textContent = deity.icon;
   document.getElementById('result-name').textContent = deity.name;
@@ -655,6 +717,10 @@ document.querySelectorAll('.qn-item').forEach(item => {
     <a href="community.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Community</span></a>
     <a href="quiz.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deity Quiz</span></a>
     <a href="alignment.html" class="qn-item"><span class="qn-icon">⚖️</span><span class="qn-name">Alignment</span></a>
+    <a href="class-quiz.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Class Quiz</span></a>
+    <a href="roller.html" class="qn-item"><span class="qn-icon">⚀</span><span class="qn-name">Stat Roller</span></a>
+    <a href="quizzes.html" class="qn-item"><span class="qn-icon">🎯</span><span class="qn-name">All Quizzes</span></a>
+    <a href="social.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Social Hub</span></a>
   </div>
 </div>
 
