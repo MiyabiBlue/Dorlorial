@@ -340,7 +340,7 @@ body.light-mode #quick-nav {
   <!-- ══ COMMUNITY ART CAROUSEL ══ -->
   <div class="carousel-wrap" id="art-carousel-wrap">
     <div class="carousel-label">Community Art — <span style="color:var(--text-dim);font-style:italic;font-family:EB Garamond,serif;text-transform:none;letter-spacing:0;">Click to visit the Community page</span></div>
-    <div id="art-carousel" onclick="navigate('community.html')">
+    <div id="art-carousel" onclick="navigate('social.html')">
       <div id="carousel-placeholder" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;opacity:0.3;">
         <span style="font-size:2rem;">🎨</span>
         <span style="font-family:Cinzel,serif;font-size:0.55rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-dark);">Community Art Will Appear Here</span>
@@ -718,6 +718,21 @@ function carUpdateInfo() {
 
 initCarousel();
 
+// Re-init carousel when navigating back (browser cache)
+window.addEventListener('pageshow', function(e) {
+  if (e.persisted) {
+    // Page restored from cache — re-run carousel
+    const wrap = document.getElementById('art-carousel-wrap');
+    const carousel = document.getElementById('art-carousel');
+    // Remove old slides (keep nav buttons, overlay, info)
+    carousel.querySelectorAll('.carousel-slide').forEach(s => s.remove());
+    document.getElementById('carousel-counter').textContent = '';
+    carSlides = []; carIndex = 0;
+    if (carTimer) clearInterval(carTimer);
+    initCarousel();
+  }
+});
+
 
 
 
@@ -773,7 +788,7 @@ let fr=0;(function loop(){requestAnimationFrame(loop);fr++;ctx.clearRect(0,0,can
     <a href="timeline.html" class="qn-item"><span class="qn-icon">⏳</span><span class="qn-name">Timeline</span></a>
     <a href="bestiary.html" class="qn-item"><span class="qn-icon">📖</span><span class="qn-name">Bestiary</span></a>
     <a href="campaigns.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Campaigns</span></a>
-    <a href="community.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Community</span></a>
+    <a href="social.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Community</span></a>
     <a href="quiz.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deity Quiz</span></a>
     <a href="alignment.html" class="qn-item"><span class="qn-icon">⚖️</span><span class="qn-name">Alignment</span></a>
     <a href="class-quiz.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Class Quiz</span></a>

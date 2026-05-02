@@ -269,8 +269,8 @@ body.light-mode #quick-nav {
       <div style="font-family:'EB Garamond',serif;font-style:italic;font-size:0.9rem;color:var(--text-dim);">Click Roll to begin</div>
     </div>
     <div class="btn-row">
-      <button class="btn-primary" onclick="rollStat()">🎲 Roll One</button>
-      <button class="btn-secondary" onclick="rollAll()">🎲 Roll All 6</button>
+      <button class="btn-primary" id="rollOneBtn" onclick="rollStat()">🎲 Roll One</button>
+      <button class="btn-secondary" onclick="rollAll()">🎲 Roll All 6 at Once</button>
       <button class="btn-secondary" onclick="resetAll()">↺ Reset</button>
     </div>
   </div>
@@ -306,6 +306,13 @@ function modStr(s){ const m=getMod(s); return (m>=0?'+':'')+m; }
 function rollD6(){ return Math.floor(Math.random()*6)+1; }
 
 function rollStat(){
+  const totalRolls = pendingRolls.length;
+  if (totalRolls >= 6) {
+    // Flash a message
+    const row = document.getElementById('dice-row');
+    row.innerHTML = '<div style="font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#e84b4b;">Maximum 6 rolls — assign or reset to continue.</div>';
+    return;
+  }
   let dice=[rollD6(),rollD6(),rollD6(),rollD6()];
   const lowestIdx=dice.indexOf(Math.min(...dice));
   dice[lowestIdx]=rollD6();
@@ -322,7 +329,15 @@ function rollStat(){
   renderPending(); updateTotal();
 }
 
-function rollAll(){ for(let i=0;i<6;i++) rollStat(); }
+function rollAll(){
+  const needed = 6 - pendingRolls.length;
+  if (needed <= 0) {
+    const row = document.getElementById('dice-row');
+    row.innerHTML = '<div style="font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#e84b4b;">Already have 6 rolls — assign them or reset.</div>';
+    return;
+  }
+  for(let i=0;i<needed;i++) rollStat();
+}
 
 function renderPending(){
   const section=document.getElementById('pending-section');

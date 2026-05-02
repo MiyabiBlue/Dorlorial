@@ -320,6 +320,9 @@ body.light-mode #quick-nav {
 
 
 
+
+  .entry-type-btn{font-family:'Cinzel',serif;font-size:0.52rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);background:rgba(200,149,42,0.03);border:1px solid rgba(200,149,42,0.15);padding:10px 12px;cursor:pointer;transition:all 0.2s;text-align:left;}
+  .entry-type-btn:hover,.entry-type-btn.active{color:var(--gold);border-color:rgba(200,149,42,0.5);background:rgba(200,149,42,0.08);}
 </style>
 </head>
 <body>
@@ -433,86 +436,51 @@ body.light-mode #quick-nav {
 
   <!-- ══ ENTRY EDITOR TAB ══ -->
   <div id="tab-editor" class="tab-content">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
-      <div class="section-label" style="margin-bottom:0;flex:1;">Edit or Add Entries</div>
-      <button class="new-entry-btn" onclick="newEntry()">+ New Entry</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;flex-wrap:wrap;gap:12px;">
+      <div class="section-label" style="margin-bottom:0;flex:1;">Quick Add or Edit</div>
     </div>
-    <div class="editor-wrap">
-      <!-- SIDEBAR: FOLDER TREE -->
-      <div class="editor-sidebar">
-        <div class="sidebar-heading">📁 Pages & Sections</div>
-        <div class="folder-list" id="folder-list">
-          <!-- Populated by JS -->
-        </div>
-      </div>
-      <!-- MAIN: ENTRY EDITOR -->
-      <div class="editor-main">
-        <div class="editor-path" id="editor-path">
-          <span>Select a folder to begin</span>
-        </div>
-        <div id="entry-list-view">
-          <p style="font-style:italic;color:var(--text-dim);font-size:0.9rem;">Choose a page and section from the left to see entries, or click <strong style="color:var(--gold-dark);">+ New Entry</strong> to create one.</p>
-        </div>
-        <div id="entry-form-view" style="display:none;">
-          <div class="form-group">
-            <label class="form-label">Entry Name *</label>
-            <input type="text" class="form-input" id="ef-name" placeholder="e.g. Nyxus, Sunbright, The Great Purge...">
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Page *</label>
-              <select class="form-select" id="ef-page" onchange="updateSubfolders()">
-                <option value="">Select page...</option>
-                <option value="deities">Deities</option>
-                <option value="factions">Factions</option>
-                <option value="characters">Characters</option>
-                <option value="lore">Lore</option>
-                <option value="locations">Locations</option>
-                <option value="bestiary">Bestiary</option>
-                <option value="timeline">Timeline</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Section / Category *</label>
-              <select class="form-select" id="ef-section">
-                <option value="">Select page first...</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Short Description <span style="color:var(--text-dim);font-size:0.8rem;font-style:italic;text-transform:none;letter-spacing:0;">(shown on cards)</span></label>
-            <input type="text" class="form-input" id="ef-desc" placeholder="One sentence summary...">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Full Entry Text</label>
-            <textarea class="form-textarea" id="ef-body" style="min-height:160px;" placeholder="Full description, lore, notes... You can use HTML tags like &lt;strong&gt;, &lt;em&gt;, &lt;h3&gt; etc."></textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Image <span style="color:var(--text-dim);font-size:0.8rem;font-style:italic;text-transform:none;letter-spacing:0;">(optional — upload or paste URL)</span></label>
-            <img id="ef-img-preview" class="img-preview" alt="Preview">
-            <div class="img-upload-area" id="ef-upload-area">
-              <input type="file" id="ef-img-file" accept="image/*" onchange="handleEditorImg(this)">
-              <span class="img-upload-icon">🖼️</span>
-              <div class="img-upload-text">Click or drag to upload</div>
-            </div>
-            <input type="url" class="form-input" id="ef-img-url" placeholder="Or paste image URL..." style="margin-top:8px;" oninput="previewUrl(this.value)">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Extra Fields <span style="color:var(--text-dim);font-size:0.8rem;font-style:italic;text-transform:none;letter-spacing:0;">(optional — race, origin, habitat, etc)</span></label>
-            <textarea class="form-textarea" id="ef-extra" style="min-height:60px;" placeholder="race: Human&#10;origin: Kodral&#10;affiliation: Red Sun Legion"></textarea>
-          </div>
-          <div class="btn-row">
-            <button class="btn-primary" onclick="saveEntry()">💾 Save Entry Instructions</button>
-            <button class="btn-secondary" onclick="cancelEntry()">Cancel</button>
-          </div>
-          <div class="save-msg" id="save-msg"></div>
-          <div id="save-instructions" style="display:none;margin-top:20px;background:rgba(200,149,42,0.04);border:1px solid rgba(200,149,42,0.2);padding:20px;">
-            <div style="font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">📋 How to Add This Entry</div>
-            <div id="instructions-text" style="font-family:'EB Garamond',serif;font-size:0.9rem;color:var(--text-dim);line-height:1.7;white-space:pre-wrap;"></div>
-          </div>
-        </div>
+
+    <!-- STEP 1: CHOOSE WHAT TO ADD -->
+    <div class="vault-card vault-card-full" style="margin-bottom:18px;">
+      <div class="vault-card-title">Step 1 — What are you adding?</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:12px;">
+        <button class="entry-type-btn active" onclick="setEntryType('session',this)">📋 Session Note</button>
+        <button class="entry-type-btn" onclick="setEntryType('deity',this)">✦ Deity</button>
+        <button class="entry-type-btn" onclick="setEntryType('character',this)">◉ Character</button>
+        <button class="entry-type-btn" onclick="setEntryType('faction',this)">⚔️ Faction</button>
+        <button class="entry-type-btn" onclick="setEntryType('location',this)">📍 Location</button>
+        <button class="entry-type-btn" onclick="setEntryType('lore',this)">📜 Lore Entry</button>
+        <button class="entry-type-btn" onclick="setEntryType('creature',this)">📖 Creature</button>
+        <button class="entry-type-btn" onclick="setEntryType('secret',this)">🔒 Secret/Plot</button>
       </div>
     </div>
+
+    <!-- DYNAMIC FORM -->
+    <div class="vault-card vault-card-full" id="entry-form-card">
+      <div class="vault-card-title" id="form-title">📋 New Session Note</div>
+      <div id="entry-form-fields" style="margin-top:16px;"></div>
+      <div class="btn-row" style="margin-top:20px;">
+        <button class="btn-primary" onclick="generateCode()">✓ Generate Code</button>
+        <button class="btn-secondary" onclick="clearForm()">↺ Clear</button>
+      </div>
+      <div id="gen-output" style="display:none;margin-top:20px;background:rgba(200,149,42,0.03);border:1px solid rgba(200,149,42,0.18);padding:20px;">
+        <div style="font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">📋 Ready to add</div>
+        <div style="font-family:'Cinzel',serif;font-size:0.52rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:8px;" id="gen-file-label"></div>
+        <pre id="gen-code" style="font-family:monospace;font-size:0.8rem;color:var(--text);white-space:pre-wrap;word-break:break-all;background:#060402;padding:14px;border:1px solid rgba(200,149,42,0.12);max-height:300px;overflow-y:auto;"></pre>
+        <button class="btn-primary" onclick="copyCode()" style="margin-top:12px;">📋 Copy Code</button>
+        <span id="copied-msg" style="display:none;font-family:'EB Garamond',serif;font-style:italic;font-size:0.85rem;color:var(--green);margin-left:10px;">✓ Copied!</span>
+      </div>
+    </div>
+
+    <!-- QUICK SESSION LOG -->
+    <div class="vault-card vault-card-full" style="margin-top:18px;" id="session-log-quick">
+      <div class="vault-card-title">⚡ Quick Session Log — Echoes Without Names</div>
+      <div class="vault-card-body" style="margin-top:10px;">
+        <p style="margin-bottom:12px;">Current: <strong style="color:var(--gold-light);">3 sessions completed</strong>. Party heading to Aetherwyn.</p>
+        <button class="btn-primary" onclick="setEntryType('session',document.querySelector('.entry-type-btn'));document.getElementById('ef-session-num').value='4';document.getElementById('ef-session-title').focus();">+ Add Session 4 Notes</button>
+      </div>
+    </div>
+
   </div>
 
   <!-- ══ COMMUNITY TAB ══ -->
@@ -1043,6 +1011,279 @@ function cancelEntry() {
   document.getElementById('save-instructions').style.display = 'none';
 }
 
+
+// ══ ENTRY EDITOR ══
+let currentEntryType = 'session';
+
+const ENTRY_FIELDS = {
+  session: {
+    title: '📋 New Session Note',
+    file: 'campaigns.html',
+    fields: [
+      {id:'ef-session-num', label:'Session Number', type:'text', placeholder:'4'},
+      {id:'ef-session-title', label:'Session Title', type:'text', placeholder:'e.g. The Vault of Crystolas'},
+      {id:'ef-session-summary', label:'Summary (what happened)', type:'textarea', placeholder:'A short spoiler-free description for the campaigns page...', rows:3},
+      {id:'ef-session-body', label:'Full Session Notes (DM only)', type:'textarea', placeholder:'Full details, decisions, consequences, player moments...', rows:6},
+    ]
+  },
+  deity: {
+    title: '✦ New Deity',
+    file: 'deities.html',
+    fields: [
+      {id:'ef-deity-id', label:'Deity ID (lowercase, hyphens)', type:'text', placeholder:'e.g. new-deity'},
+      {id:'ef-deity-name', label:'Name', type:'text', placeholder:'e.g. Ramath'},
+      {id:'ef-deity-domain', label:'Domain', type:'text', placeholder:'e.g. God of War & Honour'},
+      {id:'ef-deity-symbol', label:'Symbol', type:'text', placeholder:'e.g. The Broken Shield'},
+      {id:'ef-deity-category', label:'Category', type:'select', options:['creation','nature','hungering','chaos','shadow','cosmic','unknown']},
+      {id:'ef-deity-lore', label:'Lore / Description', type:'textarea', rows:5, placeholder:'Full lore text...'},
+    ]
+  },
+  character: {
+    title: '◉ New Character',
+    file: 'characters.html',
+    fields: [
+      {id:'ef-char-id', label:'Character ID (lowercase, hyphens)', type:'text', placeholder:'e.g. new-character'},
+      {id:'ef-char-name', label:'Name', type:'text', placeholder:''},
+      {id:'ef-char-title', label:'Title / Role', type:'text', placeholder:'e.g. Half-Elf Fighter'},
+      {id:'ef-char-race', label:'Race', type:'text', placeholder:''},
+      {id:'ef-char-origin', label:'Origin / Homeland', type:'text', placeholder:''},
+      {id:'ef-char-affiliation', label:'Affiliation', type:'text', placeholder:''},
+      {id:'ef-char-status', label:'Status', type:'select', options:['Active','Deceased','Unknown','NPC','Retired']},
+      {id:'ef-char-category', label:'Category', type:'select', options:['party','villains','allies','legends','wanderers','inventors','ascended']},
+      {id:'ef-char-body', label:'Full Description', type:'textarea', rows:5, placeholder:''},
+    ]
+  },
+  faction: {
+    title: '⚔️ New Faction',
+    file: 'factions.html',
+    fields: [
+      {id:'ef-fac-id', label:'Faction ID', type:'text', placeholder:'e.g. new-faction'},
+      {id:'ef-fac-name', label:'Name', type:'text', placeholder:''},
+      {id:'ef-fac-category', label:'Category', type:'select', options:['holy','military','scholars','crime','cults','historical']},
+      {id:'ef-fac-desc', label:'Short Description', type:'text', placeholder:'One sentence...'},
+      {id:'ef-fac-body', label:'Full Description', type:'textarea', rows:4, placeholder:''},
+    ]
+  },
+  location: {
+    title: '📍 New Location',
+    file: 'locations.html',
+    fields: [
+      {id:'ef-loc-id', label:'Location ID', type:'text', placeholder:'e.g. new-city'},
+      {id:'ef-loc-name', label:'Name', type:'text', placeholder:''},
+      {id:'ef-loc-region', label:'Region', type:'text', placeholder:'e.g. Kodral, Oakford'},
+      {id:'ef-loc-type', label:'Type', type:'select', options:['city','village','kingdom','poi','region','dungeon','ruin']},
+      {id:'ef-loc-desc', label:'Short Description', type:'text', placeholder:''},
+      {id:'ef-loc-body', label:'Full Description', type:'textarea', rows:4, placeholder:''},
+    ]
+  },
+  lore: {
+    title: '📜 New Lore Entry',
+    file: 'lore.html',
+    fields: [
+      {id:'ef-lore-id', label:'Lore ID', type:'text', placeholder:'e.g. the-void-crystal'},
+      {id:'ef-lore-name', label:'Name', type:'text', placeholder:''},
+      {id:'ef-lore-category', label:'Category', type:'select', options:['creation','magic','artifacts','sacred','void','history']},
+      {id:'ef-lore-desc', label:'Short Description', type:'text', placeholder:''},
+      {id:'ef-lore-body', label:'Full Text', type:'textarea', rows:5, placeholder:''},
+    ]
+  },
+  creature: {
+    title: '📖 New Creature',
+    file: 'bestiary.html',
+    fields: [
+      {id:'ef-cre-id', label:'Creature ID', type:'text', placeholder:'e.g. shadow-wolf'},
+      {id:'ef-cre-name', label:'Name', type:'text', placeholder:''},
+      {id:'ef-cre-icon', label:'Emoji Icon', type:'text', placeholder:'🐺'},
+      {id:'ef-cre-type', label:'Type', type:'select', options:['beast','undead','construct','fiend','dragon','elemental','aberration','humanoid']},
+      {id:'ef-cre-threat', label:'Threat Level', type:'select', options:['low','medium','high','legendary']},
+      {id:'ef-cre-size', label:'Size', type:'select', options:['Tiny','Small','Medium','Large','Huge','Gargantuan']},
+      {id:'ef-cre-habitat', label:'Habitat', type:'text', placeholder:'e.g. Ravenshroud, dark forests'},
+      {id:'ef-cre-desc', label:'Short Description (card)', type:'text', placeholder:'One sentence...'},
+      {id:'ef-cre-body', label:'Full Entry', type:'textarea', rows:5, placeholder:'Full lore and encounter notes...'},
+    ]
+  },
+  secret: {
+    title: '🔒 New Secret / Plot Thread',
+    file: 'dmvault.html (Secrets tab)',
+    fields: [
+      {id:'ef-sec-title', label:'Secret Title', type:'text', placeholder:'e.g. The True Origin of Magnus Vex'},
+      {id:'ef-sec-badge', label:'Player Status', type:'select', options:['🔒 Player Unknown','⚠️ Partially Known','✓ Revealed']},
+      {id:'ef-sec-icon', label:'Emoji Icon', type:'text', placeholder:'👁️'},
+      {id:'ef-sec-body', label:'Secret Content', type:'textarea', rows:4, placeholder:'What is the secret? Who knows it?'},
+      {id:'ef-sec-note', label:'DM Note (when to reveal)', type:'textarea', rows:2, placeholder:'When and how should this come out?'},
+    ]
+  },
+};
+
+function setEntryType(type, el) {
+  currentEntryType = type;
+  document.querySelectorAll('.entry-type-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('form-title').textContent = ENTRY_FIELDS[type].title;
+  document.getElementById('gen-output').style.display = 'none';
+  renderFormFields(type);
+}
+
+function renderFormFields(type) {
+  const cfg = ENTRY_FIELDS[type];
+  const container = document.getElementById('entry-form-fields');
+  container.innerHTML = cfg.fields.map(f => {
+    if (f.type === 'textarea') {
+      return `<div class="form-group">
+        <label class="form-label">${f.label}</label>
+        <textarea class="form-textarea" id="${f.id}" placeholder="${f.placeholder||''}" rows="${f.rows||3}"></textarea>
+      </div>`;
+    } else if (f.type === 'select') {
+      return `<div class="form-group">
+        <label class="form-label">${f.label}</label>
+        <select class="form-select" id="${f.id}">
+          ${f.options.map(o=>`<option value="${o}">${o}</option>`).join('')}
+        </select>
+      </div>`;
+    } else {
+      return `<div class="form-group">
+        <label class="form-label">${f.label}</label>
+        <input type="text" class="form-input" id="${f.id}" placeholder="${f.placeholder||''}">
+      </div>`;
+    }
+  }).join('');
+}
+
+function getVal(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function generateCode() {
+  const type = currentEntryType;
+  const cfg = ENTRY_FIELDS[type];
+  let code = '', fileLabel = `📄 Add to: ${cfg.file}`;
+  const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+
+  if (type === 'session') {
+    const num = getVal('ef-session-num');
+    const title = getVal('ef-session-title');
+    const summary = getVal('ef-session-summary');
+    const body = getVal('ef-session-body');
+    code = `<!-- SESSION ${num} — paste inside campaigns.html session log section -->
+<div class="arc-block">
+  <div class="arc-header" onclick="toggleArc(this.parentElement)">
+    <div class="arc-num">${num.padStart(2,'0')}</div>
+    <div class="arc-info">
+      <div class="arc-label">Session ${num}</div>
+      <div class="arc-title">${title}</div>
+    </div>
+    <span class="arc-toggle">▼</span>
+  </div>
+  <div class="arc-body">
+    <p>${summary}</p>
+  </div>
+</div>
+
+<!-- DM NOTES (paste in secrets tab or keep here):
+${body}
+-->`;
+    fileLabel = '📄 campaigns.html → Session Log section';
+  } else if (type === 'deity') {
+    const id = getVal('ef-deity-id') || slug(getVal('ef-deity-name'));
+    code = `  '${id}': {
+    name: '${getVal('ef-deity-name')}',
+    domain: '${getVal('ef-deity-domain')}',
+    symbol: '${getVal('ef-deity-symbol')}',
+    category: '${getVal('ef-deity-category')}',
+    image: null,
+    lore: \`${getVal('ef-deity-lore')}\`
+  },`;
+    fileLabel = '📄 deities.html → DEITIES object → paste inside correct category';
+  } else if (type === 'character') {
+    const id = getVal('ef-char-id') || slug(getVal('ef-char-name'));
+    code = `    {
+      id: '${id}',
+      name: '${getVal('ef-char-name')}',
+      title: '${getVal('ef-char-title')}',
+      icon: '◉',
+      race: '${getVal('ef-char-race')}',
+      origin: '${getVal('ef-char-origin')}',
+      affiliation: '${getVal('ef-char-affiliation')}',
+      status: '${getVal('ef-char-status')}',
+      image: null,
+      body: \`<p>${getVal('ef-char-body')}</p>\`
+    },`;
+    fileLabel = `📄 characters.html → CHARACTERS['${getVal('ef-char-category') || 'allies'}'] array`;
+  } else if (type === 'faction') {
+    const id = getVal('ef-fac-id') || slug(getVal('ef-fac-name'));
+    code = `    {
+      id: '${id}',
+      name: '${getVal('ef-fac-name')}',
+      desc: '${getVal('ef-fac-desc')}',
+      body: \`<p>${getVal('ef-fac-body')}</p>\`
+    },`;
+    fileLabel = `📄 factions.html → '${getVal('ef-fac-category') || 'holy'}' category array`;
+  } else if (type === 'location') {
+    const id = getVal('ef-loc-id') || slug(getVal('ef-loc-name'));
+    code = `    {
+      id: '${id}',
+      name: '${getVal('ef-loc-name')}',
+      type: '${getVal('ef-loc-type')}',
+      desc: '${getVal('ef-loc-desc')}',
+      body: \`<p>${getVal('ef-loc-body')}</p>\`
+    },`;
+    fileLabel = `📄 locations.html → ${getVal('ef-loc-region') || 'relevant region'} section`;
+  } else if (type === 'lore') {
+    const id = getVal('ef-lore-id') || slug(getVal('ef-lore-name'));
+    code = `    {
+      id: '${id}',
+      name: '${getVal('ef-lore-name')}',
+      desc: '${getVal('ef-lore-desc')}',
+      body: \`<p>${getVal('ef-lore-body')}</p>\`
+    },`;
+    fileLabel = `📄 lore.html → '${getVal('ef-lore-category') || 'history'}' category array`;
+  } else if (type === 'creature') {
+    const id = getVal('ef-cre-id') || slug(getVal('ef-cre-name'));
+    code = `  {
+    id:'${id}', name:'${getVal('ef-cre-name')}', icon:'${getVal('ef-cre-icon')||'?'}',
+    type:'${getVal('ef-cre-type')}', threat:'${getVal('ef-cre-threat')}',
+    habitat:'${getVal('ef-cre-habitat')}', size:'${getVal('ef-cre-size')}',
+    desc:'${getVal('ef-cre-desc')}',
+    body:\`<p>${getVal('ef-cre-body')}</p>\`
+  },`;
+    fileLabel = `📄 bestiary.html → CREATURES array → ${getVal('ef-cre-type') || 'relevant type'} section`;
+  } else if (type === 'secret') {
+    code = `      <div class="vault-card">
+        <span class="secret-badge">${getVal('ef-sec-badge') || '🔒 Player Unknown'}</span>
+        <span class="vault-card-icon">${getVal('ef-sec-icon') || '👁️'}</span>
+        <div class="vault-card-title">${getVal('ef-sec-title')}</div>
+        <div class="vault-card-body">
+          <p>${getVal('ef-sec-body')}</p>
+          <div class="dm-note"><strong>DM Note</strong>${getVal('ef-sec-note')}</div>
+        </div>
+      </div>`;
+    fileLabel = '📄 dmvault.html → Secrets tab → paste in vault-grid section';
+  }
+
+  document.getElementById('gen-code').textContent = code;
+  document.getElementById('gen-file-label').textContent = fileLabel;
+  document.getElementById('gen-output').style.display = 'block';
+  document.getElementById('gen-output').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function copyCode() {
+  const code = document.getElementById('gen-code').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    const msg = document.getElementById('copied-msg');
+    msg.style.display = 'inline';
+    setTimeout(() => msg.style.display = 'none', 2500);
+  });
+}
+
+function clearForm() {
+  document.getElementById('entry-form-fields').querySelectorAll('input,textarea').forEach(el => el.value = '');
+  document.getElementById('gen-output').style.display = 'none';
+}
+
+// Init editor
+renderFormFields('session');
+
 // ══ INIT ══
 buildFolderTree();
 
@@ -1199,9 +1440,13 @@ document.querySelectorAll('.qn-item').forEach(item => {
     <a href="timeline.html" class="qn-item"><span class="qn-icon">⏳</span><span class="qn-name">Timeline</span></a>
     <a href="bestiary.html" class="qn-item"><span class="qn-icon">📖</span><span class="qn-name">Bestiary</span></a>
     <a href="campaigns.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Campaigns</span></a>
-    <a href="community.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Community</span></a>
+    <a href="social.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Community</span></a>
     <a href="quiz.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deity Quiz</span></a>
     <a href="alignment.html" class="qn-item"><span class="qn-icon">⚖️</span><span class="qn-name">Alignment</span></a>
+    <a href="class-quiz.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Class Quiz</span></a>
+    <a href="roller.html" class="qn-item"><span class="qn-icon">⚀</span><span class="qn-name">Stat Roller</span></a>
+    <a href="quizzes.html" class="qn-item"><span class="qn-icon">🎯</span><span class="qn-name">All Quizzes</span></a>
+    <a href="social.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Social Hub</span></a>
   </div>
 </div>
 
