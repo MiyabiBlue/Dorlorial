@@ -25,7 +25,7 @@ header{position:relative;z-index:10;text-align:center;padding:80px 20px 36px;bac
 .header-divider .diamond{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:0.6;}
 
 /* ══ SEARCH ══ */
-.search-wrap{position:relative;max-width:560px;margin:0 auto 48px;padding:0 20px;}
+.search-wrap{position:relative;max-width:560px;margin:0 auto 48px;padding:0 20px;} @media(max-width:600px){.search-wrap{max-width:100%;padding:0 14px;margin-bottom:32px;} .search-wrap input{font-size:1rem;padding:14px 46px 14px 16px;} #searchResults{left:14px;right:14px;}}
 .search-wrap input{width:100%;background:#0a0702;border:1px solid rgba(200,149,42,0.3);color:var(--text);font-family:'Cinzel',serif;font-size:0.7rem;letter-spacing:0.18em;padding:14px 46px 14px 18px;outline:none;transition:border-color 0.3s;}
 .search-wrap input:focus{border-color:var(--gold);}
 .search-wrap input::placeholder{color:var(--text-dim);}
@@ -124,19 +124,38 @@ main{position:relative;z-index:10;max-width:1240px;margin:0 auto;padding:0 24px 
 
 /* ── THEME ── */
 body.light-mode {
-  --ink: #f5f0e8;
-  --text: #2a1f0e;
-  --text-dim: #6b5535;
-  --gold: #8A6010;
-  --gold-light: #A07820;
-  --gold-pale: #6A4808;
-  --gold-dark: #C8952A;
+  --ink: #f2ebe0;
+  --text: #2a1a08;
+  --text-dim: #6b5030;
+  --gold: #7a5008;
+  --gold-light: #8A6010;
+  --gold-pale: #5a3a05;
+  --gold-dark: #B88020;
 }
+body.light-mode { background: #f2ebe0; }
 body.light-mode header {
-  background: linear-gradient(180deg, #ede6d6 0%, transparent 100%);
-  border-bottom-color: rgba(138,96,16,0.25);
+  background: linear-gradient(180deg,#e8dcc8 0%,transparent 100%);
+  border-bottom-color:rgba(138,96,16,0.2);
 }
-body.light-mode #embers { opacity: 0.3; }
+body.light-mode #embers{opacity:0.15;}
+body.light-mode .hero-card, body.light-mode .nav-card{
+  background:linear-gradient(145deg,#ede4d0,#e8dcc8);
+  border-color:rgba(138,96,16,0.2);
+}
+body.light-mode .hero-card:hover, body.light-mode .nav-card:hover{
+  background:linear-gradient(145deg,#e8dcc8,#e0d4b8);
+  border-color:rgba(138,96,16,0.45);
+}
+body.light-mode .campaign-banner{background:linear-gradient(135deg,#ede4d0,#e8dcc8);}
+body.light-mode #global-toolbar{background:rgba(242,235,224,0.96);border-color:rgba(138,96,16,0.3);}
+body.light-mode #quick-nav{background:rgba(242,235,224,0.98);border-color:rgba(138,96,16,0.3);}
+body.light-mode .qn-item{background:rgba(138,96,16,0.05);border-color:rgba(138,96,16,0.15);}
+body.light-mode .section-label{color:var(--gold);}
+body.light-mode .search-wrap input{background:#e8dcc8;border-color:rgba(138,96,16,0.28);}
+body.light-mode #searchResults{background:#ede4d0;border-color:rgba(138,96,16,0.28);}
+body.light-mode .carousel-wrap{border-color:rgba(138,96,16,0.2);}
+body.light-mode .corner-btn{background:rgba(242,235,224,0.96);border-color:rgba(138,96,16,0.4);color:var(--gold);}
+body.light-mode #vaultBtn{background:linear-gradient(145deg,#ede4d0,#e8dcc8);border-color:rgba(138,96,16,0.2);}
 
 /* ── FLOATING TOOLBAR ── */
 #global-toolbar {
@@ -300,6 +319,19 @@ body.light-mode #quick-nav {
   .corner-btn{font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold);background:rgba(6,4,2,0.85);border:1px solid rgba(200,149,42,0.4);padding:11px 20px;cursor:pointer;transition:all 0.25s;text-decoration:none;display:flex;align-items:center;gap:8px;pointer-events:all;backdrop-filter:blur(12px);box-shadow:0 2px 12px rgba(0,0,0,0.5);}
   .corner-btn:hover{color:var(--gold-pale);border-color:var(--gold);background:rgba(14,10,4,0.95);transform:translateY(-1px);box-shadow:0 4px 20px rgba(200,149,42,0.15);}
   body.light-mode .corner-btn{background:rgba(245,240,232,0.95);border-color:rgba(138,96,16,0.4);color:var(--gold-dark);}
+
+  /* ── CAMPAIGN BANNER ── */
+  .campaign-banner{position:relative;z-index:10;background:linear-gradient(135deg,#0e0a02,#0a0600);border:1px solid rgba(200,149,42,0.28);padding:18px 24px;margin-bottom:0;display:flex;align-items:center;gap:18px;cursor:pointer;transition:border-color 0.3s;}
+  .campaign-banner:hover{border-color:rgba(200,149,42,0.5);}
+  .banner-pulse{width:10px;height:10px;background:var(--green,#4be87a);border-radius:50%;flex-shrink:0;animation:bannerPulse 2s ease-in-out infinite;box-shadow:0 0 8px rgba(75,232,122,0.5);}
+  @keyframes bannerPulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.3);opacity:0.6;}}
+  .banner-text{flex:1;}
+  .banner-eyebrow{font-family:'Cinzel',serif;font-size:0.48rem;letter-spacing:0.3em;text-transform:uppercase;color:#4be87a;margin-bottom:4px;}
+  .banner-title{font-family:'Cinzel',serif;font-size:clamp(0.72rem,2vw,0.9rem);font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold-light);margin-bottom:3px;}
+  .banner-sub{font-family:'EB Garamond',serif;font-style:italic;font-size:clamp(0.82rem,2vw,0.95rem);color:var(--text-dim);}
+  .banner-arrow{font-family:'Cinzel',serif;font-size:0.52rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold-dark);flex-shrink:0;transition:color 0.25s;}
+  .campaign-banner:hover .banner-arrow{color:var(--gold);}
+  body.light-mode .campaign-banner{background:linear-gradient(135deg,#ede8da,#e8e0cc);border-color:rgba(138,96,16,0.3);}
 </style>
 </head>
 <body>
@@ -336,6 +368,17 @@ body.light-mode #quick-nav {
     <a href="quizzes.html" class="corner-btn" id="quizzesCornerBtn">🎲 Quizzes & Tools</a>
   </div>
 
+
+  <!-- CAMPAIGN BANNER -->
+  <div class="campaign-banner" onclick="navigate('campaigns.html')" id="campaign-banner">
+    <div class="banner-pulse"></div>
+    <div class="banner-text">
+      <div class="banner-eyebrow">⚔ Active Campaign — Session 3 Complete</div>
+      <div class="banner-title">Echoes Without Names — Heading to Aetherwyn</div>
+      <div class="banner-sub">The party lost Vash's sister memory. Magnus Vex now lives in his head. Three crystals to find, the first awaits in the deep city.</div>
+    </div>
+    <div class="banner-arrow">View Campaign →</div>
+  </div>
 
   <!-- ══ COMMUNITY ART CAROUSEL ══ -->
   <div class="carousel-wrap" id="art-carousel-wrap">
@@ -440,6 +483,22 @@ body.light-mode #quick-nav {
       <div class="nav-name">Bestiary <span class="hero-badge badge-new">New</span></div>
       <div class="nav-desc">Every beast, monster, and entity that walks, crawls, or haunts Dorlorial — catalogued and described.</div>
       <div class="nav-arrow">Explore →</div>
+    </a>
+
+    <a href="encounter.html" class="nav-card">
+      <div class="nav-glow"></div>
+      <span class="nav-icon">🎲</span>
+      <div class="nav-name">Encounter Generator <span class="hero-badge badge-new">New</span></div>
+      <div class="nav-desc">Pick a region and threat level. Get a creature, a scenario hook, and a complication. Built for the table.</div>
+      <div class="nav-arrow">Generate →</div>
+    </a>
+
+    <a href="game.html" class="nav-card">
+      <div class="nav-glow"></div>
+      <span class="nav-icon">⚔️</span>
+      <div class="nav-name">The Oracle's Test <span class="hero-badge badge-new">New</span></div>
+      <div class="nav-desc">A text adventure through the fall of Sunbright. Your choices shape the story. Can you make it to Aetherwyn?</div>
+      <div class="nav-arrow">Play →</div>
     </a>
 
   </div>

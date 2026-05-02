@@ -259,6 +259,18 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--ink);font-fami
 /* ═══ GLOBAL WIDGETS ═══ */
 
 /* ── THEME ── */
+
+body.light-mode{background:#f2ebe0;}
+body.light-mode header{background:linear-gradient(180deg,#e8dcc8 0%,transparent 100%);border-bottom-color:rgba(138,96,16,0.2);}
+body.light-mode #embers{opacity:0.15;}
+body.light-mode main,body.light-mode .profile-panel,body.light-mode .entry-panel{background:#f2ebe0;}
+body.light-mode .nav-card,.light-mode .lore-card,.light-mode .char-card,.light-mode .deity-card{background:linear-gradient(145deg,#ede4d0,#e8dcc8)!important;border-color:rgba(138,96,16,0.2)!important;}
+body.light-mode .modal-overlay .profile-card,.light-mode .creature-modal,.light-mode .char-modal{background:#ede4d0!important;border-color:rgba(138,96,16,0.3)!important;}
+body.light-mode #global-toolbar{background:rgba(242,235,224,0.96)!important;border-color:rgba(138,96,16,0.3)!important;}
+body.light-mode #quick-nav{background:rgba(242,235,224,0.98)!important;border-color:rgba(138,96,16,0.3)!important;}
+body.light-mode .qn-item{background:rgba(138,96,16,0.05)!important;border-color:rgba(138,96,16,0.15)!important;}
+body.light-mode input,body.light-mode textarea,body.light-mode select{background:#e8dcc8!important;border-color:rgba(138,96,16,0.25)!important;color:#2a1a08!important;}
+
 body.light-mode {
   --ink: #f5f0e8;
   --text: #2a1f0e;
@@ -1103,7 +1115,10 @@ function openRegion(region) {
 
 function showCategories(region) {
   const catKeys = Object.keys(region.categories);
+  // Build location page link from region name
+  const locId = region.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   let html = `<div class="breadcrumb"><span>${region.name}</span></div>`;
+  html += `<a href="locations.html?region=${locId}" onclick="navigate('locations.html?region=${locId}');return false;" style="display:inline-flex;align-items:center;gap:6px;font-family:'Cinzel',serif;font-size:0.48rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold-dark);background:rgba(200,149,42,0.06);border:1px solid rgba(200,149,42,0.2);padding:5px 12px;margin-bottom:14px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(200,149,42,0.5)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(200,149,42,0.2)';this.style.color='var(--gold-dark)'">📍 View ${region.name} in Locations →</a>`;
   html += `<div class="cat-list">`;
   catKeys.forEach(key => {
     const cat = region.categories[key];

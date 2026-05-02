@@ -105,6 +105,18 @@ header{position:relative;z-index:10;text-align:center;padding:55px 20px 32px;bor
 /* ═══ GLOBAL WIDGETS ═══ */
 
 /* ── THEME ── */
+
+body.light-mode{background:#f2ebe0;}
+body.light-mode header{background:linear-gradient(180deg,#e8dcc8 0%,transparent 100%);border-bottom-color:rgba(138,96,16,0.2);}
+body.light-mode #embers{opacity:0.15;}
+body.light-mode main,body.light-mode .profile-panel,body.light-mode .entry-panel{background:#f2ebe0;}
+body.light-mode .nav-card,.light-mode .lore-card,.light-mode .char-card,.light-mode .deity-card{background:linear-gradient(145deg,#ede4d0,#e8dcc8)!important;border-color:rgba(138,96,16,0.2)!important;}
+body.light-mode .modal-overlay .profile-card,.light-mode .creature-modal,.light-mode .char-modal{background:#ede4d0!important;border-color:rgba(138,96,16,0.3)!important;}
+body.light-mode #global-toolbar{background:rgba(242,235,224,0.96)!important;border-color:rgba(138,96,16,0.3)!important;}
+body.light-mode #quick-nav{background:rgba(242,235,224,0.98)!important;border-color:rgba(138,96,16,0.3)!important;}
+body.light-mode .qn-item{background:rgba(138,96,16,0.05)!important;border-color:rgba(138,96,16,0.15)!important;}
+body.light-mode input,body.light-mode textarea,body.light-mode select{background:#e8dcc8!important;border-color:rgba(138,96,16,0.25)!important;color:#2a1a08!important;}
+
 body.light-mode {
   --ink: #f5f0e8;
   --text: #2a1f0e;
@@ -283,6 +295,14 @@ body.light-mode #quick-nav {
   .corner-btn:hover{color:var(--gold-pale);border-color:var(--gold);background:rgba(14,10,4,0.95);transform:translateY(-1px);box-shadow:0 4px 20px rgba(200,149,42,0.15);}
   body.light-mode .corner-btn{background:rgba(245,240,232,0.95);border-color:rgba(138,96,16,0.4);color:var(--gold-dark);}
 
+
+.art-compose-mini{display:flex;gap:6px;margin-top:8px;align-items:center;}
+.compose-mini-input{background:#060402;border:1px solid rgba(200,149,42,0.18);color:var(--text);font-family:'EB Garamond',serif;font-size:0.82rem;padding:6px 9px;outline:none;flex:1;transition:border-color 0.2s;min-width:0;}
+.compose-mini-input:focus{border-color:var(--gold);}
+.compose-mini-btn{font-family:'Cinzel',serif;font-size:0.55rem;letter-spacing:0.18em;color:var(--gold);background:transparent;border:1px solid rgba(200,149,42,0.3);padding:6px 12px;cursor:pointer;transition:all 0.2s;flex-shrink:0;}
+.compose-mini-btn:hover{background:rgba(200,149,42,0.08);}
+.art-quick-comment{font-family:'EB Garamond',serif;font-size:0.82rem;color:var(--text-dim);padding:2px 0;line-height:1.4;}
+.aqc-user{font-family:'Cinzel',serif;font-size:0.44rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold-dark);margin-right:5px;}
 </style>
 </head>
 <body>
@@ -306,33 +326,28 @@ body.light-mode #quick-nav {
   <!-- LEFT: ART FEED -->
   <div class="feed-col">
     <div class="section-label">Community Art</div>
-    <div class="art-feed" id="art-feed"><div class="empty-state">Loading...</div></div>
+    <p style="font-family:'EB Garamond',serif;font-style:italic;font-size:0.85rem;color:var(--text-dim);margin-bottom:18px;">Click any artwork to view full size. Comment on pieces directly below each one.</p>
+    <div class="art-feed" id="art-feed"><div class="empty-state">Loading art...</div></div>
   </div>
-  <!-- RIGHT: COMMENTS SIDEBAR -->
+
+  <!-- RIGHT: MAIN CHAT -->
   <div class="comments-col" id="comments-col">
     <div class="sidebar-header">
-      <div class="sidebar-title">💬 Comments</div>
-      <div class="sidebar-art-name" id="sidebar-art-name">Click any post to see its comments</div>
+      <div class="sidebar-title">💬 General Chat</div>
+      <div class="sidebar-art-name" style="font-size:0.72rem;">Open discussion — reply to anyone</div>
     </div>
-    <div id="sidebar-placeholder" class="sidebar-placeholder">
-      <span class="sidebar-placeholder-icon">🎨</span>
-      <div class="sidebar-placeholder-text">Select an artwork on the left to view and add comments</div>
+    <div id="sidebar-comments-wrap" class="sidebar-comments-wrap">
+      <div class="empty-state" style="padding:20px 0;">Loading chat...</div>
     </div>
-    <div id="sidebar-comments-wrap" class="sidebar-comments-wrap" style="display:none;"></div>
-    <div id="sidebar-compose" class="sidebar-compose">
+    <div id="sidebar-compose" class="sidebar-compose visible">
       <input class="sc-input" id="sc-name" placeholder="Your name...">
-      <textarea class="sc-textarea" id="sc-msg" placeholder="Write a comment..." rows="2"></textarea>
+      <textarea class="sc-textarea" id="sc-msg" placeholder="Say something to the community..." rows="2"></textarea>
       <div style="display:flex;align-items:center;gap:10px;">
-        <button class="sc-submit" onclick="postSidebarComment()">Post Comment</button>
+        <button class="sc-submit" onclick="postMainChat()">Post</button>
         <span class="sc-posted" id="sc-posted">✓ Posted!</span>
       </div>
     </div>
   </div>
-</div>
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox" onclick="if(event.target===this)closeLightbox()">
-  <button class="lb-close" onclick="closeLightbox()">✕</button>
-  <img class="lb-img" id="lb-img" src="" alt="">
 </div>
 <div class="transition-overlay" id="overlay"></div>
 <script>
@@ -571,6 +586,8 @@ let fr=0;(function loop(){requestAnimationFrame(loop);fr++;ctx.clearRect(0,0,can
     <a href="bestiary.html" class="qn-item"><span class="qn-icon">📖</span><span class="qn-name">Bestiary</span></a>
     <a href="campaigns.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Campaigns</span></a>
     <a href="roller.html" class="qn-item"><span class="qn-icon">⚀</span><span class="qn-name">Stat Roller</span></a>
+    <a href="encounter.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Encounters</span></a>
+    <a href="game.html" class="qn-item"><span class="qn-icon">⚔️</span><span class="qn-name">Mini Game</span></a>
     <a href="dmvault.html" class="qn-item"><span class="qn-icon">🔒</span><span class="qn-name">DM Vault</span></a>
   </div></div>
 </div>
@@ -578,97 +595,189 @@ let fr=0;(function loop(){requestAnimationFrame(loop);fr++;ctx.clearRect(0,0,can
 
 
 <script>
-// ══ GLOBAL WIDGETS ══
 
+const SB_URL = 'https://rczesfxgzuhixhinyarc.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjemVzZnhnenVoaXhoaW55YXJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTQyNzAsImV4cCI6MjA5MzA3MDI3MH0.y_1BQLSkhV85sn-mxTHqu5eHfxUEF1wu89sfwJ0hU7A';
+let allArt = [], mainComments = [], artComments = {};
 
-// ── Theme ──
-function applyTheme(theme) {
-  if (theme === 'light') {
-    document.body.classList.add('light-mode');
-    const btn = document.getElementById('themeBtn');
-    if (btn) btn.textContent = '☀️';
-  } else {
-    document.body.classList.remove('light-mode');
-    const btn = document.getElementById('themeBtn');
-    if (btn) btn.innerHTML = '<span class="toolbar-tooltip">Toggle Theme</span>🌙';
-  }
-}
-function toggleTheme() {
-  const isLight = document.body.classList.contains('light-mode');
-  const newTheme = isLight ? 'dark' : 'light';
-  localStorage.setItem('dorlorial-theme', newTheme);
-  applyTheme(newTheme);
-}
-// Apply saved theme on load - after DOM ready to avoid crashes
-(function() {
-  const saved = localStorage.getItem('dorlorial-theme') || 'dark';
-  // Apply body class immediately (no DOM needed)
-  if (saved === 'light') document.body.classList.add('light-mode');
-  // Apply button text after DOM loads
-  document.addEventListener('DOMContentLoaded', function() {
-    applyTheme(saved);
+function sbFetch(path, opts) {
+  opts = opts || {};
+  return fetch(SB_URL+'/rest/v1/'+path, {
+    headers: {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':(opts.method&&opts.method!=='GET')?'return=minimal':'return=representation'},
+    method: opts.method||'GET',
+    body: opts.body?JSON.stringify(opts.body):undefined
   });
-})();
+}
 
-// ── Quick Nav ──
-let qnOpen = false;
-
-// ── Toolbar collapse ──
-function toggleToolbar() {
-  const tb = document.getElementById('global-toolbar');
-  const qn = document.getElementById('quick-nav');
-  const collapsed = tb.classList.toggle('collapsed');
-  localStorage.setItem('dorlorial-toolbar', collapsed ? 'collapsed' : 'open');
-  // Close quick nav when collapsing
-  if (collapsed && qnOpen) {
-    qnOpen = false;
-    qn.classList.remove('open');
+// Load everything in parallel
+async function loadAll() {
+  try {
+    const [artRes, chatRes] = await Promise.all([
+      sbFetch('art_submissions?status=eq.approved&order=created_at.desc'),
+      sbFetch('comments?entry_link=eq.general-chat&order=created_at.asc&limit=100')
+    ]);
+    allArt = await artRes.json();
+    mainComments = await chatRes.json();
+    if (!Array.isArray(allArt)) allArt = [];
+    if (!Array.isArray(mainComments)) mainComments = [];
+    renderArt();
+    renderMainChat();
+  } catch(e) {
+    document.getElementById('art-feed').innerHTML='<div class="empty-state">Could not load. Refresh to try again.</div>';
+  } finally {
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      const l=document.getElementById('social-loader');
+      if(l){l.classList.add('fade-out');setTimeout(()=>l.remove(),600);}
+    }));
   }
 }
-// Restore toolbar state
-(function() {
-  if (localStorage.getItem('dorlorial-toolbar') === 'collapsed') {
-    document.addEventListener('DOMContentLoaded', () => {
-      const tb = document.getElementById('global-toolbar');
-      if (tb) tb.classList.add('collapsed');
+
+// ── ART FEED ──
+function renderArt() {
+  const feed = document.getElementById('art-feed');
+  if (!allArt.length) { feed.innerHTML='<div class="empty-state">No art yet — be the first to submit!</div>'; return; }
+  feed.innerHTML = allArt.map(art => {
+    const entryKey = 'art:'+art.id;
+    const initials = art.username.charAt(0).toUpperCase();
+    const cmts = artComments[art.id] || [];
+    return `
+    <div class="art-post" id="post-${art.id}">
+      <div class="art-img-wrap" onclick="openLightbox('${art.image_url.replace(/'/g,"\\'")}')" title="Click to enlarge">
+        <img class="art-img" src="${art.image_url}" alt="${art.title}" loading="lazy" onerror="this.parentElement.style.display='none'">
+      </div>
+      <div class="art-post-body">
+        <div class="art-post-header">
+          <div class="art-avatar">${initials}</div>
+          <div class="art-post-meta">
+            <div class="art-post-title">${art.title}</div>
+            <div class="art-post-user">by ${art.username} · ${new Date(art.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
+          </div>
+        </div>
+        ${art.description?`<div class="art-post-desc">${art.description}</div>`:''}
+        ${art.entry_name?`<span class="art-post-entry">📍 ${art.entry_name}</span>`:''}
+        <div id="art-comments-${art.id}" style="margin-top:8px;">
+          ${cmts.length ? cmts.slice(0,2).map(c=>`<div class="art-quick-comment"><span class="aqc-user">${c.username}</span> ${c.message}</div>`).join('')+(cmts.length>2?`<div class="art-quick-comment" style="color:var(--gold-dark);">+ ${cmts.length-2} more</div>`:''): ''}
+        </div>
+        <div class="art-compose-mini" id="compose-${art.id}">
+          <input class="compose-mini-input" id="an-${art.id}" placeholder="Name...">
+          <input class="compose-mini-input" id="am-${art.id}" placeholder="Comment on this piece..." style="flex:2;">
+          <button class="compose-mini-btn" onclick="postArtComment('${art.id}','${art.title.replace(/'/g,"\\'")}')">→</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  // Load art comments async
+  loadArtComments();
+}
+
+async function loadArtComments() {
+  // Batch load comments for all art
+  try {
+    const res = await sbFetch('comments?entry_link=like.art:*&order=created_at.asc&limit=500');
+    const all = await res.json();
+    if (!Array.isArray(all)) return;
+    artComments = {};
+    all.forEach(c => {
+      const id = c.entry_link?.replace('art:','');
+      if (id) { artComments[id] = artComments[id] || []; artComments[id].push(c); }
     });
-  }
-})();
-function toggleQuickNav() {
-  qnOpen = !qnOpen;
-  document.getElementById('quick-nav').classList.toggle('open', qnOpen);
-  document.getElementById('quickNavBtn').classList.toggle('active', qnOpen);
+    // Update comment previews
+    allArt.forEach(art => {
+      const el = document.getElementById('art-comments-'+art.id);
+      const cmts = artComments[art.id] || [];
+      if (el && cmts.length) {
+        el.innerHTML = cmts.slice(0,2).map(c=>`<div class="art-quick-comment"><span class="aqc-user">${c.username}</span> ${c.message}</div>`).join('')
+          +(cmts.length>2?`<div class="art-quick-comment" style="color:var(--gold-dark);">+ ${cmts.length-2} more</div>`:'');
+      }
+    });
+  } catch(e) {}
 }
-// Close quick nav on outside click
-document.addEventListener('click', e => {
-  if (qnOpen && !e.target.closest('#quick-nav') && !e.target.closest('#quickNavBtn')) {
-    qnOpen = false;
-    document.getElementById('quick-nav').classList.remove('open');
-    document.getElementById('quickNavBtn').classList.remove('active');
-  }
+
+async function postArtComment(artId, artTitle) {
+  const name = document.getElementById('an-'+artId)?.value.trim();
+  const msg = document.getElementById('am-'+artId)?.value.trim();
+  if (!name||!msg) return;
+  try {
+    await sbFetch('comments',{method:'POST',body:{username:name,message:msg,entry_link:'art:'+artId,entry_name:artTitle}});
+    document.getElementById('am-'+artId).value='';
+    document.getElementById('an-'+artId).value='';
+    await loadArtComments();
+  } catch(e) { alert('Could not post.'); }
+}
+
+// ── MAIN CHAT ──
+function renderMainChat() {
+  const wrap = document.getElementById('sidebar-comments-wrap');
+  if (!mainComments.length) { wrap.innerHTML='<div class="empty-state" style="padding:20px 0;">No messages yet. Start the conversation!</div>'; return; }
+  wrap.innerHTML = mainComments.map((c,i) => {
+    const isReply = c.message.startsWith('↩');
+    const rfid='rf-'+i;
+    return `<div class="sidebar-comment">
+      <div class="sc-header">
+        <div class="sc-user">${c.username}</div>
+        <div class="sc-date">${new Date(c.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
+      </div>
+      <div class="sc-text${isReply?' sc-reply-tag':''}">${c.message.replace(/\n/g,'<br>')}</div>
+      <button class="sc-action" onclick="toggleReplyForm('${rfid}','${c.username}')">↩ Reply</button>
+      <div class="reply-form" id="${rfid}">
+        <div class="reply-to-tag">↩ Replying to ${c.username}</div>
+        <input class="sc-input" id="rn-${rfid}" placeholder="Your name...">
+        <textarea class="sc-textarea" id="rm-${rfid}" placeholder="Your reply..." rows="2" style="min-height:44px;"></textarea>
+        <button class="sc-submit" onclick="postReply('${rfid}','${c.username}')">Post Reply</button>
+      </div>
+    </div>`;
+  }).join('');
+  setTimeout(()=>{wrap.scrollTop=wrap.scrollHeight;},50);
+}
+
+function toggleReplyForm(id,username) {
+  const f=document.getElementById(id);
+  if(f){f.classList.toggle('open');if(f.classList.contains('open'))document.getElementById('rn-'+id)?.focus();}
+}
+
+async function postReply(rfid,replyingTo) {
+  const name=document.getElementById('rn-'+rfid)?.value.trim();
+  const msg=document.getElementById('rm-'+rfid)?.value.trim();
+  if(!name||!msg)return;
+  await postToMainChat(name,'↩ @'+replyingTo+': '+msg);
+  document.getElementById(rfid)?.classList.remove('open');
+}
+
+async function postMainChat() {
+  const name=document.getElementById('sc-name').value.trim();
+  const msg=document.getElementById('sc-msg').value.trim();
+  if(!name||!msg)return;
+  await postToMainChat(name,msg);
+  document.getElementById('sc-msg').value='';
+  const ok=document.getElementById('sc-posted');
+  ok.style.display='inline';setTimeout(()=>ok.style.display='none',2500);
+}
+
+async function postToMainChat(username,message) {
+  try {
+    await sbFetch('comments',{method:'POST',body:{username,message,entry_link:'general-chat',entry_name:'General Chat'}});
+    const res=await sbFetch('comments?entry_link=eq.general-chat&order=created_at.asc&limit=100');
+    mainComments=await res.json();
+    if(!Array.isArray(mainComments))mainComments=[];
+    renderMainChat();
+  } catch(e){alert('Could not post.');}
+}
+
+function openLightbox(url) {
+  document.getElementById('lb-img').src=url;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();});
+document.querySelector('.back-link').addEventListener('click',function(e){
+  e.preventDefault();document.getElementById('overlay').classList.add('active');
+  setTimeout(()=>{window.location.href=this.getAttribute('href');},700);
 });
-// Quick nav links use page transition
-document.querySelectorAll('.qn-item').forEach(item => {
-  item.addEventListener('click', e => {
-    const href = item.getAttribute('href');
-    if (!href || href === '#') return;
-    // Check if we're already on this page
-    if (window.location.pathname.endsWith(href) || window.location.href.endsWith(href)) return;
-    e.preventDefault();
-    const overlay = document.getElementById('overlay');
-    if (overlay) {
-      overlay.classList.add('active');
-      setTimeout(() => { window.location.href = href; }, 700);
-    } else {
-      window.location.href = href;
-    }
-  });
-});
+loadAll();
 
 
 </script>
-</body>
-</html>
-<div class="transition-overlay" id="overlay"></div>
 </body>
 </html>
