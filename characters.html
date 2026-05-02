@@ -1206,6 +1206,12 @@ document.querySelectorAll('.deity-img,.char-img,.profile-img').forEach(img => {
 });
 
 
+function navigate(url) {
+  const overlay = document.getElementById('overlay');
+  overlay.classList.add('active');
+  setTimeout(() => { window.location.href = url; }, 800);
+}
+
 // ══ GLOBAL WIDGETS ══
 
 

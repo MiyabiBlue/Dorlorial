@@ -952,7 +952,6 @@ function renderScene() {
 
   // Auto-save
   saveGame();
-  updateSaveIndicator();
 }
 
 function choose(idx) {
@@ -1041,7 +1040,6 @@ let originalGameHTML = '';
 document.addEventListener('DOMContentLoaded', () => {
   const statsBar = document.getElementById('stats-bar');
   if (statsBar) {
-    // Update stat display for new fields
     statsBar.innerHTML = `
       <div class="stat-pip">
         <div class="stat-pip-label">HP</div>
@@ -1061,16 +1059,9 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="stat-pip-val" id="stat-inv" style="font-size:0.55rem;font-family:'EB Garamond',serif;color:var(--text-dim);">Nothing</div>
       </div>`;
   }
-  
   originalGameHTML = document.getElementById('game-wrap').innerHTML;
-
-  // Check for save
-  if (hasSave()) {
-    const saveRow = document.getElementById('save-row');
-    if (saveRow) saveRow.style.display = 'flex';
-  } else {
-    startGame(false);
-  }
+  deleteSave();
+  startGame(false);
 });
 
 document.querySelector('.back-link').addEventListener('click',function(e){
@@ -1091,6 +1082,12 @@ let fr=0;(function loop(){requestAnimationFrame(loop);fr++;ctx.clearRect(0,0,can
 
 
 
+function navigate(url) {
+  const overlay = document.getElementById('overlay');
+  overlay.classList.add('active');
+  setTimeout(() => { window.location.href = url; }, 800);
+}
+
 // ══ GLOBAL WIDGETS ══
 
 
@@ -1268,10 +1265,6 @@ document.querySelectorAll('.qn-item').forEach(item => {
 });
 
 
-
-</script>
-</body>
-</html>
 
 </script>
 </body>
