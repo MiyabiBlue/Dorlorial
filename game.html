@@ -320,6 +320,15 @@ body.light-mode #quick-nav {
         <div class="stat-pip-val" id="stat-scene">1</div>
       </div>
     </div>
+    <!-- SAVE ROW -->
+    <div id="save-row" style="display:none;padding:10px 16px;background:rgba(200,149,42,0.04);border-bottom:1px solid rgba(200,149,42,0.1);display:flex;align-items:center;justify-content:space-between;gap:10px;">
+      <span style="font-family:'Cinzel',serif;font-size:0.5rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-dark);">Saved game found</span>
+      <div style="display:flex;gap:8px;">
+        <button onclick="loadGame();renderScene();" style="font-family:'Cinzel',serif;font-size:0.48rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);background:transparent;border:1px solid rgba(200,149,42,0.35);padding:6px 12px;cursor:pointer;">Continue</button>
+        <button onclick="newGame();" style="font-family:'Cinzel',serif;font-size:0.48rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);background:transparent;border:1px solid rgba(200,149,42,0.15);padding:6px 12px;cursor:pointer;">New Game</button>
+      </div>
+      <span id="save-indicator" style="font-family:'EB Garamond',serif;font-style:italic;font-size:0.78rem;color:#4be87a;opacity:0;transition:opacity 0.5s;"></span>
+    </div>
     <!-- SCENE -->
     <div class="scene-area">
       <div class="scene-location" id="scene-location">The Road to Sunbright</div>
@@ -331,471 +340,692 @@ body.light-mode #quick-nav {
 </main>
 <div class="transition-overlay" id="overlay"></div>
 <script>
-// ══ GAME STATE ══
-let state = { hp:10, maxHp:10, gold:5, favour:0, scene:0, log:[], inventory:[] };
+// ══════════════════════════════════════════════════════════
+// THE SHATTERED SEAL — A Dorlorial Text Adventure
+// A wholly original story set in the world of Dorlorial
+// Navigate the ruins of an ancient vault, make choices,
+// and discover what was sealed away long ago.
+// ══════════════════════════════════════════════════════════
 
-// ══ SCENES ══
-const SCENES = [
-  {
-    id: 'start',
-    location: 'The Road to Sunbright',
-    text: `The road ahead is wrong. It's too quiet — no carts, no merchants, no travellers heading toward the capital. A courier's satchel lies abandoned in the mud, contents scattered. Further ahead, smoke rises from the direction of <span class="em">Sunbright</span>.
-
-A figure steps from the treeline. He's young, barely trained, carrying a sword he doesn't know how to hold. He introduces himself as <span class="em">Braum</span>, apprentice to a courier named Edrin. His master went ahead three hours ago. He hasn't come back.`,
-    choices: [
-      { text:"Go ahead with Braum. Whatever happened to Edrin, he shouldn't face it alone.", next:'road_brave', effect:{favour:1}, tag:'good' },
-      { text:"Tell Braum to wait here. You'll scout ahead first.", next:'road_scout', effect:{}, tag:'' },
-      { text:"Check the satchel for information before doing anything.", next:'road_satchel', effect:{gold:2}, tag:'' },
-      { text:"The smoke means the city is in danger. Braum can find his own way.", next:'road_alone', effect:{favour:-1}, tag:'bad' },
-    ]
-  },
-  {
-    id: 'road_brave',
-    location: 'The Road to Sunbright',
-    text: `You and Braum move together through the treeline, keeping low. The road opens to a small clearing — and you find Edrin. He's alive, but pinned against a tree by soldiers in red and black. A knight stands over him, questions being asked in a tone that doesn't leave room for wrong answers.
-
-The knight's helm bears the <span class="em">Red Sun</span>. These are Karst's soldiers. They're already here.`,
-    choices: [
-      { text:"Step out and create a distraction — draw them away from Edrin.", next:'distraction', effect:{hp:-2}, tag:'' },
-      { text:"Wait and listen. Find out what they want before acting.", next:'listen_in', effect:{favour:1}, tag:'' },
-      { text:"Signal Braum to circle around back while you approach from the front.", next:'coordinated', effect:{gold:3, favour:1}, tag:'good' },
-    ]
-  },
-  {
-    id: 'road_scout',
-    location: 'The Treeline',
-    text: `You move quietly through the trees. The smoke is coming from a village just off the main road — three buildings, all abandoned in a hurry. Food still on the table. A dog tied to a post, confused but unharmed.
-
-Someone left in a hurry. On the village notice board: a proclamation. A new seal at the bottom. A sun with too many points.
-
-<span class="em">By order of Commander Karst, the road to Sunbright is now under Red Sun jurisdiction.</span>
-
-Dated this morning.`,
-    choices: [
-      { text:"Take the proclamation. Evidence matters.", next:'listen_in', effect:{}, tag:'' },
-      { text:"Burn it. Less evidence of what's coming.", next:'road_brave', effect:{favour:-1}, tag:'bad' },
-      { text:"Leave it. Go back for Braum and move carefully.", next:'road_brave', effect:{favour:1}, tag:'good' },
-    ]
-  },
-  {
-    id: 'road_satchel',
-    location: 'The Abandoned Road',
-    text: `Inside the satchel: letters, mostly. Official correspondence bound for Sunbright's council. You don't open them — but two have already been opened and resealed badly. Someone read these before abandoning them.
-
-At the bottom: a small purse of coin and a folded map with three locations circled. The circles are marked with a symbol you've seen before, carved into standing stones in the north. The Order of Shadows uses that mark.
-
-You pocket the coin. The map you study carefully before putting it back.`,
-    choices: [
-      { text:"Keep the map. It's too important to leave.", next:'road_brave', effect:{}, tag:'special' },
-      { text:"Leave everything and move on. You don't want to know what this means.", next:'road_alone', effect:{}, tag:'' },
-      { text:"Find Braum and show him. He might know what it means.", next:'listen_in', effect:{favour:1}, tag:'good' },
-    ]
-  },
-  {
-    id: 'distraction',
-    location: 'The Clearing',
-    text: `You walk out of the trees with false confidence. "Excuse me — which road is this to Westlo?" The soldiers turn. The knight's gaze takes you apart in three seconds and finds you wanting.
-
-<span class="threat">"Detain them."</span>
-
-You run. They follow. Edrin and Braum have a window — you hope they use it. The sword-hilt of the nearest soldier catches you across the shoulder as you clear the treeline.`,
-    choices: [
-      { text:"Lose them in the forest — you know trees better than they do.", next:'forest_escape', effect:{}, tag:'' },
-      { text:"Double back — lead them in a circle and lose them.", next:'listen_in', effect:{hp:-1}, tag:'' },
-    ]
-  },
-  {
-    id: 'listen_in',
-    location: 'Sunbright — The Gate',
-    text: `You reach Sunbright as the last gate is being controlled. The Red Sun soldiers are organised, quiet, and clearly briefed — this is not chaos, this is a plan unfolding. Karst's takeover was not sudden. It was scheduled.
-
-Inside the city, a man stands in the square addressing a gathered crowd. Calm voice. Measured words. He explains that Sunbright's council has been <span class="em">"relieved of administrative burden"</span> for their own safety. That order will be maintained. That nothing needs to change for those who cooperate.
-
-This is <span class="em">Karst</span>. You are looking at the person who just took a city without a battle.`,
-    choices: [
-      { text:"Get to the market district. Find Madame Elira — if she's still operating, she'll know what happened.", next:'find_elira', effect:{}, tag:'' },
-      { text:"Get to the docks. If there's a way out of the city, it's there.", next:'docks', effect:{}, tag:'' },
-      { text:"Stay and listen. Karst is still talking. Let him tell you everything.", next:'karst_speech', effect:{favour:2}, tag:'special' },
-    ]
-  },
-  {
-    id: 'coordinated',
-    location: 'The Clearing — Edrin Freed',
-    text: `The plan works. Braum's noise from the east draws two soldiers into the trees. You step out from the west the moment the knight's back is turned. Three seconds. Edrin is free, moving, moving fast for a man his age.
-
-Braum emerges scratched and grinning. Edrin clasps your arm. <span class="success">"I owe you something I can't repay today,"</span> he says. <span class="success">"But I'll remember."</span>
-
-The four of you reach Sunbright just as the gates change hands.`,
-    choices: [
-      { text:"Enter through the market gate — less watched than the main road.", next:'find_elira', effect:{gold:2}, tag:'good' },
-      { text:"Wait outside. Assess before entering.", next:'karst_speech', effect:{favour:1}, tag:'' },
-    ]
-  },
-  {
-    id: 'road_alone',
-    location: 'Sunbright — The Gate',
-    text: `You make good time without Braum slowing you. Sunbright's main gate is already controlled by soldiers in red and black. The guards on the wall are new faces. The old faces are gone.
-
-A city of twenty thousand taken overnight. You walk in with the morning crowd, anonymous in the press of confused civilians, and find yourself in the middle of something that has already happened.`,
-    choices: [
-      { text:"Find a tavern and listen. Information travels fast through ordinary people.", next:'docks', effect:{}, tag:'' },
-      { text:"Head straight for the market. If Karst needed to secure anything first, it was commerce.", next:'find_elira', effect:{}, tag:'' },
-    ]
-  },
-  {
-    id: 'forest_escape',
-    location: 'Oakford Treeline',
-    text: `You run until the sounds behind you stop, then keep running anyway. When you finally still yourself against a wide oak and count breaths, you're a mile from the road and deeply, thoroughly lost.
-
-Something moves in the trees nearby. Not soldiers. Too quiet for soldiers. A <span class="threat">Hollow Hound</span> — a thing from the Umbryll Abyss wearing a dog's shape badly — steps into your line of sight. It has no interest in the soldiers. It has interest in you specifically.`,
-    choices: [
-      { text:"Don't move. Hollow Hounds are drawn to motion and panic.", next:'hollow_hound_still', effect:{}, tag:'special' },
-      { text:"Throw your pack — create noise and movement away from you.", next:'hollow_hound_throw', effect:{gold:-2}, tag:'' },
-      { text:"Run again. Into the light — they can't follow into bright clearings.", next:'listen_in', effect:{hp:-3}, tag:'bad' },
-    ]
-  },
-  {
-    id: 'hollow_hound_still',
-    location: 'Oakford Treeline',
-    text: `You stop breathing for thirty seconds. The Hollow Hound circles once, twice, its not-quite-right eyes moving across you without registering. Then it moves on, whatever thread of interest that drew it here fraying and gone.
-
-You wait five more minutes before moving. Then you find the road again.
-
-<span class="success">You handled that better than most.</span>`,
-    choices: [
-      { text:"Head for Sunbright. You've wasted enough time.", next:'listen_in', effect:{favour:1}, tag:'good' },
-    ]
-  },
-  {
-    id: 'hollow_hound_throw',
-    location: 'Oakford Treeline',
-    text: `The pack hits a branch and crashes. The Hollow Hound snaps toward the noise — and you move perpendicular, quietly, quickly. It works. You've lost your rations and two days of coin but you're intact.
-
-The forest spits you out onto the road an hour later, muddy and lighter than you started.`,
-    choices: [
-      { text:"Head for Sunbright.", next:'listen_in', effect:{}, tag:'' },
-    ]
-  },
-  {
-    id: 'find_elira',
-    location: 'Sunbright — Market District',
-    text: `Madame Elira Vance's information broker operation is still open. The sign says <em>Cloth & Sundries</em> but everyone knows what it actually is. She is behind the counter, completely calm, which means she knew this was coming.
-
-<span class="em">"You're not the first person through that door today looking scared,"</span> she says. <span class="em">"Sit down. I'll tell you what I know. Then you'll owe me something."</span>
-
-She tells you about Cassian Dreadmoor, about the three crystals, about the airship at the north dock. She tells you that Braum, if you're wondering, is welcome to stay with her. She has work for boys with more courage than sense.
-
-<span class="success">You have learned the shape of the trap you're already in.</span>`,
-    choices: [
-      { text:"Accept Elira's terms. Knowledge is worth the debt.", next:'cassian_meeting', effect:{favour:2}, tag:'good' },
-      { text:"Thank her and leave. You don't take on debts you can't see the edges of.", next:'docks', effect:{}, tag:'' },
-    ]
-  },
-  {
-    id: 'karst_speech',
-    location: 'Sunbright — The Square',
-    text: `Karst speaks for twenty minutes. You listen to every word.
-
-He is not stupid. He is not emotional. He explains the new administration with the confidence of someone who has already decided the audience agrees. He acknowledges that <em>"some adjustments"</em> will be required. He names three council members who have <em>"willingly stepped aside."</em>
-
-Then he looks across the crowd, and for one moment his gaze lands on you — or seems to. You can't tell. His expression doesn't change.
-
-<span class="em">"Order,"</span> he says, <span class="em">"is not the absence of freedom. It is freedom's prerequisite."</span>
-
-He's wrong. But he believes it. That's more dangerous than lying.`,
-    choices: [
-      { text:"Find Cassian. If Karst is the vision, Cassian is the instrument.", next:'cassian_meeting', effect:{favour:1}, tag:'' },
-      { text:"Get out of the square before you're remembered.", next:'find_elira', effect:{}, tag:'' },
-    ]
-  },
-  {
-    id: 'docks',
-    location: 'Sunbright — North Docks',
-    text: `The north docks smell of aether and machine oil. An airship is moored — not military, technically, but the crew are armed and the cargo hold is sealed with an unusual lock. A man in black armour stands at the gangplank checking a list.
-
-<span class="em">Cassian Dreadmoor</span>. You've heard the name. Everyone in Kodral has, eventually.
-
-He looks up when you approach. Studies you for exactly three seconds. Then:
-<span class="em">"You're on the list. Funny. You don't look like you know what you've agreed to."</span>`,
-    choices: [
-      { text:"Play along. Find out what you supposedly agreed to.", next:'cassian_meeting', effect:{}, tag:'' },
-      { text:"Tell him you're not on any list and watch how he reacts.", next:'cassian_honest', effect:{favour:1}, tag:'special' },
-    ]
-  },
-  {
-    id: 'cassian_honest',
-    location: 'Sunbright — North Docks',
-    text: `Cassian's expression shifts — not warmth exactly, but something close to respect.
-
-<span class="em">"That's honest."</span> A pause. <span class="em">"Honesty is rarer than it used to be. All right. Here's what's true: Karst needs something done, I need people who can do it, and the list is more of a suggestion than a contract. You're interested or you're not."</span>
-
-He explains the three crystals. He doesn't explain why Karst needs them. He doesn't explain what happens if you decline. But the gap where that information should be is very loud.`,
-    choices: [
-      { text:"Agree. The why doesn't change the what.", next:'cassian_meeting', effect:{favour:1}, tag:'' },
-    ]
-  },
-  {
-    id: 'cassian_meeting',
-    location: 'The Airship — Before Departure',
-    text: `The briefing is short. Three crystals. One in Aetherwyn's vault. One with a merchant named Karga. One that Cassian himself doesn't know the location of, which he admits with exactly no embarrassment.
-
-The airship lifts as the sun goes down. Sunbright becomes a grid of lights below, the Red Sun banner visible on three towers.
-
-Somewhere in the cargo hold, something shifts. Not cargo. Something larger.
-
-Something that breathes.`,
-    choices: [
-      { text:"Investigate the hold immediately.", next:'dragon_discovery', effect:{}, tag:'special' },
-      { text:"Tell Cassian. This is his ship and his responsibility.", next:'cassian_dragon', effect:{favour:1}, tag:'' },
-      { text:"Say nothing. Not your problem until it is.", next:'dragon_late', effect:{hp:-3}, tag:'bad' },
-    ]
-  },
-  {
-    id: 'dragon_discovery',
-    location: 'The Airship — Cargo Hold',
-    text: `A <span class="em">dragon</span>. Chained, muzzled, deeply angry about all of this. Young — the size of a large horse — but large enough that the chains securing it are straining. One link, you notice, is almost through.
-
-It looks at you. You look at it. This is a Envy Drake — you recognise the iridescent scales, the intelligence behind the rage. It isn't mindless. It's calculating.
-
-It's calculating whether you're here to help or to guard it.`,
-    choices: [
-      { text:"Free it. A dragon loose on an airship is chaos, but a chained dragon is wrong.", next:'dragon_freed', effect:{favour:2, hp:-2}, tag:'special' },
-      { text:"Tell Cassian immediately.", next:'cassian_dragon', effect:{}, tag:'' },
-      { text:"Secure the failing chain. Buy time.", next:'cassian_dragon', effect:{}, tag:'' },
-    ]
-  },
-  {
-    id: 'dragon_freed',
-    location: 'The Airship — Chaos',
-    text: `The chain breaks with a sound like a cathedral bell. The Drake is loose in three seconds. The airship loses altitude in four. You're airborne for exactly another forty seconds before Dusk Harbor's fog appears below and the ship decides it would rather be on the ground.
-
-<span class="success">You hit the water. You survive.</span> Barely. The Drake is already gone — a green shadow ascending into cloud cover, free in a way it wasn't this morning.
-
-Cassian finds you on the dock, soaking wet, looking at the wreckage of his ship. <span class="em">"That,"</span> he says, <span class="em">"was either very brave or very stupid."</span> He hands you dry clothes and says nothing else about it.`,
-    choices: [
-      { text:"This is Dusk Harbor. Time to find work and regroup.", next:'dusk_harbor', effect:{favour:2}, tag:'good' },
-    ]
-  },
-  {
-    id: 'cassian_dragon',
-    location: 'The Airship — Controlled Crisis',
-    text: `Cassian's face when you tell him can only be described as <em>unsurprised</em>.
-
-<span class="em">"I told them one chain wouldn't hold a Drake. They told me it would be fine."</span> He's already moving toward the hold. <span class="em">"It is never fine."</span>
-
-Together you manage to keep the Drake contained for another two hours before the last chain gives. The crash into Dusk Harbor is controlled, mostly. You walk away from it. The ship does not.`,
-    choices: [
-      { text:"Welcome to Dusk Harbor.", next:'dusk_harbor', effect:{}, tag:'' },
-    ]
-  },
-  {
-    id: 'dragon_late',
-    location: 'The Airship — Too Late',
-    text: `The sound from the hold gets worse. Then very loud. Then the ship tilts thirty degrees and everything slides. The Drake is through the wall of the hold and into the main deck and this is now a falling situation.
-
-<span class="threat">The impact with Dusk Harbor's dock is significant.</span>`,
-    choices: [
-      { text:"Survive.", next:'dusk_harbor', effect:{}, tag:'' },
-    ]
-  },
-  {
-    id: 'dusk_harbor',
-    location: 'Dusk Harbor — The Fog Port',
-    text: `Dusk Harbor in fog. Which is always, in Dusk Harbor.
-
-The party is intact, mostly. The ship is not. Cassian's resources are tied up in salvage. He sets the group to work at <span class="em">The Hanging Lantern</span>, a tavern three docks down, to earn keep while he sorts out transport.
-
-The work is: serving drinks, hauling barrels, listening to sailors who have had too much of both. You are good at the last one. In two days of tavern work you learn:
-— Something is moving through the fog at night that isn't a ship
-— Three people have gone missing from the eastern docks in a week
-— Someone is asking after your party by description. Not by name. By description.
-
-On the third night, <span class="threat">Vash doesn't come back from an errand.</span>`,
-    choices: [
-      { text:"Search immediately. Every minute matters.", next:'rescue_attempt', effect:{favour:1}, tag:'good' },
-      { text:"Tell the others. This takes everyone.", next:'rescue_attempt', effect:{favour:2}, tag:'good' },
-      { text:"Wait until morning. Night in Dusk Harbor is its own threat.", next:'rescue_late', effect:{favour:-1}, tag:'bad' },
-    ]
-  },
-  {
-    id: 'rescue_attempt',
-    location: 'Dusk Harbor — The Eastern Docks',
-    text: `The trail leads to a warehouse at the edge of the water. Inside: ritual markings, the smell of something wrong, and Vash — upright, breathing, but looking at you with eyes that take too long to recognise you.
-
-You get him out. But something came out with you that you can't see, and Vash can.
-
-<span class="em">"Magnus,"</span> he says, very quietly. <span class="em">"His name is Magnus Vex."</span>
-
-He describes someone standing beside you. There's no one there.`,
-    choices: [
-      { text:"Focus. Vash is alive. The rest can be dealt with.", next:'ending', effect:{favour:2}, tag:'good' },
-    ]
-  },
-  {
-    id: 'rescue_late',
-    location: 'Dusk Harbor — Morning',
-    text: `Dawn finds the warehouse empty except for Vash, and Vash is changed. Something was taken. Something was left.
-
-He looks at you like he's trying to remember your face from a description rather than from a memory. <span class="threat">His sister's name is gone.</span> He had a sister. He knows he had a sister. The name is just not there.
-
-<span class="em">"Magnus,"</span> he says. <span class="em">"Someone named Magnus Vex was here."</span> He looks at the empty space beside you. <span class="em">"He's still here."</span>`,
-    choices: [
-      { text:"Head north. Whatever answers exist, they're in Aetherwyn.", next:'ending', effect:{}, tag:'' },
-    ]
-  },
-  {
-    id: 'ending',
-    location: 'The Road North — Toward Aetherwyn',
-    text: null, // signals game end
-    isEnding: true
-  }
-];
-
-// ══ GAME ENGINE ══
-const sceneMap = {};
-SCENES.forEach(s => sceneMap[s.id] = s);
-
-function getScene(id) { return sceneMap[id]; }
-
-function startGame() {
-  state = {hp:10, maxHp:10, gold:5, favour:0, scene:0, log:[], inventory:[]};
-  showScene(SCENES[0]);
+// ── SAVE SYSTEM ──
+function saveGame() {
+  try {
+    localStorage.setItem('dorlorial-game', JSON.stringify({
+      state: gameState,
+      sceneId: currentSceneId,
+      ts: Date.now()
+    }));
+    return true;
+  } catch(e) { return false; }
 }
 
-function showScene(scene) {
+function loadGame() {
+  try {
+    const saved = localStorage.getItem('dorlorial-game');
+    if (!saved) return false;
+    const data = JSON.parse(saved);
+    gameState = data.state;
+    currentSceneId = data.sceneId;
+    return true;
+  } catch(e) { return false; }
+}
+
+function hasSave() {
+  return !!localStorage.getItem('dorlorial-game');
+}
+
+function deleteSave() {
+  localStorage.removeItem('dorlorial-game');
+}
+
+// ── GAME STATE ──
+let gameState = {
+  hp: 12, maxHp: 12,
+  lantern: true,
+  gold: 3,
+  items: [],        // collected items
+  flags: {},       // story flags
+  score: 0,
+  moves: 0,
+};
+let currentSceneId = 'intro';
+
+// ── SCENE DEFINITIONS ──
+// Each scene: id, location, text (can use [item] for item names),
+// choices: array of { text, next, requires?, gives?, takes?, hp?, score?, flag? }
+const SCENES = {
+
+  intro: {
+    loc: 'Outskirts of Aetherwyn',
+    text: `You've been following the rumours for three weeks: somewhere beneath the roots of Aetherwyn, deeper than the city itself, an ancient vault was sealed during the first age. Not hidden — sealed. There's a difference. Things are hidden when they're valuable. Things are sealed when they're dangerous.
+
+The tunnel mouth is narrow, half-collapsed, marked with a warning in a script so old no living scholar can read more than fragments. You've been hired to reach what's inside and bring back proof of its existence. You weren't told what "it" was.
+
+Your lantern flickers. The darkness below is absolute.`,
+    choices: [
+      { text: 'Descend carefully, testing each step.', next: 'upper_passage', score: 1 },
+      { text: 'Check the inscription one more time before entering.', next: 'inscription_read', score: 2 },
+      { text: 'Toss a pebble in to judge the depth.', next: 'pebble_toss', score: 0 },
+    ]
+  },
+
+  inscription_read: {
+    loc: 'Tunnel Entrance',
+    text: `You study the carved symbols. Most are beyond you — but you recognise three: a character meaning "sleep," one meaning "before the gods," and one you've only seen in texts about the Void: the symbol for "door."
+
+A door before the gods. Something was here before Nyxus, Solaris, Lumina — before the creator trio shaped the world. That isn't possible according to anything you were taught.
+
+But here it is, carved in stone.`,
+    choices: [
+      { text: 'Descend. If you run from every mystery you can't explain, you'll never work again.', next: 'upper_passage', score: 2, flag: 'read_inscription' },
+      { text: 'Copy the inscription carefully before going in.', next: 'upper_passage', gives: 'Inscription Rubbing', score: 3, flag: 'read_inscription' },
+    ]
+  },
+
+  pebble_toss: {
+    loc: 'Tunnel Entrance',
+    text: `You toss the pebble. It falls for two full seconds before you hear it land.
+
+Then, after a pause, something moves down there. Not the pebble — the pebble landed. Something else.
+
+Something reacting to the pebble.`,
+    choices: [
+      { text: 'Go in anyway. You knew it wouldn't be empty.', next: 'upper_passage', score: 0 },
+      { text: 'Go in carefully, hand on your weapon.', next: 'upper_passage', score: 1 },
+    ]
+  },
+
+  upper_passage: {
+    loc: 'The Upper Passage',
+    text: `The tunnel opens wider after thirty feet. Roots of Aetherwyn's great tree press through the ceiling, creating a low vault of living wood. In the amber light of your lantern the roots look almost architectural — ordered, deliberate.
+
+Three passages branch from this chamber. Left: cold air, smell of stone. Centre: perfectly silent. Right: a faint smell of smoke, recent.
+
+On the floor: footprints in dust. Someone was here within a week.`,
+    choices: [
+      { text: 'Take the left passage — cold air means it connects to deeper chambers.', next: 'left_passage', score: 1 },
+      { text: 'Take the centre passage — silence is unusual underground.', next: 'centre_passage', score: 2 },
+      { text: 'Follow the footprints into the right passage.', next: 'right_passage', score: 1 },
+      { text: 'Examine the footprints more carefully first.', next: 'footprint_study', score: 2 },
+    ]
+  },
+
+  footprint_study: {
+    loc: 'The Upper Passage',
+    text: `Two sets of feet. One heavier — boots with a distinctive heel-nail pattern used by Red Sun Legionnaires. One lighter, barefoot. The barefoot prints come from deeper in the tunnel and stop here. The booted prints go back out.
+
+The barefoot prints are too regular. Too even. No variation in pressure. Whoever or whatever made them was not walking naturally.`,
+    choices: [
+      { text: 'The Red Sun beat you here. Follow right to find out what they found.', next: 'right_passage', score: 2, flag: 'knows_redsun' },
+      { text: 'The barefoot thing came from below. Go to the centre passage.', next: 'centre_passage', score: 3, flag: 'knows_redsun' },
+    ]
+  },
+
+  left_passage: {
+    loc: 'The Cold Gallery',
+    text: `The cold intensifies as the passage opens into a long gallery. Alcoves line both walls, each containing a figure in crystallised ice. Twenty at least. They are perfectly preserved — clothing, expression, the exact position of their hands.
+
+They are smiling. All of them. Without exception. With the specific, eerie quality of someone who has just been told the most wonderful news they've ever received.
+
+At the far end of the gallery: a door of black stone, sealed with aetheric crystals that pulse faintly blue. Beside the door: a carved face — a serene expression, eyes closed, crowned with what looks like broken hourglass shards.
+
+Vethkarn. This is one of his.`,
+    choices: [
+      { text: 'Study the frozen figures — they might tell you something.', next: 'frozen_study', score: 2 },
+      { text: 'Approach the sealed door directly.', next: 'vethkarn_door', score: 1 },
+      { text: 'Something about this is deeply wrong. Go back to the junction.', next: 'upper_passage', score: 0 },
+    ]
+  },
+
+  frozen_study: {
+    loc: 'The Cold Gallery',
+    text: `You examine the nearest figure. A woman, mid-thirties, in merchant's clothes from a style at least four hundred years old. Her expression is rapturous — the expression of someone experiencing the best moment of their life.
+
+Between her frozen fingers: a small token. You have to chip it free carefully. A child's clay figure, badly made, clearly treasured.
+
+The inscription on the base: <em>for mum, from Tal.</em>
+
+Vethkarn preserved her at the moment she was given this. Her best moment. He didn't save her from death — she would have died anyway, eventually. He stopped her before the moment passed.
+
+You're not sure if this is kindness or something else entirely.`,
+    choices: [
+      { text: 'Take the token as evidence — people should know this place exists.', next: 'vethkarn_door', gives: 'Clay Token', score: 3 },
+      { text: 'Leave it. She should keep it. Approach the door.', next: 'vethkarn_door', score: 4 },
+    ]
+  },
+
+  vethkarn_door: {
+    loc: 'The Cold Gallery — Sealed Door',
+    text: `The crystals sealing the door react to your approach. They don't attack — they <em>pulse</em>, faster, like a heartbeat that's noticed you.
+
+The carved face beside the door is joined by text, scratched in — not carved professionally, scratched in urgency — in the common script:
+
+<em>"What lies below must not walk. Not because it is evil. Because it loves too much to let anything end. We sealed it with sorrow. Vethkarn agreed."</em>
+
+Vethkarn agreed to seal something. A god agreed to seal something, and signed the work.`,
+    choices: [
+      { text: 'You have what you came for — evidence. Go back up.', next: 'exit_attempt', score: 3, flag: 'found_vethkarn_door' },
+      { text: 'Try to open the door. You need to see what's inside.', next: 'door_open_attempt', score: 1, flag: 'found_vethkarn_door' },
+      { text: 'Examine whether the seal can be restrengthened from outside.', next: 'seal_study', score: 5, flag: 'found_vethkarn_door' },
+    ]
+  },
+
+  seal_study: {
+    loc: 'The Cold Gallery — Sealed Door',
+    text: `The crystals are weakening. Not catastrophically — but measurably. You press your hand against one and feel the pulse, the irregular stutter of something that has been maintaining itself for centuries without aid.
+
+This vault was built to last ten thousand years. It's been perhaps twelve thousand. The crystals are running on borrowed time.
+
+You can't recharge them — you don't have the capability. But you can mark them. Document the decay rate. Give this information to someone who can act on it.`,
+    choices: [
+      { text: 'Document carefully and get out. This is information that needs to reach the right people.', next: 'exit_attempt', gives: 'Crystal Assessment', score: 8, flag: 'seal_documented' },
+    ]
+  },
+
+  door_open_attempt: {
+    loc: 'The Cold Gallery — Sealed Door',
+    text: `You touch the central crystal. It shatters.
+
+The cold that pours out is not temperature. It is something else — the cold of absolute stillness, of a moment that has been held so long it's forgotten how to move.
+
+Behind the door: not a creature, not a monster. A memory. A vast, ancient, utterly patient thing that is made of the grief of ten thousand years of refusing to let things end.
+
+It looks at you. You feel your most precious memory begin to slow.
+
+Your hands on your mother's shoulders. The last time you saw her laugh. You feel it crystallising.`,
+    choices: [
+      { text: 'MOVE. Break free. Run.', next: 'escape_thing', hp: -4, score: 0 },
+      { text: 'Don't resist. Let the memory freeze. Stay in it.', next: 'frozen_end', hp: -8, score: 0 },
+    ]
+  },
+
+  escape_thing: {
+    loc: 'The Upper Passage — Running',
+    text: `You run. The cold follows for thirty feet then stops — the thing cannot leave the chamber, the weakened seal still has some hold.
+
+You collapse against the root-ceiling wall. The memory is half-frozen — you can feel it, preserved mid-motion, your mother's laugh caught like amber. It's not gone. But it's not fully yours anymore.
+
+You have what you came for and more than you bargained for. The tunnel mouth is above.`,
+    choices: [
+      { text: 'Get out. Get out now.', next: 'exit_attempt', score: 1, flag: 'touched_the_thing' },
+    ]
+  },
+
+  frozen_end: {
+    loc: 'The Cold Gallery',
+    text: `You stay.
+
+The memory is so vivid. Your mother's laugh. Her hands. The smell of the kitchen. You were so young. You didn't know it would be the last time.
+
+The cold holds you here. In the best moment. Forever.
+
+You never leave the vault.
+
+Neither do you want to.`,
+    isEnding: true,
+    endTitle: 'Preserved',
+    endDesc: 'You were kept in the best moment you ever had. Vethkarn was gentle. He always was.',
+    endGrade: 'C'
+  },
+
+  centre_passage: {
+    loc: 'The Silent Chamber',
+    text: `The silence has a quality you can feel on your skin. Not the absence of sound — the active suppression of it. You test it by speaking. Your voice dies two feet from your mouth, swallowed entirely.
+
+In the centre of the chamber: an altar of sorts. Not a worship altar — a working surface. An aetheric laboratory, centuries abandoned. Tools you don't recognise. Materials you can't name.
+
+On the surface: a journal, perfectly preserved under a glass dome.`,
+    choices: [
+      { text: 'Open the dome and read the journal.', next: 'journal_read', score: 3 },
+      { text: 'Study the tools before touching anything.', next: 'tool_study', score: 2 },
+      { text: 'The silence unsettles you. Take the journal and go.', next: 'journal_read', gives: 'Sealed Journal', score: 1 },
+    ]
+  },
+
+  tool_study: {
+    loc: 'The Silent Chamber',
+    text: `The tools were made for working with aetheric energy at scales you've never encountered. You recognise the basic principles — crystal focus, energy channeling — but these instruments were designed for something enormous.
+
+On one tool: dried residue of something dark, crystalline, not natural. You chip a fragment off carefully.
+
+The silence breaks for one second. From somewhere very deep: a pulse. Like a heartbeat. Like something that's been asleep for a very long time turned over in its sleep.`,
+    choices: [
+      { text: 'Take the fragment. Knowledge requires samples.', next: 'journal_read', gives: 'Dark Crystal Fragment', score: 3, flag: 'woke_it_slightly' },
+      { text: 'Put it down. You don't want whatever you just disturbed to wake further.', next: 'journal_read', score: 4 },
+    ]
+  },
+
+  journal_read: {
+    loc: 'The Silent Chamber',
+    text: `The journal was written by someone called Maerath — no family name, no title. The final entry:
+
+<em>"The thing below the Vault is not hostile. We made that mistake in the third expedition and lost eleven people trying to fight it. It doesn't want to fight. It wants to give. It wants to give you back whatever you've lost. It reaches into your mind and finds the absence left by the thing you loved most and it fills it. With a copy. A perfect copy of whatever is missing, preserved forever in crystal.
+
+This is why it must be sealed. Not because it's evil. Because it's exactly kind enough to destroy everything."
+
+</em>The journal ends there.`,
+    choices: [
+      { text: 'This is what you came for. Document everything and find the exit.', next: 'find_exit', score: 5, flag: 'read_journal' },
+      { text: 'You want to see this thing. Go deeper.', next: 'deep_passage', score: 1, flag: 'read_journal' },
+      { text: 'Reseal the dome. This journal should stay here.', next: 'find_exit', score: 4, flag: 'read_journal' },
+    ]
+  },
+
+  deep_passage: {
+    loc: 'The Deep Vault',
+    text: `Below the laboratory: a natural cavern, vast, older than the construction above it. The ceiling is lost in darkness. The floor is warm.
+
+In the centre: a form of light that doesn't illuminate. A shape that the eye slides off. You cannot look directly at it but you can see it in your peripheral vision.
+
+It's looking at you. It reaches toward you — not physically, mentally — and you feel it find what you're missing.
+
+You lost someone. Recently or long ago, it doesn't matter. The absence is there. The thing finds it like a key finding a lock.
+
+It offers to fill it.`,
+    choices: [
+      { text: 'Refuse. The copy isn't the real thing. A frozen moment isn't a life.', next: 'refused_gift', score: 6, flag: 'refused_gift' },
+      { text: 'Accept. The absence has been there so long. Just for a moment.', next: 'accepted_gift', hp: -3, score: 0 },
+    ]
+  },
+
+  refused_gift: {
+    loc: 'The Deep Vault',
+    text: `You refuse.
+
+The thing is still for a long moment. Then something shifts in it — not anger, something more like recognition. As though refusing is new, and interesting, and it wants to understand why.
+
+You back away slowly. It doesn't follow. You are the first person in twelve thousand years to say no to it and leave.
+
+You climb out of the vault with something you didn't have when you went in: the certainty that some absences are meant to stay absent. That the ache of loss is not an error to be corrected.
+
+You are not sure if this is wisdom or just the particular kind of peace that comes from surviving something.`,
+    choices: [
+      { text: 'Find the exit. You have everything you came for and more.', next: 'exit_attempt', score: 8, flag: 'full_knowledge' },
+    ]
+  },
+
+  accepted_gift: {
+    loc: 'The Deep Vault',
+    text: `You accept.
+
+For exactly three seconds you have them back — whoever it was, whatever was lost. The detail is perfect. The smell. The particular quality of their voice saying your name.
+
+Then the three seconds end and you understand what preserved means. The copy sits in your mind, crystalline, motionless. A perfect moment frozen before it could become a next moment.
+
+You find the exit. You carry the copy with you. It will be there when you look for it, always exactly the same, never answering, never changing, never growing.
+
+Perfect. Static. Yours forever.`,
+    choices: [
+      { text: 'Leave. You don't know yet if you made the right choice.', next: 'exit_attempt', score: 1, flag: 'accepted_gift' },
+    ]
+  },
+
+  right_passage: {
+    loc: 'The Campsite Passage',
+    text: `Recent. A week at most. Someone set up a working camp here — bedroll, small fire circle, careful organisation. Red Sun issue equipment, good quality. The soldier who was here was methodical.
+
+They left two things behind deliberately: a folded order scroll and a small compass.
+
+The order scroll reads: <em>"Locate and retrieve the Anchor. Do not engage the Vault entity. Do not open sealed doors. Confirm location and return."</em>
+
+Signed: Cassian Dreadmoor.
+
+The compass is pointing in a direction that doesn't correspond to north.`,
+    choices: [
+      { text: 'Take the compass — it's pointing at something specific.', next: 'compass_follow', gives: 'Directional Compass', score: 3, flag: 'knows_cassian_mission' },
+      { text: 'Read "The Anchor" — you've heard that phrase before. Go to the centre passage.', next: 'centre_passage', score: 4, flag: 'knows_cassian_mission' },
+      { text: 'Karst's people were here. That makes this more dangerous and more valuable. Be careful.', next: 'upper_passage', score: 2, flag: 'knows_cassian_mission' },
+    ]
+  },
+
+  compass_follow: {
+    loc: 'The Compass Room',
+    text: `The compass leads you to a small chamber off the left passage — not the Cold Gallery, a side room. In the centre: a plinth.
+
+On the plinth: a fragment of crystal unlike anything above. It hums at a frequency you feel in your back teeth. It is neither cold nor warm. It is somehow <em>present</em> in a way that other objects aren't — as though it is paying attention.
+
+This is what Cassian was looking for. This is what Karst wants.
+
+On the wall behind it: carved text. <em>"The Anchor holds the seal. Remove it and the Vault opens. It cannot be replicated. It cannot be replaced. This was made in the first age and there is only one."</em>`,
+    choices: [
+      { text: 'Take the Anchor. You were hired to find and retrieve — this is what you're here for.', next: 'take_anchor', gives: 'The Anchor', score: 0, flag: 'took_anchor' },
+      { text: 'Don't touch it. You know what the seal is keeping in.', next: 'leave_anchor', score: 6, flag: 'refused_anchor' },
+      { text: 'Document it, leave it, and get out. Someone needs to know this exists.', next: 'exit_attempt', gives: 'Anchor Documentation', score: 7, flag: 'refused_anchor' },
+    ]
+  },
+
+  take_anchor: {
+    loc: 'The Compass Room',
+    text: `You take the Anchor.
+
+For ten seconds nothing happens.
+
+Then, from very deep below: a sound. Not a collapse — a sigh. The sound of something that has been waiting for a very long time and has just been told the wait is over.
+
+The temperature in the chamber drops by fifteen degrees in a single breath.
+
+You need to leave. Now. Before the seals fail completely.`,
+    choices: [
+      { text: 'RUN.', next: 'anchor_escape', hp: -3, score: 0 },
+    ]
+  },
+
+  anchor_escape: {
+    loc: 'The Upper Passage — Fleeing',
+    text: `You run. The cold follows faster than you thought possible. You lose the lantern somewhere in the upper passage — it doesn't matter, something behind you has begun to <em>illuminate</em> in a way that has nothing to do with light.
+
+You reach the tunnel entrance. You throw yourself out into daylight.
+
+Behind you, the entrance collapses. Stone and root fill the opening in seconds — an automatic response, some mechanism the builders installed exactly for this contingency.
+
+You're alive. You have the Anchor. Karst will pay very well for it.
+
+You are not thinking about what the Anchor was anchoring.`,
+    choices: [
+      { text: 'Deliver the Anchor as contracted. The consequences aren't your problem.', next: 'bad_ending', score: 0 },
+      { text: 'Deliver the documentation instead. Tell them the Anchor is unrecoverable.', next: 'good_ending_anchor', score: 4, takes: 'The Anchor', gives: 'False Report' },
+      { text: 'Keep the Anchor hidden. Don't deliver anything. Figure out what to do.', next: 'good_ending_anchor', score: 6, flag: 'kept_anchor' },
+    ]
+  },
+
+  leave_anchor: {
+    loc: 'The Compass Room',
+    text: `You don't touch it. You back away carefully.
+
+The Anchor hums. It doesn't react to your withdrawal — it remains where it is, patient, unaware or unconcerned. Twelve thousand years of anchor. Another day is nothing.
+
+You were sent here to find it and bring it back. You found it. You're not going to bring it back.
+
+You're going to have to explain that to whoever hired you.`,
+    choices: [
+      { text: 'Find the exit and deal with the professional consequences.', next: 'exit_attempt', score: 8 },
+    ]
+  },
+
+  find_exit: {
+    loc: 'The Upper Passage',
+    text: `You navigate back through the passages. The root-ceiling chamber is calm, the three tunnel mouths exactly as you left them. The footprints in the dust point you toward the surface.
+
+You stop for a moment in the junction and take stock of what you know:
+
+Something ancient — predating the gods — is sealed beneath Aetherwyn. The seal is twelve thousand years old and weakening. Karst's people were here looking for the Anchor that holds the seal. You know where the Anchor is.
+
+What you do with this knowledge will matter.`,
+    choices: [
+      { text: 'Get out. Report to whoever hired you. Let the powerful people deal with powerful problems.', next: 'exit_attempt', score: 2 },
+      { text: 'Get out, but report to the Order of Shadows — not Karst. They should know the seal is weakening.', next: 'good_ending', score: 7, flag: 'notified_order' },
+      { text: 'Get out. Tell no one. Some information is too dangerous to share.', next: 'exit_attempt', score: 3 },
+    ]
+  },
+
+  exit_attempt: {
+    loc: 'Tunnel Mouth — Exit',
+    text: `Daylight. You pull yourself out of the tunnel mouth and sit in it for a long moment, not moving.
+
+Below you: something ancient and patient and impossibly kind, sealed in crystal twelve thousand years ago because kindness of that magnitude would end the world.
+
+Above you: a sky. A regular sky. Birds.
+
+You have a job to complete and a choice about how to complete it.`,
+    choices: [
+      { text: 'Report to your employer with everything you found.', next: 'report_all', score: 2 },
+      { text: 'Report to your employer with partial information — leave the Anchor's location out.', next: 'good_ending', score: 5 },
+      { text: 'Report to the Order of Shadows instead. They need to strengthen that seal.', next: 'best_ending', score: 9, flag: 'notified_order' },
+    ]
+  },
+
+  report_all: {
+    loc: 'The Surface',
+    text: `Your employer is pleased. Exceptionally so. You are paid triple the agreed rate without negotiation.
+
+Six weeks later, you hear a rumour: a Red Sun expedition to the vault below Aetherwyn. They're looking for something specific.
+
+You were thorough. You were professional. You gave them everything they needed.`,
+    isEnding: true,
+    endTitle: 'Thorough',
+    endDesc: 'You did the job as contracted. The consequences will unfold without you. That's not your fault. Probably.',
+    endGrade: 'C'
+  },
+
+  good_ending: {
+    loc: 'The Surface',
+    text: `It takes three weeks to reach the right ear. A scholar who knows a contact who knows someone in the Order of Shadows — the same order that helped seal the vault in the first age.
+
+They are very quiet about receiving your report. Very still. Then very busy.
+
+You don't know what they do with the information. But six months later, passing through the market in Ionsgate, you feel it: the faintest pulse of aetheric energy from somewhere very far below. Something being reinforced.
+
+The seal is holding. For now.`,
+    isEnding: true,
+    endTitle: 'The Seal Holds',
+    endDesc: 'You got the information to the people who could use it. The world doesn't know what you did. That's fine. It's still better.',
+    endGrade: 'A'
+  },
+
+  good_ending_anchor: {
+    loc: 'The Surface',
+    text: `Your employer is displeased. You do not care.
+
+The Anchor remains below Aetherwyn — either in your possession, carefully hidden, or in its original chamber where it belongs. Either way, Karst's agents will not find it.
+
+You find a different employer. Work continues. Below the city, something patient and impossibly kind waits in its crystal prison, tended by seals that are holding, for now, for a little while longer.`,
+    isEnding: true,
+    endTitle: 'The Right Choice',
+    endDesc: 'You didn't do the job you were hired to do. You did the right one. These are not always the same.',
+    endGrade: 'A'
+  },
+
+  best_ending: {
+    loc: 'The Surface — Three Months Later',
+    text: `The Order of Shadows works quietly. Within two months of your report, the vault entrance has been properly sealed from above, the inscription restored, new warning markers placed in seven languages.
+
+A scholar from the Order visits you. She thanks you. She tells you the crystals will hold for another four thousand years at least.
+
+She also tells you that the thing below has a name — not one humans gave it. A name it always had. She writes it on a piece of paper and shows it to you.
+
+You never tell anyone what it says. But you think about it often.
+
+Some things are better sealed. Not because they're evil. Because they love too much to let anything end.`,
+    isEnding: true,
+    endTitle: 'Sealed Again',
+    endDesc: 'You found the ancient, the dangerous, and the kind — and you helped keep the world safe from all three. That's the work.',
+    endGrade: 'S'
+  },
+
+  bad_ending: {
+    loc: 'The Surface — Two Weeks Later',
+    text: `Karst has the Anchor. It takes him eight days to deploy a team to the vault.
+
+You don't hear what they find. What you hear, eventually, three months later, is that something is wrong beneath Aetherwyn. A cold that doesn't come from weather. People waking with memories that feel preserved, crystalline, frozen at the moment of greatest joy.
+
+The thing below is patient. It is not in a hurry. It will fill every absence it can find, one at a time, forever.
+
+You were paid very well.`,
+    isEnding: true,
+    endTitle: 'The Seal Breaks',
+    endDesc: 'The work pays. The consequences compound. Somewhere below a city, something ancient and kind begins to spread.',
+    endGrade: 'D'
+  },
+};
+
+// ── ENGINE ──
+function getScene(id) { return SCENES[id]; }
+
+function startGame(fromSave) {
+  if (!fromSave) {
+    gameState = {hp:12,maxHp:12,lantern:true,gold:3,items:[],flags:{},score:0,moves:0};
+    currentSceneId = 'intro';
+  }
+  renderScene();
+}
+
+function renderScene() {
+  const scene = getScene(currentSceneId);
   if (!scene) return;
-  if (scene.isEnding) { showEnding(); return; }
 
-  document.getElementById('scene-location').textContent = scene.location;
+  if (scene.isEnding) { showEnding(scene); return; }
+
+  document.getElementById('scene-location').textContent = scene.loc;
   document.getElementById('scene-text').innerHTML = scene.text;
-  document.getElementById('stat-scene').textContent = state.scene + 1;
+  document.getElementById('stat-scene').textContent = gameState.moves + 1;
+  document.getElementById('stat-hp').textContent = gameState.hp;
+  document.getElementById('stat-score').textContent = gameState.score;
 
-  const choicesEl = document.getElementById('choices');
-  choicesEl.innerHTML = scene.choices.map((c,i) => `
-    <button class="choice ${c.tag||''}" onclick="choose(${i})">
-      <span class="choice-key">${String.fromCharCode(65+i)}</span>
+  // Build inventory display
+  const inv = gameState.items.length ? gameState.items.join(' · ') : 'Nothing';
+  document.getElementById('stat-inv').textContent = inv;
+
+  // HP bar
+  const pct = (gameState.hp / gameState.maxHp) * 100;
+  const bar = document.getElementById('hp-bar');
+  bar.style.width = pct + '%';
+  bar.className = 'hp-bar ' + (pct > 60 ? 'safe' : pct > 30 ? 'warn' : '');
+
+  // Filter choices by requirements
+  const available = scene.choices.filter(c => {
+    if (!c.requires) return true;
+    return c.requires.every(r => gameState.items.includes(r) || gameState.flags[r]);
+  });
+
+  const letters = ['A','B','C','D','E','F'];
+  document.getElementById('choices').innerHTML = available.map((c,i) => `
+    <button class="choice" onclick="choose(${i})">
+      <span class="choice-key">${letters[i]}</span>
       <span class="choice-text">${c.text}</span>
     </button>`).join('');
 
-  updateStats();
+  // Add log entry
+  addLog(scene.loc);
+
+  // Auto-save
+  saveGame();
+  updateSaveIndicator();
 }
 
 function choose(idx) {
-  const scene = SCENES.find(s => s.id === getCurrentSceneId());
+  const scene = getScene(currentSceneId);
   if (!scene) return;
-  const choice = scene.choices[idx];
+  const available = scene.choices.filter(c => !c.requires || c.requires.every(r => gameState.items.includes(r) || gameState.flags[r]));
+  const choice = available[idx];
+  if (!choice) return;
 
   // Apply effects
-  const eff = choice.effect || {};
-  if (eff.hp) { state.hp = Math.max(0, Math.min(state.maxHp, state.hp + eff.hp)); }
-  if (eff.gold !== undefined) { state.gold = Math.max(0, state.gold + eff.gold); }
-  if (eff.favour !== undefined) { state.favour += eff.favour; }
+  if (choice.hp) gameState.hp = Math.max(0, Math.min(gameState.maxHp, gameState.hp + choice.hp));
+  if (choice.score) gameState.score += choice.score;
+  if (choice.gives) { if (!gameState.items.includes(choice.gives)) gameState.items.push(choice.gives); }
+  if (choice.takes) gameState.items = gameState.items.filter(i => i !== choice.takes);
+  if (choice.flag) gameState.flags[choice.flag] = true;
+  gameState.moves++;
 
-  // Log
-  const logEntry = {text: choice.text, type: eff.hp < 0 ? 'bad' : eff.favour > 0 ? 'good' : ''};
-  state.log.unshift(logEntry);
-  if (state.log.length > 6) state.log = state.log.slice(0,6);
-
-  state.scene++;
-  updateLog();
-
-  // Check death
-  if (state.hp <= 0) { showDeath(); return; }
-
-  const next = getScene(choice.next);
-  if (next) showScene(next);
+  if (gameState.hp <= 0) { showDeath(); return; }
+  currentSceneId = choice.next;
+  renderScene();
 }
 
-function getCurrentSceneId() {
-  // Find current scene by elimination — track via scene text
-  const textEl = document.getElementById('scene-text');
-  for (const s of SCENES) {
-    if (s.text && textEl.innerHTML.includes(s.text.substring(10,40).replace(/<[^>]+>/g,''))) return s.id;
-  }
-  return 'start';
-}
-
-function updateStats() {
-  document.getElementById('stat-hp').textContent = state.hp;
-  document.getElementById('stat-gold').textContent = state.gold;
-  document.getElementById('stat-favour').textContent = state.favour > 0 ? '+'+state.favour : state.favour;
-  const hpPct = (state.hp / state.maxHp) * 100;
-  const bar = document.getElementById('hp-bar');
-  bar.style.width = hpPct + '%';
-  bar.className = 'hp-bar ' + (hpPct > 60 ? 'safe' : hpPct > 30 ? 'warn' : '');
-}
-
-function updateLog() {
-  const log = document.getElementById('log');
-  log.innerHTML = state.log.map(e => `<div class="log-entry ${e.type}"><span class="log-sep">›</span>${e.text.substring(0,80)}${e.text.length>80?'...':''}</div>`).join('');
-}
-
-function showEnding() {
-  const grade = state.favour >= 5 ? 'Honoured' : state.favour >= 2 ? 'Trusted' : state.favour >= 0 ? 'Unknown' : 'Distrusted';
-  const icons = {Honoured:'⭐',Trusted:'🌟',Unknown:'◉',Distrusted:'🌑'};
-  document.getElementById('choices').innerHTML = '';
-  document.getElementById('scene-text').innerHTML = '';
-  document.getElementById('scene-location').textContent = 'Journey Complete';
+function showEnding(scene) {
+  const grades = {S:'⭐⭐⭐',A:'⭐⭐',B:'⭐','C':'◎',D:'◇'};
   document.getElementById('game-wrap').innerHTML = `
     <div class="game-over">
-      <span class="go-icon">${icons[grade]}</span>
-      <div class="go-title">The Road to Aetherwyn</div>
-      <div class="go-desc">You survived Sunbright's fall, an airship crash, and the docks of Dusk Harbor. Vash is changed. The party is intact. The first crystal waits somewhere in the deep city, and Magnus Vex is in Vash's head, and the three crystals Karst needs may be the least of your problems.<br><br>The world is larger than it was when you started.</div>
-      <div class="go-score">Standing: ${grade} &nbsp;·&nbsp; Favour: ${state.favour > 0 ? '+' : ''}${state.favour} &nbsp;·&nbsp; Gold: ${state.gold} &nbsp;·&nbsp; HP: ${state.hp}/${state.maxHp}</div>
-      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-        <button class="btn-gold" onclick="startGame()">Play Again</button>
-        <a href="campaigns.html" class="btn-gold" style="text-decoration:none;">Read the Full Campaign →</a>
+      <span class="go-icon">${grades[scene.endGrade]||'◉'}</span>
+      <div class="go-title">${scene.endTitle}</div>
+      <div class="go-desc">${scene.endDesc}</div>
+      <div class="go-score">
+        Grade: ${scene.endGrade} &nbsp;·&nbsp; Score: ${gameState.score}
+        &nbsp;·&nbsp; Moves: ${gameState.moves}
+        ${gameState.items.length ? '&nbsp;·&nbsp; Carried: '+gameState.items.join(', ') : ''}
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:16px;">
+        <button class="btn-gold" onclick="newGame()">Play Again</button>
+        ${scene.endGrade==='D'||scene.endGrade==='C' ? '<button class="btn-gold" style="border-color:rgba(200,149,42,0.25);color:var(--text-dim);" onclick="newGame()">Try for a better ending</button>' : ''}
       </div>
     </div>`;
+  deleteSave();
 }
 
 function showDeath() {
   document.getElementById('game-wrap').innerHTML = `
     <div class="game-over">
       <span class="go-icon">💀</span>
-      <div class="go-title">Fallen</div>
-      <div class="go-desc">Dorlorial is unforgiving. The road to Aetherwyn remains unwalked, the crystals unfound. Whatever Karst needed them for continues without you.<br><br>The world doesn't stop when a single traveller falls.</div>
-      <div class="go-score">Favour: ${state.favour > 0?'+':''}${state.favour} &nbsp;·&nbsp; Gold: ${state.gold} &nbsp;·&nbsp; Scenes: ${state.scene}</div>
-      <button class="btn-gold" onclick="startGame()">Try Again</button>
+      <div class="go-title">The Vault Claims Another</div>
+      <div class="go-desc">The thing below did not find you hostile. It simply found you insufficient. The vault is patient. It will wait for the next visitor.</div>
+      <div class="go-score">Score: ${gameState.score} · Moves: ${gameState.moves}</div>
+      <button class="btn-gold" onclick="newGame()" style="margin-top:16px;">Try Again</button>
     </div>`;
+  deleteSave();
 }
 
-// Init - track current scene separately
-let currentScene = null;
-function showSceneById(id) {
-  currentScene = id;
-  const sc = getScene(id);
-  showScene(sc);
+function newGame() {
+  deleteSave();
+  startGame(false);
+  document.getElementById('game-wrap').innerHTML = originalGameHTML;
+  renderScene();
+  document.getElementById('save-row').style.display = 'flex';
 }
-// Override choose to track properly
-const originalChoose = choose;
-window.choose = function(idx) {
-  const scene = getScene(currentScene || 'start');
-  if (!scene) return;
-  const choice = scene.choices[idx];
-  const eff = choice.effect || {};
-  if (eff.hp) state.hp = Math.max(0, Math.min(state.maxHp, state.hp + eff.hp));
-  if (eff.gold !== undefined) state.gold = Math.max(0, state.gold + eff.gold);
-  if (eff.favour !== undefined) state.favour += eff.favour;
-  state.log.unshift({text:choice.text, type:eff.hp<0?'bad':eff.favour>0?'good':''});
-  if (state.log.length>6) state.log=state.log.slice(0,6);
-  state.scene++;
-  updateLog(); updateStats();
-  if (state.hp <= 0) { showDeath(); return; }
-  currentScene = choice.next;
-  const next = getScene(choice.next);
-  if (next) showScene(next);
-};
 
-state = {hp:10,maxHp:10,gold:5,favour:0,scene:0,log:[],inventory:[]};
-currentScene = 'start';
-showScene(SCENES[0]);
+function addLog(location) {
+  const log = document.getElementById('log');
+  if (!log) return;
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.innerHTML = `<span class="log-sep">›</span>${location}`;
+  log.insertBefore(entry, log.firstChild);
+  while (log.children.length > 8) log.removeChild(log.lastChild);
+}
+
+function updateSaveIndicator() {
+  const ind = document.getElementById('save-indicator');
+  if (ind) {
+    ind.textContent = '✓ Saved';
+    ind.style.opacity = '1';
+    setTimeout(()=>ind.style.opacity='0', 2000);
+  }
+}
+
+// Store original HTML for restart
+let originalGameHTML = '';
+
+// Save indicator in stats
+document.addEventListener('DOMContentLoaded', () => {
+  const statsBar = document.getElementById('stats-bar');
+  if (statsBar) {
+    // Update stat display for new fields
+    statsBar.innerHTML = `
+      <div class="stat-pip">
+        <div class="stat-pip-label">HP</div>
+        <div class="stat-pip-val" id="stat-hp">12</div>
+        <div class="hp-bar-wrap"><div class="hp-bar safe" id="hp-bar" style="width:100%"></div></div>
+      </div>
+      <div class="stat-pip">
+        <div class="stat-pip-label">Score</div>
+        <div class="stat-pip-val" id="stat-score">0</div>
+      </div>
+      <div class="stat-pip">
+        <div class="stat-pip-label">Move</div>
+        <div class="stat-pip-val" id="stat-scene">1</div>
+      </div>
+      <div class="stat-pip" style="flex:2;">
+        <div class="stat-pip-label">Carrying</div>
+        <div class="stat-pip-val" id="stat-inv" style="font-size:0.55rem;font-family:'EB Garamond',serif;color:var(--text-dim);">Nothing</div>
+      </div>`;
+  }
+  
+  originalGameHTML = document.getElementById('game-wrap').innerHTML;
+
+  // Check for save
+  if (hasSave()) {
+    const saveRow = document.getElementById('save-row');
+    if (saveRow) saveRow.style.display = 'flex';
+  } else {
+    startGame(false);
+  }
+});
 
 document.querySelector('.back-link').addEventListener('click',function(e){
   e.preventDefault();
   document.getElementById('overlay').classList.add('active');
   setTimeout(()=>{window.location.href=this.getAttribute('href');},700);
 });
+
 
 const canvas=document.getElementById('embers');const ctx=canvas.getContext('2d');
 function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
@@ -1037,9 +1267,7 @@ document.querySelectorAll('.qn-item').forEach(item => {
 </script>
 </body>
 </html>
+
 </script>
-</body>
-</html>
-<div class="transition-overlay" id="overlay"></div>
 </body>
 </html>

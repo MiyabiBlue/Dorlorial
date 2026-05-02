@@ -65,6 +65,18 @@ main{position:relative;z-index:10;max-width:720px;margin:0 auto;padding:50px 24p
 /* ═══ GLOBAL WIDGETS ═══ */
 
 /* ── THEME ── */
+
+body.light-mode{background:#f2ebe0;}
+body.light-mode header{background:linear-gradient(180deg,#e8dcc8 0%,transparent 100%);border-bottom-color:rgba(138,96,16,0.2);}
+body.light-mode #embers{opacity:0.15;}
+body.light-mode main,body.light-mode .profile-panel,body.light-mode .entry-panel{background:#f2ebe0;}
+body.light-mode .nav-card,.light-mode .lore-card,.light-mode .char-card,.light-mode .deity-card{background:linear-gradient(145deg,#ede4d0,#e8dcc8)!important;border-color:rgba(138,96,16,0.2)!important;}
+body.light-mode .modal-overlay .profile-card,.light-mode .creature-modal,.light-mode .char-modal{background:#ede4d0!important;border-color:rgba(138,96,16,0.3)!important;}
+body.light-mode #global-toolbar{background:rgba(242,235,224,0.96)!important;border-color:rgba(138,96,16,0.3)!important;}
+body.light-mode #quick-nav{background:rgba(242,235,224,0.98)!important;border-color:rgba(138,96,16,0.3)!important;}
+body.light-mode .qn-item{background:rgba(138,96,16,0.05)!important;border-color:rgba(138,96,16,0.15)!important;}
+body.light-mode input,body.light-mode textarea,body.light-mode select{background:#e8dcc8!important;border-color:rgba(138,96,16,0.25)!important;color:#2a1a08!important;}
+
 body.light-mode {
   --ink: #f5f0e8;
   --text: #2a1f0e;
@@ -583,8 +595,6 @@ const DEITIES = {
 // Remove null entry
 delete DEITIES.thalor_sea;
 
-};
-
 
 
 let currentQ = 0;
@@ -684,7 +694,7 @@ document.querySelector('.back-link').addEventListener('click', function(e) {
   setTimeout(() => { window.location.href = this.getAttribute('href'); }, 800);
 });
 
-initQuiz();
+document.addEventListener("DOMContentLoaded", function() { initQuiz(); });
 
 const canvas=document.getElementById('embers');const ctx=canvas.getContext('2d');
 function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}

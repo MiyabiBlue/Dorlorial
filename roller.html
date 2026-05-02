@@ -72,6 +72,18 @@ main{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:40px 24p
 /* ═══ GLOBAL WIDGETS ═══ */
 
 /* ── THEME ── */
+
+body.light-mode{background:#f2ebe0;}
+body.light-mode header{background:linear-gradient(180deg,#e8dcc8 0%,transparent 100%);border-bottom-color:rgba(138,96,16,0.2);}
+body.light-mode #embers{opacity:0.15;}
+body.light-mode main,body.light-mode .profile-panel,body.light-mode .entry-panel{background:#f2ebe0;}
+body.light-mode .nav-card,.light-mode .lore-card,.light-mode .char-card,.light-mode .deity-card{background:linear-gradient(145deg,#ede4d0,#e8dcc8)!important;border-color:rgba(138,96,16,0.2)!important;}
+body.light-mode .modal-overlay .profile-card,.light-mode .creature-modal,.light-mode .char-modal{background:#ede4d0!important;border-color:rgba(138,96,16,0.3)!important;}
+body.light-mode #global-toolbar{background:rgba(242,235,224,0.96)!important;border-color:rgba(138,96,16,0.3)!important;}
+body.light-mode #quick-nav{background:rgba(242,235,224,0.98)!important;border-color:rgba(138,96,16,0.3)!important;}
+body.light-mode .qn-item{background:rgba(138,96,16,0.05)!important;border-color:rgba(138,96,16,0.15)!important;}
+body.light-mode input,body.light-mode textarea,body.light-mode select{background:#e8dcc8!important;border-color:rgba(138,96,16,0.25)!important;color:#2a1a08!important;}
+
 body.light-mode {
   --ink: #f5f0e8;
   --text: #2a1f0e;
@@ -310,7 +322,7 @@ function rollStat(){
   if (totalRolls >= 6) {
     // Flash a message
     const row = document.getElementById('dice-row');
-    row.innerHTML = '<div style="font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#e84b4b;">Maximum 6 rolls — assign or reset to continue.</div>';
+    row.innerHTML = '<div style="font-family:Cinzel,serif;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#e84b4b;">Maximum 6 rolls — assign or reset to continue.</div>';
     return;
   }
   let dice=[rollD6(),rollD6(),rollD6(),rollD6()];
@@ -333,7 +345,7 @@ function rollAll(){
   const needed = 6 - pendingRolls.length;
   if (needed <= 0) {
     const row = document.getElementById('dice-row');
-    row.innerHTML = '<div style="font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#e84b4b;">Already have 6 rolls — assign them or reset.</div>';
+    row.innerHTML = '<div style="font-family:Cinzel,serif;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#e84b4b;">Already have 6 rolls — assign them or reset.</div>';
     return;
   }
   for(let i=0;i<needed;i++) rollStat();
@@ -440,59 +452,7 @@ const MAX=80;const embers=[];for(let i=0;i<MAX;i++)embers.push(spawnEmber(true))
 function drawEmber(e){const fl=0.6+Math.sin(e.age*e.flicker*80)*0.4;const al=Math.min(e.life,1)*e.bright*fl;const g=ctx.createRadialGradient(e.x,e.y,0,e.x,e.y,e.size*3);g.addColorStop(0,`rgba(255,210,70,${al*0.9})`);g.addColorStop(0.5,`rgba(200,120,15,${al*0.35})`);g.addColorStop(1,`rgba(140,50,0,0)`);ctx.beginPath();ctx.arc(e.x,e.y,e.size*3,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();ctx.beginPath();ctx.arc(e.x,e.y,e.size*0.5,0,Math.PI*2);ctx.fillStyle=`rgba(255,245,200,${al})`;ctx.fill();}
 let fr=0;(function loop(){requestAnimationFrame(loop);fr++;ctx.clearRect(0,0,canvas.width,canvas.height);for(let i=embers.length-1;i>=0;i--){const e=embers[i];e.age++;e.life-=e.decay;e.x+=e.drift+Math.sin(e.age*e.wobble+e.wOff)*0.7;e.y-=e.speed;drawEmber(e);if(e.life<=0||e.y<-20||e.x<-20||e.x>canvas.width+20){embers.splice(i,1);embers.push(spawnEmber(false));}}if(fr%45===0&&embers.length<MAX+15){for(let j=0;j<3;j++)embers.push(spawnEmber(false));}})();
 
-</script>
 
-<!-- ══ GLOBAL TOOLBAR ══ -->
-<div id="global-toolbar">
-  <!-- Quick Nav -->
-  <button class="toolbar-btn" id="quickNavBtn" onclick="toggleQuickNav()" title="Quick Navigation">
-    <span class="toolbar-tooltip">Quick Nav</span>
-    ☰
-  </button>
-  <div class="toolbar-divider"></div>
-  <!-- Theme -->
-  <button class="toolbar-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle Theme">
-    <span class="toolbar-tooltip">Toggle Theme</span>
-    🌙
-  </button>
-  <!-- Back to top -->
-  <div class="toolbar-divider"></div>
-  <button class="toolbar-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to Top">
-    <span class="toolbar-tooltip">Back to Top</span>
-    ▲
-  </button>
-  <div class="toolbar-divider"></div>
-  <!-- Collapse -->
-  <button class="toolbar-btn" id="toggleToolbarBtn" onclick="toggleToolbar()" title="Hide toolbar">
-    <span class="toolbar-tooltip">Hide Toolbar</span>
-    ◀◀
-  </button>
-</div>
-
-<!-- ══ QUICK NAV PANEL ══ -->
-<div id="quick-nav">
-      <div class="qn-title">Navigate to...</div>
-  <div class="qn-grid">
-    <a href="hub.html" class="qn-item"><span class="qn-icon">🏠</span><span class="qn-name">Hub</span></a>
-    <a href="map.html" class="qn-item"><span class="qn-icon">🗺️</span><span class="qn-name">Map</span></a>
-    <a href="social.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Social Hub</span></a>
-    <a href="quizzes.html" class="qn-item"><span class="qn-icon">🎯</span><span class="qn-name">Quizzes</span></a>
-    <a href="deities.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deities</span></a>
-    <a href="factions.html" class="qn-item"><span class="qn-icon">⚔️</span><span class="qn-name">Factions</span></a>
-    <a href="characters.html" class="qn-item"><span class="qn-icon">◉</span><span class="qn-name">Characters</span></a>
-    <a href="locations.html" class="qn-item"><span class="qn-icon">📍</span><span class="qn-name">Locations</span></a>
-    <a href="lore.html" class="qn-item"><span class="qn-icon">📜</span><span class="qn-name">Lore</span></a>
-    <a href="timeline.html" class="qn-item"><span class="qn-icon">⏳</span><span class="qn-name">Timeline</span></a>
-    <a href="bestiary.html" class="qn-item"><span class="qn-icon">📖</span><span class="qn-name">Bestiary</span></a>
-    <a href="campaigns.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Campaigns</span></a>
-    <a href="roller.html" class="qn-item"><span class="qn-icon">⚀</span><span class="qn-name">Stat Roller</span></a>
-    <a href="dmvault.html" class="qn-item"><span class="qn-icon">🔒</span><span class="qn-name">DM Vault</span></a>
-  </div></div>
-</div>
-
-
-
-<script>
 // ══ GLOBAL WIDGETS ══
 
 
@@ -581,9 +541,64 @@ document.querySelectorAll('.qn-item').forEach(item => {
 });
 
 
+
 </script>
-</body>
+
+<!-- ══ GLOBAL TOOLBAR ══ -->
+<div id="global-toolbar">
+  <!-- Quick Nav -->
+  <button class="toolbar-btn" id="quickNavBtn" onclick="toggleQuickNav()" title="Quick Navigation">
+    <span class="toolbar-tooltip">Quick Nav</span>
+    ☰
+  </button>
+  <div class="toolbar-divider"></div>
+  <!-- Theme -->
+  <button class="toolbar-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle Theme">
+    <span class="toolbar-tooltip">Toggle Theme</span>
+    🌙
+  </button>
+  <!-- Back to top -->
+  <div class="toolbar-divider"></div>
+  <button class="toolbar-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to Top">
+    <span class="toolbar-tooltip">Back to Top</span>
+    ▲
+  </button>
+  <div class="toolbar-divider"></div>
+  <!-- Collapse -->
+  <button class="toolbar-btn" id="toggleToolbarBtn" onclick="toggleToolbar()" title="Hide toolbar">
+    <span class="toolbar-tooltip">Hide Toolbar</span>
+    ◀◀
+  </button>
+</div>
+
+<!-- ══ QUICK NAV PANEL ══ -->
+<div id="quick-nav">
+      <div class="qn-title">Navigate to...</div>
+  <div class="qn-grid">
+    <a href="hub.html" class="qn-item"><span class="qn-icon">🏠</span><span class="qn-name">Hub</span></a>
+    <a href="map.html" class="qn-item"><span class="qn-icon">🗺️</span><span class="qn-name">Map</span></a>
+    <a href="social.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Social Hub</span></a>
+    <a href="quizzes.html" class="qn-item"><span class="qn-icon">🎯</span><span class="qn-name">Quizzes</span></a>
+    <a href="deities.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deities</span></a>
+    <a href="factions.html" class="qn-item"><span class="qn-icon">⚔️</span><span class="qn-name">Factions</span></a>
+    <a href="characters.html" class="qn-item"><span class="qn-icon">◉</span><span class="qn-name">Characters</span></a>
+    <a href="locations.html" class="qn-item"><span class="qn-icon">📍</span><span class="qn-name">Locations</span></a>
+    <a href="lore.html" class="qn-item"><span class="qn-icon">📜</span><span class="qn-name">Lore</span></a>
+    <a href="timeline.html" class="qn-item"><span class="qn-icon">⏳</span><span class="qn-name">Timeline</span></a>
+    <a href="bestiary.html" class="qn-item"><span class="qn-icon">📖</span><span class="qn-name">Bestiary</span></a>
+    <a href="campaigns.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Campaigns</span></a>
+    <a href="roller.html" class="qn-item"><span class="qn-icon">⚀</span><span class="qn-name">Stat Roller</span></a>
+    <a href="encounter.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Encounters</span></a>
+    <a href="game.html" class="qn-item"><span class="qn-icon">⚔️</span><span class="qn-name">Mini Game</span></a>
+    <a href="dmvault.html" class="qn-item"><span class="qn-icon">🔒</span><span class="qn-name">DM Vault</span></a>
+  </div></div>
+</div>
+
+
+
+
 </html>
 <div class="transition-overlay" id="overlay"></div>
 </body>
+</html></body>
 </html>
