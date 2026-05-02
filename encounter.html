@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Encounter Generator — Dorlorial</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
@@ -19,8 +19,6 @@ header{position:relative;z-index:10;text-align:center;padding:55px 20px 36px;bor
 .header-title{font-family:'Cinzel Decorative',serif;font-size:clamp(1.6rem,5vw,3rem);font-weight:700;background:linear-gradient(180deg,var(--gold-pale) 0%,var(--gold) 55%,var(--gold-dark) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
 .header-sub{font-family:'EB Garamond',serif;font-style:italic;font-size:0.92rem;color:var(--text-dim);}
 main{position:relative;z-index:10;max-width:900px;margin:0 auto;padding:40px 24px 80px;}
-
-/* CONTROLS */
 .controls-card{background:linear-gradient(145deg,#0e0a04,#0a0702);border:1px solid rgba(200,149,42,0.22);padding:28px;position:relative;margin-bottom:28px;}
 .controls-card::before{content:'';position:absolute;top:0;left:0;width:32px;height:32px;border-top:1px solid var(--gold);border-left:1px solid var(--gold);}
 .controls-card::after{content:'';position:absolute;bottom:0;right:0;width:32px;height:32px;border-bottom:1px solid var(--gold);border-right:1px solid var(--gold);}
@@ -32,56 +30,36 @@ main{position:relative;z-index:10;max-width:900px;margin:0 auto;padding:40px 24p
 .control-select option{background:#0e0a04;}
 .gen-btn{font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold);background:transparent;border:1px solid rgba(200,149,42,0.4);padding:12px 28px;cursor:pointer;transition:all 0.3s;white-space:nowrap;align-self:flex-end;}
 .gen-btn:hover{background:rgba(200,149,42,0.1);border-color:var(--gold);}
-.gen-btn:active{transform:scale(0.97);}
-
-/* RESULT */
 #result-area{display:none;}
-.encounter-card{background:linear-gradient(145deg,#0e0a04,#0a0702);border:1px solid rgba(200,149,42,0.3);padding:0;overflow:hidden;animation:encounterIn 0.5s cubic-bezier(0.34,1.2,0.64,1);}
-@keyframes encounterIn{0%{opacity:0;transform:translateY(12px);}100%{opacity:1;transform:translateY(0);}}
+.encounter-card{background:linear-gradient(145deg,#0e0a04,#0a0702);border:1px solid rgba(200,149,42,0.3);padding:0;overflow:hidden;animation:ei 0.5s ease;}
+@keyframes ei{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
 .enc-header{background:rgba(200,149,42,0.06);border-bottom:1px solid rgba(200,149,42,0.15);padding:22px 28px;display:flex;align-items:center;gap:18px;}
 .enc-icon{font-size:3rem;flex-shrink:0;}
-.enc-header-text{}
 .enc-region{font-family:'Cinzel',serif;font-size:0.5rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:4px;}
-.enc-creature-name{font-family:'Cinzel Decorative',serif;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:700;background:linear-gradient(180deg,var(--gold-pale),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;}
-.enc-type-row{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;}
-.enc-badge{font-family:'Cinzel',serif;font-size:0.42rem;letter-spacing:0.18em;text-transform:uppercase;padding:3px 8px;border:1px solid;}
-.enc-badge.threat-low{color:#4be87a;border-color:rgba(75,232,122,0.25);background:rgba(75,232,122,0.05);}
-.enc-badge.threat-medium,.enc-badge.threat-med{color:var(--gold);border-color:rgba(200,149,42,0.3);background:rgba(200,149,42,0.05);}
-.enc-badge.threat-high{color:#e84b4b;border-color:rgba(232,75,75,0.25);background:rgba(232,75,75,0.05);}
-.enc-badge.threat-legendary{color:#b84be8;border-color:rgba(184,75,232,0.25);background:rgba(184,75,232,0.05);}
-.enc-badge.type{color:var(--text-dim);border-color:rgba(200,149,42,0.15);background:rgba(200,149,42,0.03);}
+.enc-creature-name{font-family:'Cinzel Decorative',serif;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:700;background:linear-gradient(180deg,var(--gold-pale),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.enc-badge{font-family:'Cinzel',serif;font-size:0.42rem;letter-spacing:0.18em;text-transform:uppercase;padding:3px 8px;border:1px solid;margin:2px;display:inline-block;}
+.enc-badge.low{color:#4be87a;border-color:rgba(75,232,122,0.25);background:rgba(75,232,122,0.05);}
+.enc-badge.medium{color:var(--gold);border-color:rgba(200,149,42,0.3);background:rgba(200,149,42,0.05);}
+.enc-badge.high{color:#e84b4b;border-color:rgba(232,75,75,0.25);background:rgba(232,75,75,0.05);}
+.enc-badge.legendary{color:#b84be8;border-color:rgba(184,75,232,0.25);background:rgba(184,75,232,0.05);}
+.enc-badge.type{color:var(--text-dim);border-color:rgba(200,149,42,0.15);}
 .enc-body{padding:24px 28px;}
 .enc-section{font-family:'Cinzel',serif;font-size:0.52rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid rgba(200,149,42,0.12);}
-.enc-desc{font-family:'EB Garamond',serif;font-style:italic;font-size:1rem;color:var(--text-dim);line-height:1.65;margin-bottom:22px;}
-.enc-hook{background:rgba(200,149,42,0.04);border-left:3px solid var(--gold-dark);padding:16px 18px;margin-bottom:22px;}
-.enc-hook-text{font-family:'EB Garamond',serif;font-size:1rem;color:var(--text);line-height:1.7;}
+.enc-hook{background:rgba(200,149,42,0.04);border-left:3px solid var(--gold-dark);padding:16px 18px;margin-bottom:22px;font-family:'EB Garamond',serif;font-size:1rem;color:var(--text);line-height:1.7;}
 .enc-details-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px;}
 .enc-detail{background:rgba(200,149,42,0.03);border:1px solid rgba(200,149,42,0.12);padding:12px 14px;}
 .enc-detail-label{font-family:'Cinzel',serif;font-size:0.42rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:4px;}
-.enc-detail-val{font-family:'EB Garamond',serif;font-size:0.9rem;color:var(--text);}
+.enc-detail-val{font-family:'EB Garamond',serif;font-size:0.88rem;color:var(--text);}
 .enc-complication{background:rgba(232,75,75,0.04);border:1px solid rgba(232,75,75,0.15);padding:14px 16px;margin-bottom:22px;}
 .enc-complication-label{font-family:'Cinzel',serif;font-size:0.42rem;letter-spacing:0.2em;text-transform:uppercase;color:#e84b4b;margin-bottom:5px;}
 .enc-complication-text{font-family:'EB Garamond',serif;font-size:0.9rem;color:var(--text);font-style:italic;}
 .enc-footer{display:flex;gap:12px;flex-wrap:wrap;}
 .enc-link{font-family:'Cinzel',serif;font-size:0.52rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold-dark);background:transparent;border:1px solid rgba(200,149,42,0.25);padding:9px 18px;cursor:pointer;transition:all 0.25s;text-decoration:none;}
 .enc-link:hover{color:var(--gold);border-color:rgba(200,149,42,0.5);}
-
-.section-label{font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold-dark);text-align:center;margin-bottom:20px;display:flex;align-items:center;gap:12px;}
-.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(200,149,42,0.22));}
-.section-label::after{background:linear-gradient(90deg,rgba(200,149,42,0.22),transparent);}
-
-/* HISTORY */
-.history-list{display:flex;flex-direction:column;gap:8px;margin-top:24px;}
-.history-item{background:rgba(200,149,42,0.03);border:1px solid rgba(200,149,42,0.1);padding:10px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.2s;}
-.history-item:hover{border-color:rgba(200,149,42,0.35);}
-.history-icon{font-size:1.4rem;flex-shrink:0;}
-.history-info{flex:1;}
-.history-name{font-family:'Cinzel',serif;font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold-light);}
-.history-region{font-family:'EB Garamond',serif;font-style:italic;font-size:0.82rem;color:var(--text-dim);}
-.history-threat{font-family:'Cinzel',serif;font-size:0.4rem;letter-spacing:0.15em;text-transform:uppercase;padding:2px 6px;border:1px solid rgba(200,149,42,0.18);color:var(--text-dim);}
 .transition-overlay{position:fixed;inset:0;z-index:300;background:#060402;pointer-events:none;opacity:0;transition:opacity 0.7s;}
 .transition-overlay.active{opacity:1;pointer-events:all;}
-@media(max-width:600px){.controls-row{flex-direction:column;}.enc-details-grid{grid-template-columns:repeat(2,1fr);}header{padding:44px 14px 28px;}main{padding:24px 14px 60px;}}
+body.light-mode{background:#e8d5a3 !important;--ink:#e8d5a3;--text:#1a0e04;--text-dim:#5a3810;--gold:#7a4e08;--gold-dark:#b87828;}
+@media(max-width:600px){.controls-row{flex-direction:column;}.enc-details-grid{grid-template-columns:repeat(2,1fr);}}
 /* ═══ GLOBAL WIDGETS ═══ */
 
 /* ── THEME ── */
@@ -283,18 +261,19 @@ body.light-mode #quick-nav {
   body.light-mode .corner-btn{background:rgba(245,240,232,0.95);border-color:rgba(138,96,16,0.4);color:var(--gold-dark);}
 
   /* ── CAMPAIGN BANNER ── */
-  .campaign-banner{position:relative;z-index:10;background:linear-gradient(135deg,#0e0a02,#0a0600);border:1px solid rgba(200,149,42,0.28);padding:18px 24px;margin-bottom:0;display:flex;align-items:center;gap:18px;cursor:pointer;transition:border-color 0.3s;}
+  .campaign-banner{position:relative;z-index:10;background:linear-gradient(135deg,#0e0a02,#0a0600);border:1px solid rgba(200,149,42,0.28);padding:12px 20px;margin-bottom:0;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color 0.3s;}
   .campaign-banner:hover{border-color:rgba(200,149,42,0.5);}
   .banner-pulse{width:10px;height:10px;background:var(--green,#4be87a);border-radius:50%;flex-shrink:0;animation:bannerPulse 2s ease-in-out infinite;box-shadow:0 0 8px rgba(75,232,122,0.5);}
-  @keyframes bannerPulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.3);opacity:0.6;}}
+  @keyframes bannerPulse{0%,100%{transform:scale(1);opacity:1;}
+}
+@keyframes kffix2{0%{transform:scale(1.3);opacity:0.6;}
   .banner-text{flex:1;}
   .banner-eyebrow{font-family:'Cinzel',serif;font-size:0.48rem;letter-spacing:0.3em;text-transform:uppercase;color:#4be87a;margin-bottom:4px;}
   .banner-title{font-family:'Cinzel',serif;font-size:clamp(0.72rem,2vw,0.9rem);font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold-light);margin-bottom:3px;}
   .banner-sub{font-family:'EB Garamond',serif;font-style:italic;font-size:clamp(0.82rem,2vw,0.95rem);color:var(--text-dim);}
   .banner-arrow{font-family:'Cinzel',serif;font-size:0.52rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold-dark);flex-shrink:0;transition:color 0.25s;}
   .campaign-banner:hover .banner-arrow{color:var(--gold);}
-  body.light-mode .campaign-banner{background:linear-gradient(135deg,#ede8da,#e8e0cc);border-color:rgba(138,96,16,0.3);}
-
+  body.light-mode .campaign-banner{background:linear-gradient(135deg,#ede8da,#e8e0cc);border-color:rgba(138,96,16,0.3);}}
 </style>
 </head>
 <body>
@@ -321,10 +300,6 @@ body.light-mode #quick-nav {
           <option value="Verglaze">Verglaze — The Frozen North</option>
           <option value="Ravenshroud">Ravenshroud — City of Shadows</option>
           <option value="Reyur">Reyur — The Swamplands</option>
-          <option value="Huetmot">Huetmot — Ancient Forests</option>
-          <option value="Kadaka">Kadaka — Lightning Plains</option>
-          <option value="Westlo">Westlo — The Jungle Isles</option>
-          <option value="Erentil">Erentil — The Clockwork City</option>
           <option value="Aetherwyn">Aetherwyn — The Deep City</option>
           <option value="Dusk Harbor">Dusk Harbor — The Fog Port</option>
         </select>
@@ -333,10 +308,10 @@ body.light-mode #quick-nav {
         <span class="control-label">Threat Level</span>
         <select class="control-select" id="threat-select">
           <option value="any">Any Threat</option>
-          <option value="low">Low — Manageable</option>
-          <option value="medium">Medium — Dangerous</option>
-          <option value="high">High — Deadly</option>
-          <option value="legendary">Legendary — Run</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+          <option value="legendary">Legendary</option>
         </select>
       </div>
       <div class="control-group">
@@ -352,77 +327,18 @@ body.light-mode #quick-nav {
       <button class="gen-btn" onclick="generate()">🎲 Generate Encounter</button>
     </div>
   </div>
-
   <div id="result-area">
-    <div class="section-label" id="result-label">Encounter</div>
-    <div class="encounter-card" id="encounter-card"></div>
+    <div id="encounter-card"></div>
     <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap;">
       <button class="gen-btn" onclick="generate()" style="font-size:0.58rem;padding:10px 20px;">🎲 Roll Again</button>
-      <button class="gen-btn" onclick="saveToHistory()" id="save-btn" style="font-size:0.58rem;padding:10px 20px;color:var(--text-dim);">📋 Save to History</button>
     </div>
   </div>
-
-  <div id="history-section" style="display:none;margin-top:40px;">
-    <div class="section-label">Recent Encounters</div>
-    <div class="history-list" id="history-list"></div>
-    <button onclick="clearHistory()" style="margin-top:12px;font-family:'Cinzel',serif;font-size:0.48rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);background:none;border:1px solid rgba(200,149,42,0.12);padding:7px 14px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(200,149,42,0.3)'" onmouseout="this.style.borderColor='rgba(200,149,42,0.12)'">Clear History</button>
-  </div>
 </main>
+
+
 <div class="transition-overlay" id="overlay"></div>
 
-<!-- ══ GLOBAL TOOLBAR ══ -->
-<div id="global-toolbar">
-  <!-- Quick Nav -->
-  <button class="toolbar-btn" id="quickNavBtn" onclick="toggleQuickNav()" title="Quick Navigation">
-    <span class="toolbar-tooltip">Quick Nav</span>
-    ☰
-  </button>
-  <div class="toolbar-divider"></div>
-  <!-- Theme -->
-  <button class="toolbar-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle Theme">
-    <span class="toolbar-tooltip">Toggle Theme</span>
-    🌙
-  </button>
-  <!-- Back to top -->
-  <div class="toolbar-divider"></div>
-  <button class="toolbar-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to Top">
-    <span class="toolbar-tooltip">Back to Top</span>
-    ▲
-  </button>
-  <div class="toolbar-divider"></div>
-  <!-- Collapse -->
-  <button class="toolbar-btn" id="toggleToolbarBtn" onclick="toggleToolbar()" title="Hide toolbar">
-    <span class="toolbar-tooltip">Hide Toolbar</span>
-    ◀◀
-  </button>
-</div>
-
-<!-- ══ QUICK NAV PANEL ══ -->
-<div id="quick-nav">
-    <div class="qn-title">Navigate to...</div>
-  <div class="qn-grid">
-    <a href="hub.html" class="qn-item"><span class="qn-icon">🏠</span><span class="qn-name">Hub</span></a>
-    <a href="map.html" class="qn-item"><span class="qn-icon">🗺️</span><span class="qn-name">Map</span></a>
-    <a href="social.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Social Hub</span></a>
-    <a href="quizzes.html" class="qn-item"><span class="qn-icon">🎯</span><span class="qn-name">Quizzes</span></a>
-    <a href="deities.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deities</span></a>
-    <a href="factions.html" class="qn-item"><span class="qn-icon">⚔️</span><span class="qn-name">Factions</span></a>
-    <a href="characters.html" class="qn-item"><span class="qn-icon">◉</span><span class="qn-name">Characters</span></a>
-    <a href="locations.html" class="qn-item"><span class="qn-icon">📍</span><span class="qn-name">Locations</span></a>
-    <a href="lore.html" class="qn-item"><span class="qn-icon">📜</span><span class="qn-name">Lore</span></a>
-    <a href="timeline.html" class="qn-item"><span class="qn-icon">⏳</span><span class="qn-name">Timeline</span></a>
-    <a href="bestiary.html" class="qn-item"><span class="qn-icon">📖</span><span class="qn-name">Bestiary</span></a>
-    <a href="campaigns.html" class="qn-item"><span class="qn-icon">🎲</span><span class="qn-name">Campaigns</span></a>
-    <a href="roller.html" class="qn-item"><span class="qn-icon">⚀</span><span class="qn-name">Stat Roller</span></a>
-    <a href="dmvault.html" class="qn-item" onclick="event.preventDefault();document.getElementById('vaultModal')?.classList.add('open') || window.location.href='dmvault.html'"><span class="qn-icon">🔒</span><span class="qn-name">DM Vault</span></a>
-  </div></div>
-</div>
-
-
-
-
 <script>
-
 const CREATURES = [
   // ══ BEASTS ══
   {
@@ -748,8 +664,6 @@ const CREATURES = [
 
 ];
 
-
-// Region → creature type weights
 const REGION_WEIGHTS = {
   'Kodral':      {humanoid:4, undead:3, fiend:1},
   'Ionsgate':    {beast:3, construct:2, elemental:1},
@@ -975,31 +889,87 @@ function clearHistory() {
   renderHistory();
 }
 
-renderHistory();
 
-document.querySelector('.back-link').addEventListener('click',function(e){
+let currentEncounter = null;
+
+function pickRandom(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
+
+function weightedRandom(arr, weights) {
+  if (!weights || !Object.keys(weights).length) return pickRandom(arr);
+  const typed = {};
+  arr.forEach(c => { typed[c.type] = (typed[c.type]||[]).concat(c); });
+  let pool = [];
+  Object.entries(weights).forEach(([type, w]) => {
+    if (typed[type]) for(let i=0;i<w;i++) pool = pool.concat(typed[type]);
+  });
+  if (!pool.length) pool = arr;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function generate() {
+  const region = document.getElementById('region-select').value;
+  const threat = document.getElementById('threat-select').value;
+  const time = document.getElementById('time-select').value;
+  const actualTime = time === 'any' ? pickRandom(['dawn','day','dusk','night']) : time;
+
+  let pool = threat === 'any' ? CREATURES : CREATURES.filter(c => c.threat === threat);
+  if (!pool.length) pool = CREATURES;
+
+  const weights = REGION_WEIGHTS[region] || {};
+  const creature = weightedRandom(pool, weights);
+
+  const hookPool = (HOOKS[creature.type] && (HOOKS[creature.type][actualTime] || HOOKS[creature.type].any)) || HOOKS.beast.any;
+  const hook = pickRandom(hookPool);
+  const complication = Math.random() < 0.65 ? pickRandom(COMPLICATIONS) : null;
+  const number = pickRandom(NUMBER_OF);
+  const regionLabel = region === 'any' ? pickRandom(Object.keys(REGION_WEIGHTS).filter(r=>r!=='any')) : region;
+  const timeIcons = {dawn:'🌅',day:'☀️',dusk:'🌆',night:'🌙'};
+
+  const card = document.getElementById('encounter-card');
+  card.className = 'encounter-card';
+  card.innerHTML = `
+    <div class="enc-header">
+      <div class="enc-icon">${creature.icon}</div>
+      <div>
+        <div class="enc-region">${timeIcons[actualTime]||'⏱'} ${regionLabel} · ${actualTime}</div>
+        <div class="enc-creature-name">${creature.name}</div>
+        <div style="margin-top:6px;">
+          <span class="enc-badge ${creature.threat}">${creature.threat} threat</span>
+          <span class="enc-badge type">${creature.type}</span>
+          <span class="enc-badge type">${creature.size}</span>
+        </div>
+      </div>
+    </div>
+    <div class="enc-body">
+      <div class="enc-section">The Setup</div>
+      <div class="enc-hook">${hook}</div>
+      <div class="enc-details-grid">
+        <div class="enc-detail"><div class="enc-detail-label">Numbers</div><div class="enc-detail-val">${number}</div></div>
+        <div class="enc-detail"><div class="enc-detail-label">Habitat</div><div class="enc-detail-val">${creature.habitat}</div></div>
+        <div class="enc-detail"><div class="enc-detail-label">Summary</div><div class="enc-detail-val" style="font-style:italic;color:var(--text-dim);font-size:0.82rem;">${creature.desc}</div></div>
+      </div>
+      ${complication ? `<div class="enc-section">Complication</div><div class="enc-complication"><div class="enc-complication-label">⚠ Twist</div><div class="enc-complication-text">${complication}</div></div>` : ''}
+      <div class="enc-footer">
+        <a href="bestiary.html" class="enc-link">View in Bestiary →</a>
+        <button class="enc-link" onclick="generate()">Roll Again →</button>
+      </div>
+    </div>`;
+
+  document.getElementById('result-area').style.display = 'block';
+  document.getElementById('result-area').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+document.querySelector('.back-link').addEventListener('click', function(e) {
   e.preventDefault();
   document.getElementById('overlay').classList.add('active');
-  setTimeout(()=>{window.location.href=this.getAttribute('href');},700);
+  setTimeout(() => { window.location.href = this.getAttribute('href'); }, 700);
 });
-
-const canvas=document.getElementById('embers');const ctx=canvas.getContext('2d');
-function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
-resize();window.addEventListener('resize',resize);
-function rand(a,b){return a+Math.random()*(b-a);}
-function spawnEmber(init){let x,y;if(init){x=rand(0,canvas.width);y=rand(0,canvas.height);}else{const s=Math.random();if(s<0.6){x=rand(0,canvas.width);y=canvas.height+10;}else if(s<0.8){x=-10;y=rand(0,canvas.height);}else{x=canvas.width+10;y=rand(0,canvas.height);}}return{x,y,size:rand(0.8,2.8),speed:rand(0.2,1.2),drift:rand(-0.5,0.5),wobble:rand(0.005,0.02),wOff:rand(0,Math.PI*2),life:rand(0.4,0.9),decay:rand(0.0005,0.002),bright:rand(0.3,0.8),flicker:rand(0.006,0.04),age:init?rand(0,400):0};}
-const MAX=80;const embers=[];for(let i=0;i<MAX;i++)embers.push(spawnEmber(true));
-function drawEmber(e){const fl=0.6+Math.sin(e.age*e.flicker*80)*0.4;const al=Math.min(e.life,1)*e.bright*fl;const g=ctx.createRadialGradient(e.x,e.y,0,e.x,e.y,e.size*3);g.addColorStop(0,`rgba(255,210,70,${al*0.9})`);g.addColorStop(0.5,`rgba(200,120,15,${al*0.35})`);g.addColorStop(1,`rgba(140,50,0,0)`);ctx.beginPath();ctx.arc(e.x,e.y,e.size*3,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();ctx.beginPath();ctx.arc(e.x,e.y,e.size*0.5,0,Math.PI*2);ctx.fillStyle=`rgba(255,245,200,${al})`;ctx.fill();}
-let fr=0;(function loop(){requestAnimationFrame(loop);fr++;ctx.clearRect(0,0,canvas.width,canvas.height);for(let i=embers.length-1;i>=0;i--){const e=embers[i];e.age++;e.life-=e.decay;e.x+=e.drift+Math.sin(e.age*e.wobble+e.wOff)*0.7;e.y-=e.speed;drawEmber(e);if(e.life<=0||e.y<-20||e.x<-20||e.x>canvas.width+20){embers.splice(i,1);embers.push(spawnEmber(false));}}if(fr%45===0&&embers.length<MAX+15){for(let j=0;j<3;j++)embers.push(spawnEmber(false));}})();
-
-
 
 function navigate(url) {
   const overlay = document.getElementById('overlay');
   overlay.classList.add('active');
   setTimeout(() => { window.location.href = url; }, 800);
 }
-
 // ══ GLOBAL WIDGETS ══
 
 
@@ -1089,9 +1059,16 @@ document.querySelectorAll('.qn-item').forEach(item => {
 
 
 
+
+
+const canvas=document.getElementById('embers');const ctx=canvas.getContext('2d');
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+function rand(a,b){return a+Math.random()*(b-a);}
+function spawnEmber(init){let x,y;if(init){x=rand(0,canvas.width);y=rand(0,canvas.height);}else{const s=Math.random();if(s<0.6){x=rand(0,canvas.width);y=canvas.height+10;}else if(s<0.8){x=-10;y=rand(0,canvas.height);}else{x=canvas.width+10;y=rand(0,canvas.height);}}return{x,y,size:rand(0.8,2.8),speed:rand(0.2,1.2),drift:rand(-0.5,0.5),wobble:rand(0.005,0.02),wOff:rand(0,Math.PI*2),life:rand(0.4,0.9),decay:rand(0.0005,0.002),bright:rand(0.3,0.8),flicker:rand(0.006,0.04),age:init?rand(0,400):0};}
+const MAX=70;const embers=[];for(let i=0;i<MAX;i++)embers.push(spawnEmber(true));
+function drawEmber(e){const fl=0.6+Math.sin(e.age*e.flicker*80)*0.4;const al=Math.min(e.life,1)*e.bright*fl;const g=ctx.createRadialGradient(e.x,e.y,0,e.x,e.y,e.size*3);g.addColorStop(0,`rgba(255,210,70,${al*0.9})`);g.addColorStop(0.5,`rgba(200,120,15,${al*0.35})`);g.addColorStop(1,`rgba(140,50,0,0)`);ctx.beginPath();ctx.arc(e.x,e.y,e.size*3,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();ctx.beginPath();ctx.arc(e.x,e.y,e.size*0.5,0,Math.PI*2);ctx.fillStyle=`rgba(255,245,200,${al})`;ctx.fill();}
+let fr=0;(function loop(){requestAnimationFrame(loop);fr++;ctx.clearRect(0,0,canvas.width,canvas.height);for(let i=embers.length-1;i>=0;i--){const e=embers[i];e.age++;e.life-=e.decay;e.x+=e.drift+Math.sin(e.age*e.wobble+e.wOff)*0.7;e.y-=e.speed;drawEmber(e);if(e.life<=0||e.y<-20||e.x<-20||e.x>canvas.width+20){embers.splice(i,1);embers.push(spawnEmber(false));}}if(fr%45===0&&embers.length<MAX+10){for(let j=0;j<3;j++)embers.push(spawnEmber(false));}})();
 </script>
-</body>
-</html>
-<div class="transition-overlay" id="overlay"></div>
 </body>
 </html>
