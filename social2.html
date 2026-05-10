@@ -318,8 +318,9 @@ body.light-mode #quick-nav {
     </div>
     <input type="file" id="file-input" accept="image/*" onchange="fileChosen(this)">
 
-    <div class="or-divider">— or paste an image URL —</div>
-    <input class="minput" id="m-url" placeholder="https://i.imgur.com/..." style="margin-bottom:16px;">
+    <div class="or-divider">— paste an image URL (recommended) —</div>
+    <input class="minput" id="m-url" placeholder="https://i.imgur.com/... or Discord image link" style="margin-bottom:4px;">
+    <div style="font-family:'EB Garamond',serif;font-style:italic;font-size:0.78rem;color:var(--text-dim);margin-bottom:12px;">Upload to <a href="https://imgur.com" target="_blank" style="color:var(--gold-dark);">Imgur</a> or share via Discord to get a URL. Direct URLs load faster and more reliably.</div>
 
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
       <button class="sbtn" onclick="submitArt()">Submit</button>
@@ -354,14 +355,31 @@ body.light-mode #quick-nav {
 
 <script>
 const SB='https://rczesfxgzuhixhinyarc.supabase.co',KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjemVzZnhnenVoaXhoaW55YXJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTQyNzAsImV4cCI6MjA5MzA3MDI3MH0.y_1BQLSkhV85sn-mxTHqu5eHfxUEF1wu89sfwJ0hU7A';
-let imgData=null; // base64 image from file picker
+let imgData=null;
 
-function apifetch(path){
-  return fetch(SB+'/rest/v1/'+path,{
-    cache:'no-store',
-    headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=representation'}
-  });
+// Fetch with timeout + automatic retry (up to maxTries attempts)
+function apifetch(path, maxTries) {
+  maxTries = maxTries || 3;
+  function attempt(triesLeft) {
+    var controller = new AbortController();
+    var timer = setTimeout(function(){ controller.abort(); }, 8000); // 8s timeout
+    return fetch(SB+'/rest/v1/'+path, {
+      cache: 'no-store',
+      signal: controller.signal,
+      headers: {'apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=representation'}
+    }).then(function(r){ clearTimeout(timer); return r; })
+      .catch(function(e){
+        clearTimeout(timer);
+        if(triesLeft > 1) {
+          // Wait 1.5s then retry
+          return new Promise(function(res){ setTimeout(res, 1500); }).then(function(){ return attempt(triesLeft-1); });
+        }
+        throw e;
+      });
+  }
+  return attempt(maxTries);
 }
+
 function postfetch(path,body){
   return fetch(SB+'/rest/v1/'+path,{
     method:'POST',
@@ -370,16 +388,27 @@ function postfetch(path,body){
   });
 }
 
+function showRetryBtn(containerId, retryFn, message) {
+  var el = document.getElementById(containerId);
+  if(!el) return;
+  el.innerHTML = '<div style="text-align:center;padding:32px 16px;">'
+    + '<p class="empty" style="margin-bottom:14px;">' + message + '</p>'
+    + '<button onclick="' + retryFn + '()" style="font-family:\'Cinzel\',serif;font-size:0.52rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);background:transparent;border:1px solid rgba(200,149,42,0.4);padding:9px 20px;cursor:pointer;">↺ Retry</button>'
+    + '</div>';
+}
+
 function loadArt(){
   var g=document.getElementById('agrid');
-  g.innerHTML='<p class="empty">Loading...</p>';
-  apifetch('art_submissions?order=created_at.desc')
+  g.innerHTML='<p class="empty">Loading art...</p>';
+  apifetch('art_submissions?order=created_at.desc&select=id,title,username,image_url')
     .then(function(r){return r.json();})
     .then(function(data){
       g.innerHTML='';
       if(!Array.isArray(data)||!data.length){g.innerHTML='<p class="empty">No art yet — be the first to submit!</p>';return;}
       for(var i=0;i<data.length;i++){
         var a=data[i];
+        // Skip base64 blobs — they're too large to render reliably; only show URL-based images
+        if(!a.image_url||a.image_url.startsWith('data:')){continue;}
         var card=document.createElement('div');
         card.className='acard';
         var img=document.createElement('img');
@@ -390,27 +419,34 @@ function loadArt(){
         img.onerror=function(){this.parentElement.style.display='none';};
         var body=document.createElement('div');
         body.className='acard-body';
-        body.innerHTML='<div class="acard-title">'+escHtml(a.title)+'</div><div class="acard-user">by '+escHtml(a.username)+'</div>';
+        body.innerHTML='<div class="acard-title">'+escHtml(a.title||'Untitled')+'</div><div class="acard-user">by '+escHtml(a.username||'Unknown')+'</div>';
         card.appendChild(img);
         card.appendChild(body);
         g.appendChild(card);
       }
+      if(!g.children.length) g.innerHTML='<p class="empty">No art yet — be the first to submit!</p>';
     })
-    .catch(function(e){g.innerHTML='<p class="empty">Could not load art.</p>';console.error('Art error:',e);});
+    .catch(function(e){
+      console.error('Art load failed after retries:',e);
+      showRetryBtn('agrid','loadArt','Could not reach the server.');
+    });
 }
 
 function loadChat(){
+  var box=document.getElementById('cmsgs');
   apifetch('comments?entry_link=eq.general-chat&order=created_at.asc&limit=100')
     .then(function(r){return r.json();})
     .then(function(data){
-      var box=document.getElementById('cmsgs');
       if(!Array.isArray(data)||!data.length){box.innerHTML='<p class="empty">No messages yet. Say hello!</p>';return;}
       box.innerHTML=data.map(function(c){
         return '<div class="cmsg"><div class="cmsg-user">'+escHtml(c.username)+'</div><div class="cmsg-text">'+escHtml(c.message)+'</div></div>';
       }).join('');
       box.scrollTop=box.scrollHeight;
     })
-    .catch(function(e){document.getElementById('cmsgs').innerHTML='<p class="empty">Could not load chat.</p>';console.error('Chat:',e);});
+    .catch(function(e){
+      console.error('Chat load failed after retries:',e);
+      showRetryBtn('cmsgs','loadChat','Chat could not load.');
+    });
 }
 
 function escHtml(s){
@@ -470,9 +506,17 @@ function submitArt(){
   var ok=document.getElementById('m-ok');
   err.style.display='none';ok.style.display='none';
 
-  var imageUrl=imgData||url;
+  // Always prefer URL over file upload — base64 causes load failures
+  var imageUrl=url||imgData;
   if(!name||!title){err.textContent='Please fill in your name and a title.';err.style.display='inline';return;}
-  if(!imageUrl){err.textContent='Please choose an image or paste a URL.';err.style.display='inline';return;}
+  if(!imageUrl){err.textContent='Please paste an image URL or choose a file.';err.style.display='inline';return;}
+
+  // Warn if they used a file upload instead of a URL — base64 is too large
+  if(imageUrl.startsWith('data:')){
+    err.textContent='File uploads can cause loading issues. Please upload your image to Imgur or Discord and paste the URL instead.';
+    err.style.display='inline';
+    return;
+  }
 
   postfetch('art_submissions',{username:name,title:title,image_url:imageUrl,description:desc,status:'approved',entry_link:'art',entry_name:title})
     .then(function(r){
