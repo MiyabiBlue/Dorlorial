@@ -1544,5 +1544,110 @@ document.querySelectorAll('.qn-item').forEach(item => {
 })();
 </script>
 
+
+<script>
+/* FINAL DM VAULT ART FIX:
+   Only loads pending/approved URL-based art.
+   Skips archived/base64 rows so old giant images do not break the vault.
+*/
+(function(){
+  function esc(s){
+    return String(s || "")
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;")
+      .replace(/'/g,"&#39;");
+  }
+
+  async function loadVaultArtFinal(){
+    const grid = document.getElementById("art-grid");
+    if(!grid) return;
+
+    try{
+      const rows = await sbFetch(
+        "art_submissions?select=id,username,title,image_url,description,status,created_at&status=in.(pending,approved)&order=created_at.desc"
+      );
+
+      window.allArt = Array.isArray(rows)
+        ? rows.filter(a =>
+            a &&
+            a.image_url &&
+            /^https?:\/\//i.test(String(a.image_url)) &&
+            !String(a.image_url).startsWith("data:")
+          )
+        : [];
+
+      renderVaultArtFinal();
+    }catch(e){
+      grid.innerHTML = '<div class="empty-state">Could not load DM Vault art. Check art_submissions SELECT policy.</div>';
+    }
+  }
+
+  function renderVaultArtFinal(){
+    const grid = document.getElementById("art-grid");
+    if(!grid) return;
+
+    const search = (document.getElementById("art-search")?.value || "").toLowerCase();
+    const folder = window.currentArtFolder || "all";
+
+    let rows = window.allArt || [];
+
+    if(folder !== "all"){
+      rows = rows.filter(a => String(a.status || "") === folder);
+    }
+
+    if(search){
+      rows = rows.filter(a =>
+        String(a.title || "").toLowerCase().includes(search) ||
+        String(a.username || "").toLowerCase().includes(search) ||
+        String(a.description || "").toLowerCase().includes(search)
+      );
+    }
+
+    if(!rows.length){
+      grid.innerHTML = '<div class="empty-state">No pending or approved URL-based art found.</div>';
+      return;
+    }
+
+    grid.innerHTML = rows.map(art => {
+      const isPending = art.status === "pending";
+      const isApproved = art.status === "approved";
+      return `
+        <div class="art-dm-card">
+          <img class="art-dm-img" src="${esc(art.image_url)}" alt="${esc(art.title)}" onerror="this.style.display='none'">
+          <div class="art-dm-info">
+            <div class="art-dm-title">${esc(art.title || "Untitled")}</div>
+            <div class="art-dm-user">by ${esc(art.username || "Unknown")} · ${esc(art.status || "unknown")}</div>
+            ${art.description ? `<div style="font-family:'EB Garamond',serif;font-style:italic;font-size:0.8rem;color:var(--text-dim);margin-bottom:8px;">${esc(art.description)}</div>` : ""}
+            <div class="art-dm-actions">
+              ${isPending ? `<button class="btn-approve" onclick="updateArt('${esc(art.id)}','approved')">✓ Approve</button>` : ""}
+              ${isApproved ? `<button class="btn-secondary" style="font-size:0.42rem;padding:5px 10px;" onclick="updateArt('${esc(art.id)}','pending')">↩ Unpublish</button>` : ""}
+              <button class="btn-delete" onclick="deleteArt('${esc(art.id)}')">🗑 Delete</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  window.loadAllArt = loadVaultArtFinal;
+  window.renderArtFiltered = renderVaultArtFinal;
+
+  document.addEventListener("click", function(e){
+    const text = String(e.target?.textContent || "").toLowerCase();
+    if(text.includes("community") || text.includes("art") || text.includes("pending") || text.includes("approved")){
+      setTimeout(loadVaultArtFinal, 150);
+    }
+  });
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", loadVaultArtFinal);
+  } else {
+    loadVaultArtFinal();
+  }
+})();
+</script>
+
 </body>
 </html>
