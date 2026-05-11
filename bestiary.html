@@ -31,6 +31,9 @@ main{position:relative;z-index:10;max-width:1200px;margin:0 auto;padding:32px 20
 .creature-icon-wrap{background:rgba(200,149,42,0.05);border-bottom:1px solid rgba(200,149,42,0.1);padding:20px;text-align:center;font-size:2.4rem;}
 .creature-body{padding:16px;}
 .creature-name{font-family:'Cinzel',serif;font-size:0.78rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold-light);margin-bottom:6px;}
+.creature-level{font-family:'Cinzel',serif;font-size:0.5rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin:-1px 0 8px;padding:4px 8px;border:1px solid rgba(200,149,42,0.25);display:inline-block;background:rgba(200,149,42,0.05);}
+.level-divider{width:100%;height:1px;background:rgba(200,149,42,0.14);margin:2px 0;flex-basis:100%;}
+
 .creature-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
 .ctag{font-family:'Cinzel',serif;font-size:0.38rem;letter-spacing:0.15em;text-transform:uppercase;padding:3px 7px;border:1px solid;}
 .ctag.beast{color:#4be87a;border-color:rgba(75,232,122,0.3);}
@@ -275,6 +278,17 @@ body.light-mode #quick-nav {
   .banner-arrow{font-family:'Cinzel',serif;font-size:0.52rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold-dark);flex-shrink:0;transition:color 0.25s;}
   .campaign-banner:hover .banner-arrow{color:var(--gold);}
   body.light-mode .campaign-banner{background:linear-gradient(135deg,#ede8da,#e8e0cc);border-color:rgba(138,96,16,0.3);}}
+
+.statblock{margin-top:22px;background:#f3e3b5;color:#2a1608;border:2px solid #7a2e12;padding:14px 16px;font-family:'EB Garamond',serif;box-shadow:0 0 0 1px rgba(0,0,0,0.25) inset;}
+.statblock h4{font-family:'Cinzel',serif;font-size:1rem;letter-spacing:.08em;color:#7a2e12;margin:0 0 2px;text-transform:uppercase;}
+.statblock .sb-sub{font-style:italic;color:#533019;margin-bottom:8px;}
+.statblock .sb-line{border-top:1px solid #b96a34;margin:7px 0;}
+.statblock .sb-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;text-align:center;margin:8px 0;}
+.statblock .sb-grid div{background:rgba(122,46,18,.08);padding:4px 2px;}
+.statblock b{color:#7a2e12;}
+.statblock p{color:#2a1608!important;line-height:1.45!important;margin-bottom:6px!important;font-size:.94rem!important;}
+@media(max-width:600px){.statblock .sb-grid{grid-template-columns:repeat(3,1fr);}}
+
 </style>
 </head>
 <body>
@@ -286,19 +300,24 @@ body.light-mode #quick-nav {
   <h1 class="header-title">Bestiary</h1>
   <p class="header-sub">Every beast, monster, and entity that walks, crawls, or haunts the world</p>
 </header>
-<div style="position:relative;z-index:10;background:rgba(232,75,75,0.08);border:1px solid rgba(232,75,75,0.25);padding:12px 24px;text-align:center;font-family:'Cinzel',serif;font-size:0.55rem;letter-spacing:0.3em;text-transform:uppercase;color:#e84b4b;">⚠ Work in Progress — This page is being improved. Some features may not work correctly.</div>
 <main>
   <div class="search-filter">
     <input type="text" id="bSearch" placeholder="Search creatures..." oninput="renderCreatures()">
-    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
-    <button class="filter-btn" onclick="setFilter('beast',this)">Beasts</button>
-    <button class="filter-btn" onclick="setFilter('undead',this)">Undead</button>
-    <button class="filter-btn" onclick="setFilter('construct',this)">Constructs</button>
-    <button class="filter-btn" onclick="setFilter('fiend',this)">Fiends</button>
-    <button class="filter-btn" onclick="setFilter('dragon',this)">Dragons</button>
-    <button class="filter-btn" onclick="setFilter('elemental',this)">Elementals</button>
-    <button class="filter-btn" onclick="setFilter('aberration',this)">Aberrations</button>
-    <button class="filter-btn" onclick="setFilter('humanoid',this)">Humanoids</button>
+    <button class="filter-btn type-filter active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn type-filter" onclick="setFilter('beast',this)">Beasts</button>
+    <button class="filter-btn type-filter" onclick="setFilter('undead',this)">Undead</button>
+    <button class="filter-btn type-filter" onclick="setFilter('construct',this)">Constructs</button>
+    <button class="filter-btn type-filter" onclick="setFilter('fiend',this)">Fiends</button>
+    <button class="filter-btn type-filter" onclick="setFilter('dragon',this)">Dragons</button>
+    <button class="filter-btn type-filter" onclick="setFilter('elemental',this)">Elementals</button>
+    <button class="filter-btn type-filter" onclick="setFilter('aberration',this)">Aberrations</button>
+    <button class="filter-btn type-filter" onclick="setFilter('humanoid',this)">Humanoids</button>
+    <div class="level-divider"></div>
+    <button class="filter-btn level-filter active" onclick="setLevelFilter('all',this)">All Levels</button>
+    <button class="filter-btn level-filter" onclick="setLevelFilter('1-4',this)">Lv 1–4</button>
+    <button class="filter-btn level-filter" onclick="setLevelFilter('5-8',this)">Lv 5–8</button>
+    <button class="filter-btn level-filter" onclick="setLevelFilter('9-12',this)">Lv 9–12</button>
+    <button class="filter-btn level-filter" onclick="setLevelFilter('13+',this)">Lv 13+</button>
   </div>
   <div class="creature-count" id="creature-count">All Creatures</div>
   <div class="creature-grid" id="creature-grid"></div>
@@ -325,7 +344,7 @@ body.light-mode #quick-nav {
 const CREATURES = [
   // ══ BEASTS ══
   {
-    id:'ashwolf', name:'Ashwolf', icon:'🐺', type:'beast', threat:'medium',
+    id:'ashwolf', name:'Ashwolf', icon:'🐺', type:'beast', threat:'medium', level:4,
     habitat:'Settnak, Fireguard', size:'Large',
     desc:'A wolf born from volcanic ash and smoke — its fur is perpetually smouldering and its breath carries the scent of sulfur.',
     body:`<p>The Ashwolf is native to the volcanic regions of <strong>Settnak</strong> and <strong>Fireguard</strong>, where centuries of exposure to volcanic activity have transformed the common wolf into something far more dangerous. Their fur appears to be constantly smouldering without ever fully catching flame, and their bite carries a burning heat that lingers long after the wound is treated.</p>
@@ -335,7 +354,7 @@ const CREATURES = [
 <blockquote>"You'll smell them before you see them. By the time you see them, it's already too late to run." — Settnak hunter</blockquote>`
   },
   {
-    id:'crystalback', name:'Crystalback Tortoise', icon:'🐢', type:'beast', threat:'low',
+    id:'crystalback', name:'Crystalback Tortoise', icon:'🐢', type:'beast', threat:'low', level:2,
     habitat:'Oakford, Crystal Coast', size:'Huge',
     desc:'An ancient tortoise whose shell has grown crystals over centuries of living near aetheric deposits.',
     body:`<p>The Crystalback Tortoise is one of the oldest living creatures in Dorlorial — individuals have been documented living for over four hundred years. They are found primarily in <strong>Oakford</strong> and along the <strong>Crystal Coast</strong>, where the earth is rich with aetheric deposits that slowly crystallise into the shell over decades.</p>
@@ -344,26 +363,26 @@ const CREATURES = [
 <p>Crystalbacks are not aggressive. When threatened they retreat into their shell, which is nearly impervious to conventional weapons. The crystals on their shells occasionally shed and can be harvested as minor aetheric components by those patient enough to wait for them.</p>`
   },
   {
-    id:'fungal-crawler', name:'Fungal Crawler', icon:'🍄', type:'beast', threat:'medium',
+    id:'fungal-crawler', name:'Fungal Crawler', icon:'🍄', type:'beast', threat:'medium', level:3,
     habitat:'Fungaria, Ravenshroud', size:'Medium',
     desc:'A spider-like creature whose body is entirely overgrown with fungi — it spreads spores that cloud the mind.',
     body:`<p>The Fungal Crawler is believed to be a natural evolution of arachnids that have lived too long within the mycelium network of <strong>Fungaria</strong>. Their bodies have been entirely colonised by fungi, which provide camouflage in the mushroom forests but also serve as a weapon — the spores they release cause confusion and disorientation in those who breathe them.</p>
-<p>Fungal Crawlers are not malicious by nature but are intensely territorial. They are tolerated within Fungaria as part of the ecosystem and are considered an extension of Gondwan Petri's domain.</p>
+<p>Fungal Crawlers are not malicious by nature but are intensely territorial. They are tolerated within Fungaria as part of the ecosystem and are considered an extension of Gondwan Petri\'s domain.</p>
 <h3>Encounter Notes</h3>
 <p>Avoid breathing the spores. A cloth over the mouth provides partial protection. The Crawlers are most dangerous in enclosed spaces where the spore cloud cannot disperse. Outside of Fungaria they are disoriented and significantly weaker.</p>`
   },
   {
-    id:'tide-serpent', name:'Tide Serpent', icon:'🐍', type:'beast', threat:'high',
+    id:'tide-serpent', name:'Tide Serpent', icon:'🐍', type:'beast', threat:'high', level:12,
     habitat:'Faroth Sea, Toke Ocean', size:'Gargantuan',
     desc:'A sea serpent of enormous size that appears during storms — sailors debate whether it serves Thalor or simply shares his temperament.',
     body:`<p>The Tide Serpent is the most feared creature in the open waters of Dorlorial. Documented lengths reach over two hundred feet, though sailors tend to exaggerate in proportion to how frightened they were. They are most active during storms, leading to the widespread belief that they are agents of <strong>Thalor</strong> — though no divine connection has ever been confirmed.</p>
 <p>Tide Serpents are rarely aggressive toward ships that do not provoke them. They appear primarily interested in the large deep-sea creatures that constitute their actual diet. However their movement alone can capsize smaller vessels.</p>
 <h3>Encounter Notes</h3>
 <p>Engaging a Tide Serpent at sea is essentially inadvisable. The few recorded victories were achieved through lightning magic — for reasons that remain poorly understood, electrical attacks cause them to dive deep and disengage. Coastal communities maintain shrines to Thalor near their harbours partly in hopes of keeping the Serpents peaceful.</p>
-<blockquote>"It didn't attack us. It just moved past. The wave it made was enough." — survivor account</blockquote>`
+<blockquote>"It didn\'t attack us. It just moved past. The wave it made was enough." — survivor account</blockquote>`
   },
   {
-    id:'thornback', name:'Thornback Boar', icon:'🐗', type:'beast', threat:'low',
+    id:'thornback', name:'Thornback Boar', icon:'🐗', type:'beast', threat:'low', level:1,
     habitat:'Oakford, Ionsgate region', size:'Large',
     desc:'A common but aggressive boar with a ridge of bone spurs along its spine — capable of reversing into attackers.',
     body:`<p>The Thornback Boar is a ubiquitous creature across the forested regions of central Dorlorial. The distinctive ridge of bone spurs along its spine is used both in mating displays and as a defensive weapon — when cornered, a Thornback will reverse at speed into its attacker, dragging the spurs across whatever it contacts.</p>
@@ -373,8 +392,8 @@ const CREATURES = [
   },
   // ══ UNDEAD ══
   {
-    id:'hollow-one', name:'Hollow One', icon:'👤', type:'undead', threat:'high',
-    habitat:'Ravenshroud, anywhere Vexara's cult operates', size:'Medium',
+    id:'hollow-one', name:'Hollow One', icon:'👤', type:'undead', threat:'high', level:8,
+    habitat:'Ravenshroud, anywhere Vexara\'s cult operates', size:'Medium',
     desc:'A person whose memories and identity have been entirely consumed — a body that walks and obeys but holds nothing inside.',
     body:`<p>A <strong>Hollow One</strong> is what remains when the cult of Vexara finishes its work on a person. The body continues to function — it breathes, walks, follows instructions — but the person who inhabited it is gone. There are no memories, no emotions, no preferences. Just obedience.</p>
 <p>What makes Hollow Ones uniquely disturbing is that they are physically indistinguishable from living people at first glance. It is only in sustained interaction that the absence becomes apparent — the flat affect, the lack of reaction to stimuli that should provoke a response, the eyes that track without recognising.</p>
@@ -383,7 +402,7 @@ const CREATURES = [
 <blockquote>"I thought he was tired. He had been tired before. This was something else." — Kodral resident</blockquote>`
   },
   {
-    id:'gravewoken', name:'Gravewoken', icon:'💀', type:'undead', threat:'medium',
+    id:'gravewoken', name:'Gravewoken', icon:'💀', type:'undead', threat:'medium', level:4,
     habitat:'Battlefields, Old Calladona, ancient ruins', size:'Medium',
     desc:'Soldiers and fighters raised from old battlefields — they carry the wounds that killed them and remember only the battle they died in.',
     body:`<p>Gravewoken arise on old battlefields and in places where violent death occurred in large numbers. Unlike more sophisticated undead, they are not raised through intentional magic — they simply wake, driven by some residual echo of the conflict that ended their lives. They remember only the fight. They see only enemies.</p>
@@ -392,9 +411,9 @@ const CREATURES = [
 <p>Gravewoken are not tactically sophisticated but they do not tire and they do not feel pain. Destroying them requires either significant physical damage or holy magic. They can sometimes be confused or briefly halted by speaking to them about the battle they remember — the dissonance of hearing a detail they cannot reconcile occasionally causes them to pause.</p>`
   },
   {
-    id:'umbral-shade', name:'Umbral Shade', icon:'🌑', type:'undead', threat:'high',
+    id:'umbral-shade', name:'Umbral Shade', icon:'🌑', type:'undead', threat:'high', level:7,
     habitat:'Ravenshroud, Umbryll Abyss', size:'Small',
-    desc:'A fragment of a stolen soul given physical form by Duskyre's power — it seeks living warmth to consume.',
+    desc:'A fragment of a stolen soul given physical form by Duskyre\'s power — it seeks living warmth to consume.',
     body:`<p>When <strong>Duskyre</strong> takes a mortal into the <strong>Umbryll Abyss</strong>, not all of them remain whole. Some fragment under the pressure of what the Abyss is, and those fragments escape — thin, cold, hungry things that drift through shadow looking for living warmth. These are Umbral Shades.</p>
 <p>They cannot exist in direct light. Even torchlight causes them to recoil. But in shadow they are almost invisible and their touch drains warmth and clarity — extended exposure causes confusion and cold damage even before any physical wound is inflicted.</p>
 <h3>Encounter Notes</h3>
@@ -402,7 +421,7 @@ const CREATURES = [
   },
   // ══ CONSTRUCTS ══
   {
-    id:'aether-golem', name:'Aether Golem', icon:'⚙️', type:'construct', threat:'high',
+    id:'aether-golem', name:'Aether Golem', icon:'⚙️', type:'construct', threat:'high', level:10,
     habitat:'Gearhold, Aetherwyn, magical laboratories', size:'Large',
     desc:'A construct powered by crystallised aetheric energy — built to guard, built to last, and difficult to reason with.',
     body:`<p>Aether Golems are the pinnacle of construct engineering in Dorlorial, most commonly found in <strong>Gearhold</strong> and in the deep vaults of <strong>Aetherwyn</strong>. They are powered by crystallised aetheric cores — fragments of energy associated with <strong>Crystolas</strong> — which grant them not just power but a form of purpose that simpler constructs lack.</p>
@@ -411,7 +430,7 @@ const CREATURES = [
 <p>Destroying the aetheric core in the golem's chest cavity disables it instantly — but the core is heavily protected and reaching it in combat is the challenge. Anti-magic fields significantly weaken Aether Golems. The Vault of Crystolas in Aetherwyn is rumoured to be guarded by Golems of unusual size and age.</p>`
   },
   {
-    id:'clockwork-sentinel', name:'Clockwork Sentinel', icon:'🔧', type:'construct', threat:'medium',
+    id:'clockwork-sentinel', name:'Clockwork Sentinel', icon:'🔧', type:'construct', threat:'medium', level:4,
     habitat:'Gearhold, Erentil', size:'Medium',
     desc:'A mechanical guardian built in Erentil — less powerful than an Aether Golem but far more common and easier to maintain.',
     body:`<p>The Clockwork Sentinel is the workhorse of construct technology in <strong>Erentil</strong> — manufactured in Gearhold and deployed across the region as guards, labourers, and enforcers. They run on wound clockwork mechanisms rather than aetheric power, which makes them less capable than true Golems but also more reliable and easier to repair.</p>
@@ -421,16 +440,16 @@ const CREATURES = [
   },
   // ══ FIENDS ══
   {
-    id:'ashborn', name:'Ashborn Wraith', icon:'🔥', type:'fiend', threat:'high',
+    id:'ashborn', name:'Ashborn Wraith', icon:'🔥', type:'fiend', threat:'high', level:8,
     habitat:'Settnak, volcanic regions', size:'Medium',
     desc:'A servant of Malachar who has transformed through devotion into something between mortal and elemental fire.',
     body:`<p>The Ashborn are mortal servants of <strong>Malachar</strong> who have undergone the Burning Rite — a ritual of devotion that transforms them over years of practice until they can manifest living flame from within. A fully realised Ashborn Wraith is indistinguishable from a burning humanoid silhouette; a less advanced Ashborn might simply appear as a heavily scarred person who runs abnormally hot.</p>
-<p>They serve as Malachar's priests, warriors, and enforcers throughout <strong>Settnak</strong> and the volcanic regions. They feel no pain from fire and are sustained by heat rather than food.</p>
+<p>They serve as Malachar\'s priests, warriors, and enforcers throughout <strong>Settnak</strong> and the volcanic regions. They feel no pain from fire and are sustained by heat rather than food.</p>
 <h3>Encounter Notes</h3>
 <p>Cold damage and water are highly effective. Standard fire resistance is insufficient — Ashborn fire burns hotter than natural flame. The transformation is reversible only in early stages; a fully-realised Wraith cannot be returned to human form. Destroying them causes a brief but violent explosion of released heat.</p>`
   },
   {
-    id:'void-tendril', name:'Void Tendril', icon:'◈', type:'fiend', threat:'legendary',
+    id:'void-tendril', name:'Void Tendril', icon:'◈', type:'fiend', threat:'legendary', level:15,
     habitat:'Ancient ruins, places of great death', size:'Large',
     desc:'A physical extension of the Void into the mortal plane — it does not think, it does not feel. It only consumes.',
     body:`<p>A Void Tendril is not a creature in any meaningful sense. It is a physical extrusion of the <strong>Void</strong> itself — a place in reality where the boundary between existence and non-existence has been worn thin enough for something to push through. It has no intelligence, no goal, no preferences. It simply expands into whatever space it occupies until something forces it back.</p>
@@ -441,26 +460,26 @@ const CREATURES = [
   },
   // ══ DRAGONS ══
   {
-    id:'envy-drake', name:'Envy Drake', icon:'🐲', type:'dragon', threat:'high',
+    id:'envy-drake', name:'Envy Drake', icon:'🐲', type:'dragon', threat:'high', level:7,
     habitat:'Kadaka, Eastern mountains', size:'Large',
-    desc:'A lesser dragon touched by Rhaegal's influence — obsessed with collecting what others possess and destroying what it cannot take.',
+    desc:'A lesser dragon touched by Rhaegal\'s influence — obsessed with collecting what others possess and destroying what it cannot take.',
     body:`<p>Envy Drakes are believed to be dragons that have been subtly influenced by <strong>Rhaegal</strong>, the Dragon God of Envy. They are not as powerful as true dragons but are distinguished by their fixation on acquisition — they are compelled to take what others value, often ignoring obvious treasure in favour of something that clearly matters deeply to a specific person.</p>
-<p>They are found most commonly in and around <strong>Kadaka</strong> where Rhaegal's influence is strongest. Envy Drakes frequently destroy what they cannot carry away, which makes them more destructive than typical hoarding dragons.</p>
+<p>They are found most commonly in and around <strong>Kadaka</strong> where Rhaegal\'s influence is strongest. Envy Drakes frequently destroy what they cannot carry away, which makes them more destructive than typical hoarding dragons.</p>
 <h3>Encounter Notes</h3>
 <p>Envy Drakes can sometimes be distracted by offering something they clearly desire. They are susceptible to magic associated with <strong>Crystolas</strong> — the purity of aetheric energy seems to disrupt their envy-driven focus. They are not as physically powerful as true dragons and can be defeated through sustained combat, but they fight with unusual cunning for their size.</p>`
   },
   {
-    id:'glacial-serpent', name:'Glacial Serpent', icon:'🧊', type:'dragon', threat:'legendary',
+    id:'glacial-serpent', name:'Glacial Serpent', icon:'🧊', type:'dragon', threat:'legendary', level:16,
     habitat:'Verglaze, Frozen Ocean', size:'Gargantuan',
     desc:'An ancient ice dragon that has not moved from the peaks of Verglaze in living memory — and the mountains themselves are colder for its presence.',
     body:`<p>The Glacial Serpent of Verglaze is not confirmed to be a single creature — it may be that multiple sightings over centuries refer to different individuals, or it may be that one truly ancient dragon has simply remained in the peaks of the frozen mountain range for an incomprehensible span of time. Either way, the cold that radiates from the upper peaks of Verglaze is attributed to its presence.</p>
-<p>No expedition sent to locate it has returned with anything other than frostbite and gaps in their memories of the upper peaks. Whether this is the dragon's doing or the mountain's natural hostility is unknown.</p>
+<p>No expedition sent to locate it has returned with anything other than frostbite and gaps in their memories of the upper peaks. Whether this is the dragon\'s doing or the mountain\'s natural hostility is unknown.</p>
 <h3>Encounter Notes</h3>
-<p>Almost nothing is confirmed about this creature's capabilities. The cold it generates is described by survivors as fundamentally different from natural cold — it is the cold of intent rather than weather. Magical fire is the assumed primary countermeasure. Approaching the upper peaks of Verglaze without serious preparation for cold equivalent to the Vethkarn's domain is not advised.</p>`
+<p>Almost nothing is confirmed about this creature\'s capabilities. The cold it generates is described by survivors as fundamentally different from natural cold — it is the cold of intent rather than weather. Magical fire is the assumed primary countermeasure. Approaching the upper peaks of Verglaze without serious preparation for cold equivalent to the Vethkarn's domain is not advised.</p>`
   },
   // ══ ELEMENTALS ══
   {
-    id:'storm-wraith', name:'Storm Wraith', icon:'⚡', type:'elemental', threat:'high',
+    id:'storm-wraith', name:'Storm Wraith', icon:'⚡', type:'elemental', threat:'high', level:8,
     habitat:'Kadaka, Hvallatr, open seas', size:'Large',
     desc:'An elemental born from lightning strikes — drawn to metal, drawn to height, and incapable of remaining still.',
     body:`<p>Storm Wraiths are elementals that coalesce during severe electrical storms, particularly in <strong>Kadaka</strong> where Raijin's Strike perpetually draws lightning. They appear as humanoid shapes of crackling electricity and move at terrifying speed, unable or unwilling to remain in one place for more than a few seconds.</p>
@@ -469,7 +488,7 @@ const CREATURES = [
 <p>Non-metallic weapons and armour are strongly preferred. Grounding magic — connecting the Wraith to the earth — slows and weakens them significantly. They cannot exist in still air; sufficient wind control magic can contain them. Stone and wood absorb their energy without conducting it dangerously.</p>`
   },
   {
-    id:'magma-elemental', name:'Magma Elemental', icon:'🌋', type:'elemental', threat:'high',
+    id:'magma-elemental', name:'Magma Elemental', icon:'🌋', type:'elemental', threat:'high', level:10,
     habitat:'Fireguard, Settnak, volcanic regions', size:'Huge',
     desc:'Living magma given will — slow but effectively indestructible to conventional weapons, and capable of melting through stone.',
     body:`<p>Magma Elementals are among the more common elemental threats in the volcanic regions of <strong>Fireguard</strong> and <strong>Settnak</strong>. They are not fast — a careful party can simply stay ahead of one — but they are nearly impossible to harm through conventional means, and they melt through stone walls and barriers with patience that suggests they have no concept of urgency.</p>
@@ -479,27 +498,27 @@ const CREATURES = [
   },
   // ══ ABERRATIONS ══
   {
-    id:'memory-leech', name:'Memory Leech', icon:'🧠', type:'aberration', threat:'medium',
+    id:'memory-leech', name:'Memory Leech', icon:'🧠', type:'aberration', threat:'medium', level:3,
     habitat:'Ravenshroud, Dusk Harbor, dark urban areas', size:'Tiny',
-    desc:'A small parasitic creature that feeds on memory — its host often doesn't notice until significant time has been lost.',
-    body:`<p>The Memory Leech is believed to be a natural creature rather than one created by Vexara's cult, though the cult has been known to cultivate them. They are small — roughly the size of a human fist — and attach to the base of the skull or behind the ear, where their presence is difficult to notice. They feed on neurological energy, which manifests as the gradual disappearance of memories in the host.</p>
+    desc:'A small parasitic creature that feeds on memory — its host often doesn\'t notice until significant time has been lost.',
+    body:`<p>The Memory Leech is believed to be a natural creature rather than one created by Vexara\'s cult, though the cult has been known to cultivate them. They are small — roughly the size of a human fist — and attach to the base of the skull or behind the ear, where their presence is difficult to notice. They feed on neurological energy, which manifests as the gradual disappearance of memories in the host.</p>
 <p>Hosts often notice nothing unusual except a vague sense that time has passed strangely and an inability to recall specific recent events. By the time the leech has fed sufficiently, it detaches and moves on, leaving gaps that the host may not even realise are there.</p>
 <h3>Encounter Notes</h3>
 <p>Detection requires either a thorough physical examination or magical detection of parasitic energy. Removal must be done carefully — forcible removal while the leech is actively feeding causes additional memory damage. Salt and radiant magic cause the leech to detach voluntarily. The memories consumed are gone permanently.</p>
-<blockquote>"She kept asking what year it was. Not because she didn't know — because she couldn't trust herself that she did." — Dusk Harbor healer</blockquote>`
+<blockquote>"She kept asking what year it was. Not because she didn\'t know — because she couldn\'t trust herself that she did." — Dusk Harbor healer</blockquote>`
   },
   {
-    id:'hollow-hound', name:'Hollow Hound', icon:'🐕', type:'aberration', threat:'high',
+    id:'hollow-hound', name:'Hollow Hound', icon:'🐕', type:'aberration', threat:'high', level:6,
     habitat:'Ravenshroud, Umbryll Abyss vicinity', size:'Large',
     desc:'A creature from the Umbryll Abyss that resembles a dog in the way a shadow resembles the person who casts it.',
-    body:`<p>Hollow Hounds are not animals. They are entities from <strong>Duskyre</strong>'s Umbryll Abyss that have taken on a canine shape — presumably because they have spent time near dogs taken into the Abyss and have absorbed something of their form. The resemblance is uncanny from a distance and deeply wrong up close: the proportions shift slightly, the eyes reflect light that isn't there, and the sound they make is almost but not quite a bark.</p>
+    body:`<p>Hollow Hounds are not animals. They are entities from <strong>Duskyre</strong>'s Umbryll Abyss that have taken on a canine shape — presumably because they have spent time near dogs taken into the Abyss and have absorbed something of their form. The resemblance is uncanny from a distance and deeply wrong up close: the proportions shift slightly, the eyes reflect light that isn\'t there, and the sound they make is almost but not quite a bark.</p>
 <p>They hunt in pairs and seem to be able to communicate silently, coordinating their attacks without any visible signal. They phase partially through solid objects — not fully, but enough to make grappling them difficult.</p>
 <h3>Encounter Notes</h3>
 <p>Radiant damage and fire both work well. They are vulnerable when fully manifested in physical space — which combat forces them to do — but they will attempt to phase back to a semi-corporeal state whenever they have space to retreat. They cannot phase through sanctified ground.</p>`
   },
   // ══ HUMANOIDS ══
   {
-    id:'umbra-cultist', name:'Umbra Cultist', icon:'🌑', type:'humanoid', threat:'medium',
+    id:'umbra-cultist', name:'Umbra Cultist', icon:'🌑', type:'humanoid', threat:'medium', level:3,
     habitat:'Ravenshroud, hidden cells across Dorlorial', size:'Medium',
     desc:'A mortal servant of Duskyre who has traded a portion of their own shadow for powers of concealment and dark magic.',
     body:`<p>Umbra Cultists are ordinary people who have made a deliberate covenant with <strong>Duskyre</strong>. In exchange for shadow-based abilities — enhanced concealment, shadow walking over short distances, and the ability to extinguish light sources at will — they have surrendered a portion of their own shadow permanently. An Umbra Cultist's shadow is always slightly wrong: too short, pointing the wrong direction, occasionally moving independently.</p>
@@ -508,26 +527,26 @@ const CREATURES = [
 <p>Radiant light negates their concealment abilities entirely. In full daylight they lose most of their advantages and fight as ordinary humans. They are trained in avoiding capture and will prioritise escape over combat. The shadow anomaly is the primary way to identify them before they reveal themselves.</p>`
   },
   {
-    id:'red-sun-soldier', name:'Red Sun Legionnaire', icon:'🔴', type:'humanoid', threat:'medium',
+    id:'red-sun-soldier', name:'Red Sun Legionnaire', icon:'🔴', type:'humanoid', threat:'medium', level:3,
     habitat:'Kodral, Sunbright, expanding', size:'Medium',
-    desc:'A soldier of Karst's Red Sun Legion — disciplined, well-equipped, and absolutely loyal to the cause.',
-    body:`<p>The Red Sun Legionnaire is the backbone of <strong>Karst</strong>'s military expansion across Kodral. They are recruited primarily from the gladiatorial culture of <strong>Adroya</strong> — fighters who value strength, discipline, and the idea of belonging to something that wins. They are not fanatical in the manner of cultists; they are professionals who have made a calculated decision that Karst's side is the one worth being on.</p>
+    desc:'A soldier of Karst\'s Red Sun Legion — disciplined, well-equipped, and absolutely loyal to the cause.',
+    body:`<p>The Red Sun Legionnaire is the backbone of <strong>Karst</strong>'s military expansion across Kodral. They are recruited primarily from the gladiatorial culture of <strong>Adroya</strong> — fighters who value strength, discipline, and the idea of belonging to something that wins. They are not fanatical in the manner of cultists; they are professionals who have made a calculated decision that Karst\'s side is the one worth being on.</p>
 <p>This makes them both more predictable and more dangerous than ideologically-driven soldiers. They follow orders efficiently, do not take unnecessary risks, and retreat when retreat is tactically correct rather than staying to die for a symbol.</p>
 <h3>Encounter Notes</h3>
 <p>They operate best in coordinated groups. Isolated Legionnaires are significantly less effective. They are vulnerable to morale loss when their command structure is disrupted — without clear orders they default to defensive formation rather than pressing an attack. Elite Legionnaires carry weapons treated with Gravewake residue, which causes an unusual cold sensation on contact.</p>`
   },
   // ══ MORE BEASTS ══
   {
-    id:'spore-bat', name:'Spore Bat', icon:'🦇', type:'beast', threat:'low',
+    id:'spore-bat', name:'Spore Bat', icon:'🦇', type:'beast', threat:'low', level:1,
     habitat:'Fungaria, cave systems', size:'Small',
     desc:'A blind bat whose wings are coated in bioluminescent fungi spores — harmless alone, disorienting in swarms.',
     body:`<p>The Spore Bat is one of the most common creatures within <strong>Fungaria</strong> and its surrounding cave networks. Individually they are almost entirely harmless — small, blind, navigating by echolocation and the mycelium signals that run through the fungal ecosystem around them. Their wings shed bioluminescent spores passively as they fly.</p>
-<p>In swarms, the spore clouds become genuinely disorienting. The spores don't cause direct harm but they interfere with vision and, in larger concentrations, can cause mild euphoria and spatial confusion — particularly problematic underground where orientation is already difficult.</p>
+<p>In swarms, the spore clouds become genuinely disorienting. The spores don\'t cause direct harm but they interfere with vision and, in larger concentrations, can cause mild euphoria and spatial confusion — particularly problematic underground where orientation is already difficult.</p>
 <h3>Encounter Notes</h3>
 <p>Individual Spore Bats are not worth fighting. Swarms should be dispersed by wind magic or avoided entirely. <strong>Gondwan Petri</strong>'s followers consider harming Spore Bats disrespectful and will remember it. The spores themselves have minor alchemical applications as a component in sleep or confusion potions.</p>`
   },
   {
-    id:'ridgeback-elk', name:'Ridgeback Elk', icon:'🦌', type:'beast', threat:'medium',
+    id:'ridgeback-elk', name:'Ridgeback Elk', icon:'🦌', type:'beast', threat:'medium', level:4,
     habitat:'Oakford, Ionsgate region, northern forests', size:'Large',
     desc:'A massive elk with a ridge of crystallised bone along its spine — sacred to followers of Sylvara, dangerous if cornered.',
     body:`<p>The Ridgeback Elk is the largest land animal in the forests of central Dorlorial. The crystallised bone ridge along its spine — which grows throughout its lifetime, becoming more pronounced with age — is believed to be a result of centuries of exposure to aetheric deposits in the soil of <strong>Oakford</strong>. Elder specimens have ridges that catch light like gemstones.</p>
@@ -536,7 +555,7 @@ const CREATURES = [
 <p>Ridgeback Elk will not initiate aggression. When cornered or threatened, however, they are devastating — the crystallised ridge functions as a weapon when they rear and drive it downward. The ridge fragments are prized by jewelers and alchemists, which is why poaching remains a persistent problem despite the religious prohibition.</p>`
   },
   {
-    id:'deep-crawler', name:'Deep Crawler', icon:'🕷️', type:'beast', threat:'high',
+    id:'deep-crawler', name:'Deep Crawler', icon:'🕷️', type:'beast', threat:'high', level:7,
     habitat:'Aetherwyn, underground systems', size:'Large',
     desc:'A massive blind spider that hunts by aetheric vibration rather than sight or sound — it feels magic before it arrives.',
     body:`<p>The Deep Crawler evolved in the lightless depths beneath Oakford, where the aetheric deposits that feed the crystal formations above also feed something far less benign below. They are entirely blind but possess an organ along their underside that detects aetheric energy — which means they feel spellcasting the way other creatures feel sound, registering it from considerable distance and orienting toward it.</p>
@@ -546,17 +565,17 @@ const CREATURES = [
 <blockquote>"We lost the wizard first. Then we understood what the sound was." — Aetherwyn expedition survivor</blockquote>`
   },
   {
-    id:'mire-crocodile', name:'Mire Crocodile', icon:'🐊', type:'beast', threat:'high',
+    id:'mire-crocodile', name:'Mire Crocodile', icon:'🐊', type:'beast', threat:'high', level:8,
     habitat:'Reyur swamps, Green Bay', size:'Huge',
-    desc:'A crocodile grown enormous in Reyur's warm swamps — patient, nearly invisible in the water, and large enough to overturn a small boat.',
+    desc:'A crocodile grown enormous in Reyur\'s warm swamps — patient, nearly invisible in the water, and large enough to overturn a small boat.',
     body:`<p>The Mire Crocodile of <strong>Reyur</strong> has had centuries of nutrient-rich swampland and minimal natural predators to grow in. The largest documented specimens exceed thirty feet. They are ambush hunters of exceptional patience — capable of holding completely still for hours, submerged to their eyes in dark water, waiting for anything to come close enough to the bank.</p>
-<p>They are not connected to Thalor's domain despite living in water — they are simply very large, very old, and very effective at what they do. Reyur locals have named several of the elder Mire Crocodiles and give them wide berth as a matter of cultural habit.</p>
+<p>They are not connected to Thalor\'s domain despite living in water — they are simply very large, very old, and very effective at what they do. Reyur locals have named several of the elder Mire Crocodiles and give them wide berth as a matter of cultural habit.</p>
 <h3>Encounter Notes</h3>
 <p>The primary danger is not recognising one until it moves. Once it moves, it is fast. Their armoured hide resists most conventional weapons — aim for the softer underside or the eyes. Fire causes them to release and retreat. The Cypress Cathedral in Reyur has a Mire Crocodile named <strong>Old Bile</strong> that has lived beneath its foundations for at least two hundred years and is considered a local guardian.</p>`
   },
   // ══ MORE UNDEAD ══
   {
-    id:'ashen-revenant', name:'Ashen Revenant', icon:'🔥', type:'undead', threat:'high',
+    id:'ashen-revenant', name:'Ashen Revenant', icon:'🔥', type:'undead', threat:'high', level:7,
     habitat:'Settnak, Fireguard, battlefields near volcanic regions', size:'Medium',
     desc:'A soldier who died in volcanic fire and refused to stop burning — driven by the last emotion they felt before death.',
     body:`<p>Ashen Revenants are not raised by any external power — they rise through sheer force of unresolved emotional intensity at the moment of death. Those who die in volcanic fire while gripped by rage, grief, or obsession occasionally refuse to stop. The body burns without consuming itself, sustained by whatever drove the person in their final moments.</p>
@@ -565,7 +584,7 @@ const CREATURES = [
 <p>Water and cold are highly effective. Speaking to a Revenant about what drove them — acknowledging the grief or the rage — can sometimes cause them to pause, and in rare cases to resolve and finally rest. <strong>Furius</strong>'s followers sometimes seek Revenants out as teachers, believing their unextinguished will contains lessons worth learning.</p>`
   },
   {
-    id:'bone-collector', name:'Bone Collector', icon:'💀', type:'undead', threat:'medium',
+    id:'bone-collector', name:'Bone Collector', icon:'💀', type:'undead', threat:'medium', level:5,
     habitat:'Old Calladona, ancient ruins, battlefields', size:'Large',
     desc:'An undead entity that has assembled itself from the bones of many different people — no single skeleton, but an accumulation.',
     body:`<p>Bone Collectors are the result of battlefields and mass graves where too many dead are concentrated in too small a space. Rather than individual dead rising, the collective energy of so many deaths coalesces into a single entity that begins pulling available bones together into a larger and larger form. A mature Bone Collector may be carrying the remains of dozens of people.</p>
@@ -575,17 +594,17 @@ const CREATURES = [
   },
   // ══ MORE FIENDS ══
   {
-    id:'grief-shade', name:'Grief Shade', icon:'😢', type:'fiend', threat:'medium',
+    id:'grief-shade', name:'Grief Shade', icon:'😢', type:'fiend', threat:'medium', level:4,
     habitat:'Ravenshroud, sites of tragedy', size:'Small',
-    desc:'A manifestation of accumulated grief given form — it doesn't attack. It simply sits near you and amplifies whatever loss you carry.',
-    body:`<p>A Grief Shade is not traditionally classified as a fiend by all scholars — some argue it's closer to a phenomenon than a creature. It appears as a small, dark, featureless silhouette that sits or stands near its target and does nothing except intensify the experience of grief and loss the target already carries. It doesn't create new pain. It just makes existing pain louder.</p>
-<p>They appear most frequently in <strong>Ravenshroud</strong> and in places where significant tragedy has occurred. Some people believe they are fragments of Duskyre's influence rather than independent entities.</p>
+    desc:'A manifestation of accumulated grief given form — it doesn\'t attack. It simply sits near you and amplifies whatever loss you carry.',
+    body:`<p>A Grief Shade is not traditionally classified as a fiend by all scholars — some argue it's closer to a phenomenon than a creature. It appears as a small, dark, featureless silhouette that sits or stands near its target and does nothing except intensify the experience of grief and loss the target already carries. It doesn\'t create new pain. It just makes existing pain louder.</p>
+<p>They appear most frequently in <strong>Ravenshroud</strong> and in places where significant tragedy has occurred. Some people believe they are fragments of Duskyre\'s influence rather than independent entities.</p>
 <h3>Encounter Notes</h3>
 <p>Grief Shades cannot be harmed physically — they are not fully material. Radiant magic disperses them temporarily. The most effective approach is genuine resolution of the grief they are amplifying — a Grief Shade will leave a target who has processed what it is amplifying, as there is nothing left to feed on. They are deeply unpleasant to be near but rarely fatal on their own. The danger is when a Grief Shade accompanies other threats and the party is emotionally compromised by its presence.</p>`
   },
   // ══ MORE DRAGONS ══
   {
-    id:'fungal-wyrm', name:'Fungal Wyrm', icon:'🐛', type:'dragon', threat:'high',
+    id:'fungal-wyrm', name:'Fungal Wyrm', icon:'🐛', type:'dragon', threat:'high', level:9,
     habitat:'Fungaria, deep cave systems', size:'Huge',
     desc:'A wyrm — a legless dragon variant — whose scales have been colonised by fungi over centuries of living within the mycelium network.',
     body:`<p>The Fungal Wyrm is a wyrm — the legless, serpentine variant of dragon — that has spent so long within <strong>Fungaria</strong>'s mycelium network that the fungi have colonised its scales entirely. It appears as a massive fungal organism from a distance. Up close, the dragon structure beneath is visible: the eyes, the jaw, the way it moves.</p>
@@ -595,59 +614,96 @@ const CREATURES = [
   },
   // ══ MORE ELEMENTALS ══
   {
-    id:'tidal-revenant', name:'Tidal Revenant', icon:'🌊', type:'elemental', threat:'high',
+    id:'tidal-revenant', name:'Tidal Revenant', icon:'🌊', type:'elemental', threat:'high', level:7,
     habitat:'Coastal regions, Faroth Sea, Reyur', size:'Large',
     desc:'A water elemental formed at the site of a major drowning — carrying the shape of whoever drowned with it, visible just beneath the surface.',
     body:`<p>Tidal Revenants form at the sites of significant drownings — not all drownings, but those where the circumstances were violent or the loss was deeply felt. They are water elementals in the technical sense but they carry an imprint of the dead: the shape of a person is visible beneath the surface of their liquid form, moving within it as if still alive.</p>
 <p>Whether this is the actual soul of the drowned or simply an imprint in the water's memory is a theological question. Followers of <strong>Thalor</strong> say the latter. Followers of <strong>Nyxus</strong> decline to answer.</p>
 <h3>Encounter Notes</h3>
-<p>Lightning is highly effective. Cold magic temporarily slows them significantly. They pull targets into water whenever possible — their primary hunting method is drowning. They can move through any body of water instantly and are almost impossible to fight while in deep water. Force them onto land where they weaken considerably and are far less mobile. Thalor's clerics can communicate with them and occasionally compel them to return to stillness.</p>
-<blockquote>"It had my brother's face. I couldn't strike it. That was the point." — survivor account</blockquote>`
+<p>Lightning is highly effective. Cold magic temporarily slows them significantly. They pull targets into water whenever possible — their primary hunting method is drowning. They can move through any body of water instantly and are almost impossible to fight while in deep water. Force them onto land where they weaken considerably and are far less mobile. Thalor\'s clerics can communicate with them and occasionally compel them to return to stillness.</p>
+<blockquote>"It had my brother's face. I couldn\'t strike it. That was the point." — survivor account</blockquote>`
   },
   // ══ MORE ABERRATIONS ══
   {
-    id:'echo-mimic', name:'Echo Mimic', icon:'👁️', type:'aberration', threat:'high',
+    id:'echo-mimic', name:'Echo Mimic', icon:'👁️', type:'aberration', threat:'high', level:6,
     habitat:'Dusk Harbor, fog-heavy coastal areas', size:'Medium',
     desc:'A creature that copies the appearance and voice of someone the target loves — perfectly, down to mannerisms they only noticed subconsciously.',
     body:`<p>The Echo Mimic is among the more disturbing entities documented in Dorlorial. It has no fixed form — it reads the mind of its target and adopts the precise appearance of whoever that person most wants to see or most fears seeing. The copy is not approximate. It includes the way they hold their shoulders, the specific intonation of their laugh, a scar on the left hand the target never consciously registered.</p>
-<p>Echo Mimics are believed to originate from the deeper parts of <strong>Dusk Harbor</strong>'s fog, though their origin is genuinely unknown. Some scholars believe they are related to Vexara's operations. Others believe they are something older.</p>
+<p>Echo Mimics are believed to originate from the deeper parts of <strong>Dusk Harbor</strong>'s fog, though their origin is genuinely unknown. Some scholars believe they are related to Vexara\'s operations. Others believe they are something older.</p>
 <h3>Encounter Notes</h3>
-<p>The copy is perfect but the behaviour is wrong — the Mimic doesn't actually know what its target knows, so the person it resembles will say things slightly off, ask questions they shouldn't need to ask, react a beat late. The gap between perfect appearance and slightly wrong behaviour is deeply uncanny and is usually the tell. Destroying the Mimic requires either significant physical damage while not hesitating, or fire which disrupts whatever it uses to maintain the form.</p>
-<blockquote>"It wasn't her. I knew it wasn't her. But my hands wouldn't move." — Dusk Harbor survivor</blockquote>`
+<p>The copy is perfect but the behaviour is wrong — the Mimic doesn\'t actually know what its target knows, so the person it resembles will say things slightly off, ask questions they shouldn\'t need to ask, react a beat late. The gap between perfect appearance and slightly wrong behaviour is deeply uncanny and is usually the tell. Destroying the Mimic requires either significant physical damage while not hesitating, or fire which disrupts whatever it uses to maintain the form.</p>
+<blockquote>"It wasn't her. I knew it wasn't her. But my hands wouldn\'t move." — Dusk Harbor survivor</blockquote>`
   },
   {
-    id:'thought-leech', name:'Thought Leech', icon:'🧠', type:'aberration', threat:'medium',
+    id:'thought-leech', name:'Thought Leech', icon:'🧠', type:'aberration', threat:'medium', level:2,
     habitat:'Old libraries, ruins, places of intense intellectual activity', size:'Tiny',
     desc:'A parasite that feeds on complex thought — hosts become simple and content while the Leech grows fat on abstraction.',
-    body:`<p>The Thought Leech is the Memory Leech's more insidious cousin. Where the Memory Leech takes specific recollections, the Thought Leech feeds on the capacity for complex cognition itself — abstract reasoning, creative thinking, and nuanced emotional processing. Hosts don't lose memories. They just become... simpler. Happier, often. Less troubled. They can still perform routine tasks. They just can't think about anything complicated anymore.</p>
+    body:`<p>The Thought Leech is the Memory Leech's more insidious cousin. Where the Memory Leech takes specific recollections, the Thought Leech feeds on the capacity for complex cognition itself — abstract reasoning, creative thinking, and nuanced emotional processing. Hosts don\'t lose memories. They just become... simpler. Happier, often. Less troubled. They can still perform routine tasks. They just can\'t think about anything complicated anymore.</p>
 <p>Thought Leeches are attracted to minds of high intellectual activity — scholars, wizards, artificers — and are found most commonly in old libraries and academic ruins where generations of intense thinking have left a kind of psychic residue that draws them.</p>
 <h3>Encounter Notes</h3>
 <p>Detection is similar to Memory Leeches. The host rarely seeks help because the symptoms feel pleasant — they are calmer, less anxious, unburdened by the complexity that plagued them. Only those around them notice the change. Treatment requires careful magical removal. The intelligence consumed cannot be restored — but the capacity for new learning remains intact, meaning slow recovery is possible.</p>`
   },
   // ══ MORE HUMANOIDS ══
   {
-    id:'spicerunner-enforcer', name:'Spicerunner Enforcer', icon:'🗡️', type:'humanoid', threat:'medium',
+    id:'spicerunner-enforcer', name:'Spicerunner Enforcer', icon:'🗡️', type:'humanoid', threat:'medium', level:3,
     habitat:'Anywhere the Spicerunners operate — most major cities', size:'Medium',
-    desc:'A highly trained agent of the Spicerunners — not a thug, but a professional whose skills include things that shouldn't be possible.',
+    desc:'A highly trained agent of the Spicerunners — not a thug, but a professional whose skills include things that shouldn\'t be possible.',
     body:`<p>The <strong>Spicerunners</strong> are Dorlorial's most powerful crime syndicate, and their Enforcers reflect that status. These are not street muscle. They are trained operatives whose skill set includes lock manipulation, poison, forgery, and the kind of unarmed combat that takes years to master and leaves no distinctive marks. Many could pass as merchants, scholars, or minor nobles without difficulty.</p>
 <p>Spicerunner Enforcers are rarely sent to intimidate. If an Enforcer has been sent to deal with a situation personally, the Spicerunners have decided that the situation requires someone who solves problems permanently and quietly.</p>
 <h3>Encounter Notes</h3>
 <p>Fighting an Enforcer on their terms is a mistake. They prefer darkness, enclosed spaces, and isolation — getting between a target and their allies. In open combat with multiple opponents they are significantly less dangerous. They carry at least one poison on their person at all times and use it without hesitation. Capturing one rarely yields information — Spicerunner training includes extensive resistance to interrogation.</p>`
   },
   {
-    id:'wandering-prophet', name:'Wandering Prophet', icon:'🌿', type:'humanoid', threat:'low',
+    id:'wandering-prophet', name:'Wandering Prophet', icon:'🌿', type:'humanoid', threat:'low', level:2,
     habitat:'Roads, crossroads, outside city gates', size:'Medium',
-    desc:'A person touched by divine vision who wanders Dorlorial delivering messages they don't fully understand to people who weren't expecting them.',
+    desc:'A person touched by divine vision who wanders Dorlorial delivering messages they don\'t fully understand to people who weren\'t expecting them.',
     body:`<p>Wandering Prophets are not a faction or a cult — they are individuals who have received a divine communication from one of Dorlorial's gods and been left fundamentally changed by it. Most are ordinary people who had one extraordinary moment. They now walk, delivering messages — to specific people, at specific places — that they received but cannot fully interpret themselves.</p>
 <p>They are almost never dangerous. They are frequently confusing. The messages they carry are often fragmented, metaphorical, or decades premature. But they are also never wrong, which is why experienced adventurers and scholars take them seriously even when the message makes no sense yet.</p>
 <h3>Encounter Notes</h3>
-<p>If a Wandering Prophet approaches the party, pay attention. They don't approach people by accident — they are there because they were told to be there. The message may be obscure. Write it down anyway. Which god sent them can sometimes be inferred from the imagery they use or the feeling the message leaves — Nyxus's prophets tend toward riddles, Solaris's toward duty, Sylvara's toward natural cycles and patience.</p>
+<p>If a Wandering Prophet approaches the party, pay attention. They don\'t approach people by accident — they are there because they were told to be there. The message may be obscure. Write it down anyway. Which god sent them can sometimes be inferred from the imagery they use or the feeling the message leaves — Nyxus's prophets tend toward riddles, Solaris's toward duty, Sylvara\'s toward natural cycles and patience.</p>
 <blockquote>"He said: 'The door you cannot see is the one you need to open.' Then he left. Three months later we found it." — adventurer account</blockquote>`
   },
 
 ];
 
+const DND_STAT_BLOCKS = {
+  'ashwolf': `<div class="statblock"><h4>Ashwolf</h4><div class="sb-sub">Large beast, unaligned</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 4 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 14 (natural armor)<br><b>Hit Points</b> 45 (6d10 + 12)<br><b>Speed</b> 50 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>17</div><div><b>DEX</b><br>14</div><div><b>CON</b><br>15</div><div><b>INT</b><br>3</div><div><b>WIS</b><br>12</div><div><b>CHA</b><br>8</div></div><div class="sb-line"></div><p><b>Skills</b> Perception +3, Stealth +4<br><b>Senses</b> passive Perception 13<br><b>Damage Resistances/Immunities</b> fire damage; vulnerable to cold damage</p><p><b>Traits.</b> pack tactics, keen hearing and smell.</p><p><b>Actions.</b> Bite. +5 to hit, reach 5 ft., one target. Hit: 10 (2d6+3) piercing plus 3 (1d6) fire damage. Target must succeed on DC 13 Strength save or be knocked prone.</p></div>`,
+  'crystalback': `<div class="statblock"><h4>Crystalback Tortoise</h4><div class="sb-sub">Huge beast, unaligned</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 2 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 17 (crystal shell)<br><b>Hit Points</b> 95 (10d12 + 30)<br><b>Speed</b> 20 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>19</div><div><b>DEX</b><br>6</div><div><b>CON</b><br>17</div><div><b>INT</b><br>2</div><div><b>WIS</b><br>12</div><div><b>CHA</b><br>5</div></div><div class="sb-line"></div><p><b>Skills</b> Perception +3<br><b>Senses</b> passive Perception 13<br><b>Damage Resistances/Immunities</b> resistance to nonmagical bludgeoning, piercing, and slashing while in shell</p><p><b>Traits.</b> shell defense, aether shell.</p><p><b>Actions.</b> Slam. +7 to hit, reach 5 ft., one target. Hit: 18 (3d8+5) bludgeoning damage.</p></div>`,
+  'fungal-crawler': `<div class="statblock"><h4>Fungal Crawler</h4><div class="sb-sub">Medium beast, unaligned</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 3 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 14<br><b>Hit Points</b> 32 (5d8 + 10)<br><b>Speed</b> 30 ft., climb 30 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>14</div><div><b>DEX</b><br>16</div><div><b>CON</b><br>14</div><div><b>INT</b><br>2</div><div><b>WIS</b><br>12</div><div><b>CHA</b><br>6</div></div><div class="sb-line"></div><p><b>Skills</b> Stealth +5<br><b>Senses</b> blindsight 10 ft., passive Perception 11<br><b>Damage Resistances/Immunities</b> poison</p><p><b>Traits.</b> spider climb, spore cloud.</p><p><b>Actions.</b> Bite. +5 to hit, reach 5 ft., one target. Hit: 7 (1d8+3) piercing plus 7 (2d6) poison damage. Spore Cloud Recharge 5-6. Creatures in 10 ft. DC 13 Con save or poisoned until end of next turn.</p></div>`,
+  'tide-serpent': `<div class="statblock"><h4>Tide Serpent</h4><div class="sb-sub">Gargantuan beast, unaligned</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 12 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 16<br><b>Hit Points</b> 189 (14d20 + 42)<br><b>Speed</b> 20 ft., swim 60 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>23</div><div><b>DEX</b><br>14</div><div><b>CON</b><br>17</div><div><b>INT</b><br>3</div><div><b>WIS</b><br>12</div><div><b>CHA</b><br>8</div></div><div class="sb-line"></div><p><b>Skills</b> Perception +5<br><b>Senses</b> darkvision 60 ft., passive Perception 15<br><b>Damage Resistances/Immunities</b> resistance to lightning</p><p><b>Traits.</b> hold breath, siege monster.</p><p><b>Actions.</b> Bite. +10 to hit, reach 10 ft., one target. Hit: 27 (4d10+5) piercing. Tail. +10 to hit, reach 15 ft., one target. Hit: 22 (3d10+6) bludgeoning and DC 16 Strength save or knocked prone.</p></div>`,
+  'thornback': `<div class="statblock"><h4>Thornback Boar</h4><div class="sb-sub">Large beast, unaligned</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 1 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 13 (bone spurs)<br><b>Hit Points</b> 30 (4d10 + 8)<br><b>Speed</b> 40 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>17</div><div><b>DEX</b><br>11</div><div><b>CON</b><br>15</div><div><b>INT</b><br>2</div><div><b>WIS</b><br>10</div><div><b>CHA</b><br>6</div></div><div class="sb-line"></div><p><b>Skills</b> Perception +2<br><b>Senses</b> passive Perception 12<br><b>Damage Resistances/Immunities</b> none</p><p><b>Traits.</b> charge, relentless (recharges after short rest).</p><p><b>Actions.</b> Gore. +5 to hit, reach 5 ft., one target. Hit: 10 (2d6+3) piercing. If it moved 20 ft. straight first, target takes extra 7 (2d6) damage and DC 13 Strength save or prone.</p></div>`,
+  'hollow-one': `<div class="statblock"><h4>Hollow One</h4><div class="sb-sub">Medium undead, neutral evil</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 8 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 13<br><b>Hit Points</b> 45 (6d8 + 18)<br><b>Speed</b> 30 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>14</div><div><b>DEX</b><br>12</div><div><b>CON</b><br>16</div><div><b>INT</b><br>6</div><div><b>WIS</b><br>10</div><div><b>CHA</b><br>5</div></div><div class="sb-line"></div><p><b>Skills</b> Perception +2<br><b>Senses</b> darkvision 60 ft., passive Perception 12<br><b>Damage Resistances/Immunities</b> necrotic; immune charmed, frightened</p><p><b>Traits.</b> hollow obedience, undead fortitude.</p><p><b>Actions.</b> Withering Touch. +5 to hit, reach 5 ft., one target. Hit: 12 (2d8+3) necrotic damage, and target cannot regain hit points until start of Hollow One’s next turn.</p></div>`,
+  'gravewoken': `<div class="statblock"><h4>Gravewoken</h4><div class="sb-sub">Medium undead, neutral evil</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 4 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 14 (scrap armor)<br><b>Hit Points</b> 30 (4d8 + 12)<br><b>Speed</b> 30 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>16</div><div><b>DEX</b><br>10</div><div><b>CON</b><br>16</div><div><b>INT</b><br>6</div><div><b>WIS</b><br>8</div><div><b>CHA</b><br>5</div></div><div class="sb-line"></div><p><b>Skills</b> none<br><b>Senses</b> darkvision 60 ft., passive Perception 9<br><b>Damage Resistances/Immunities</b> poison; immune exhaustion, poisoned</p><p><b>Traits.</b> undead fortitude.</p><p><b>Actions.</b> Rusty Blade. +5 to hit, reach 5 ft., one target. Hit: 7 (1d8+3) slashing damage.</p></div>`,
+  'umbral-shade': `<div class="statblock"><h4>Umbral Shade</h4><div class="sb-sub">Small undead, chaotic evil</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 7 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 12<br><b>Hit Points</b> 22 (5d6 + 5)<br><b>Speed</b> 0 ft., fly 40 ft. (hover)</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>6</div><div><b>DEX</b><br>14</div><div><b>CON</b><br>12</div><div><b>INT</b><br>8</div><div><b>WIS</b><br>12</div><div><b>CHA</b><br>10</div></div><div class="sb-line"></div><p><b>Skills</b> Stealth +4<br><b>Senses</b> darkvision 60 ft., passive Perception 11<br><b>Damage Resistances/Immunities</b> necrotic, cold; vulnerable radiant</p><p><b>Traits.</b> amorphous shadow, sunlight weakness.</p><p><b>Actions.</b> Life Drain. +4 to hit, reach 5 ft., one creature. Hit: 9 (2d6+2) necrotic damage and target’s Strength score is reduced by 1d4 until a short or long rest.</p></div>`,
+  'aether-golem': `<div class="statblock"><h4>Aether Golem</h4><div class="sb-sub">Large construct, unaligned</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 10 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 17 (natural armor)<br><b>Hit Points</b> 133 (14d10 + 56)<br><b>Speed</b> 30 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>20</div><div><b>DEX</b><br>9</div><div><b>CON</b><br>18</div><div><b>INT</b><br>6</div><div><b>WIS</b><br>11</div><div><b>CHA</b><br>5</div></div><div class="sb-line"></div><p><b>Skills</b> none<br><b>Senses</b> darkvision 120 ft., passive Perception 10<br><b>Damage Resistances/Immunities</b> poison, psychic; immune charmed, exhaustion, frightened, paralyzed, poisoned</p><p><b>Traits.</b> magic resistance, immutable form.</p><p><b>Actions.</b> Multiattack: two slams. Slam. +8 to hit, reach 5 ft., one target. Hit: 16 (2d10+5) bludgeoning plus 5 (1d10) force damage.</p></div>`,
+  'clockwork-sentinel': `<div class="statblock"><h4>Clockwork Sentinel</h4><div class="sb-sub">Medium construct, unaligned</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 4 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 15 (metal plating)<br><b>Hit Points</b> 45 (6d8 + 18)<br><b>Speed</b> 30 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>16</div><div><b>DEX</b><br>12</div><div><b>CON</b><br>16</div><div><b>INT</b><br>5</div><div><b>WIS</b><br>10</div><div><b>CHA</b><br>5</div></div><div class="sb-line"></div><p><b>Skills</b> Perception +2<br><b>Senses</b> darkvision 60 ft., passive Perception 12<br><b>Damage Resistances/Immunities</b> poison; immune exhaustion, poisoned</p><p><b>Traits.</b> programmed orders.</p><p><b>Actions.</b> Spear Arm. +5 to hit, reach 5 ft., one target. Hit: 8 (1d10+3) piercing damage.</p></div>`,
+  'ashborn': `<div class="statblock"><h4>Ashborn Wraith</h4><div class="sb-sub">Medium fiend, chaotic evil</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 8 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 15<br><b>Hit Points</b> 78 (12d8 + 24)<br><b>Speed</b> 30 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>12</div><div><b>DEX</b><br>16</div><div><b>CON</b><br>14</div><div><b>INT</b><br>11</div><div><b>WIS</b><br>12</div><div><b>CHA</b><br>16</div></div><div class="sb-line"></div><p><b>Skills</b> Intimidation +6, Religion +3<br><b>Senses</b> darkvision 60 ft., passive Perception 11<br><b>Damage Resistances/Immunities</b> fire; vulnerable cold</p><p><b>Traits.</b> fire aura, death burst.</p><p><b>Actions.</b> Burning Touch. +6 to hit, reach 5 ft., one target. Hit: 14 (3d6+4) fire damage. Death Burst: when reduced to 0 hp, creatures within 10 ft. make DC 14 Dex save or take 10 (3d6) fire.</p></div>`,
+  'void-tendril': `<div class="statblock"><h4>Void Tendril</h4><div class="sb-sub">Large fiend, chaotic evil</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 15 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 16<br><b>Hit Points</b> 152 (16d10 + 64)<br><b>Speed</b> 30 ft., climb 30 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>20</div><div><b>DEX</b><br>12</div><div><b>CON</b><br>18</div><div><b>INT</b><br>5</div><div><b>WIS</b><br>14</div><div><b>CHA</b><br>8</div></div><div class="sb-line"></div><p><b>Skills</b> Perception +6<br><b>Senses</b> blindsight 60 ft., passive Perception 16<br><b>Damage Resistances/Immunities</b> necrotic, poison; resistant nonmagical weapons</p><p><b>Traits.</b> void consumption, magic devourer.</p><p><b>Actions.</b> Tendril. +9 to hit, reach 15 ft., one target. Hit: 18 (3d8+5) necrotic. Target DC 16 Con save or max hp reduced by same amount until long rest.</p></div>`,
+  'envy-drake': `<div class="statblock"><h4>Envy Drake</h4><div class="sb-sub">Large dragon, chaotic neutral</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 7 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 16 (natural armor)<br><b>Hit Points</b> 102 (12d10 + 36)<br><b>Speed</b> 40 ft., fly 60 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>19</div><div><b>DEX</b><br>14</div><div><b>CON</b><br>17</div><div><b>INT</b><br>10</div><div><b>WIS</b><br>12</div><div><b>CHA</b><br>14</div></div><div class="sb-line"></div><p><b>Skills</b> Perception +5, Stealth +6<br><b>Senses</b> darkvision 60 ft., passive Perception 15<br><b>Damage Resistances/Immunities</b> poison</p><p><b>Traits.</b> jealous fixation.</p><p><b>Actions.</b> Multiattack: bite and claw. Bite. +7 to hit, reach 10 ft., Hit: 15 (2d10+4) piercing. Claw. +7 to hit, Hit: 11 (2d6+4) slashing. Envious Breath Recharge 5-6: 30-ft cone, DC 15 Con save, 35 (10d6) poison damage half on success.</p></div>`,
+  'glacial-serpent': `<div class="statblock"><h4>Glacial Serpent</h4><div class="sb-sub">Gargantuan dragon, neutral evil</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 16 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 18 (natural armor)<br><b>Hit Points</b> 225 (18d20 + 36)<br><b>Speed</b> 40 ft., burrow 30 ft., fly 80 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>24</div><div><b>DEX</b><br>10</div><div><b>CON</b><br>21</div><div><b>INT</b><br>16</div><div><b>WIS</b><br>14</div><div><b>CHA</b><br>18</div></div><div class="sb-line"></div><p><b>Skills</b> Perception +8, Stealth +6<br><b>Senses</b> blindsight 60 ft., darkvision 120 ft., passive Perception 18<br><b>Damage Resistances/Immunities</b> cold</p><p><b>Traits.</b> legendary resistance 3/day, ice walk.</p><p><b>Actions.</b> Multiattack: bite and tail. Bite. +12 to hit, reach 15 ft., Hit: 29 (4d10+7) piercing plus 10 (3d6) cold. Frost Breath Recharge 5-6: 60-ft cone, DC 18 Con save, 54 (12d8) cold damage half on success.</p></div>`,
+  'storm-wraith': `<div class="statblock"><h4>Storm Wraith</h4><div class="sb-sub">Medium elemental, chaotic neutral</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 8 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 15<br><b>Hit Points</b> 90 (12d8 + 36)<br><b>Speed</b> 0 ft., fly 60 ft. (hover)</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>8</div><div><b>DEX</b><br>18</div><div><b>CON</b><br>16</div><div><b>INT</b><br>10</div><div><b>WIS</b><br>12</div><div><b>CHA</b><br>11</div></div><div class="sb-line"></div><p><b>Skills</b> Perception +4<br><b>Senses</b> darkvision 60 ft., passive Perception 14<br><b>Damage Resistances/Immunities</b> lightning, thunder; resistant nonmagical weapons</p><p><b>Traits.</b> air form.</p><p><b>Actions.</b> Shock. +7 to hit, reach 5 ft., one target. Hit: 18 (4d6+4) lightning. Thunderclap Recharge 5-6: creatures within 10 ft. DC 15 Con save or 21 (6d6) thunder and deafened 1 minute.</p></div>`,
+  'magma-elemental': `<div class="statblock"><h4>Magma Elemental</h4><div class="sb-sub">Large elemental, neutral</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 10 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 15<br><b>Hit Points</b> 102 (12d10 + 36)<br><b>Speed</b> 30 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>18</div><div><b>DEX</b><br>10</div><div><b>CON</b><br>17</div><div><b>INT</b><br>6</div><div><b>WIS</b><br>10</div><div><b>CHA</b><br>7</div></div><div class="sb-line"></div><p><b>Skills</b> none<br><b>Senses</b> darkvision 60 ft., passive Perception 10<br><b>Damage Resistances/Immunities</b> fire, poison; vulnerable cold</p><p><b>Traits.</b> heated body, earth glide through lava/ash.</p><p><b>Actions.</b> Slam. +7 to hit, reach 10 ft., one target. Hit: 15 (2d10+4) bludgeoning plus 7 (2d6) fire.</p></div>`,
+  'memory-leech': `<div class="statblock"><h4>Memory Leech</h4><div class="sb-sub">Tiny aberration, unaligned</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 3 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 13<br><b>Hit Points</b> 10 (4d4)<br><b>Speed</b> 10 ft., climb 20 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>3</div><div><b>DEX</b><br>16</div><div><b>CON</b><br>10</div><div><b>INT</b><br>4</div><div><b>WIS</b><br>12</div><div><b>CHA</b><br>6</div></div><div class="sb-line"></div><p><b>Skills</b> Stealth +5<br><b>Senses</b> blindsight 30 ft., passive Perception 11<br><b>Damage Resistances/Immunities</b> psychic</p><p><b>Traits.</b> memory drain.</p><p><b>Actions.</b> Attach. +5 to hit, reach 5 ft., one creature. Hit: 1 piercing plus 7 (2d6) psychic, and target DC 12 Int save or loses memory of the last minute until restoration magic or long rest.</p></div>`,
+  'hollow-hound': `<div class="statblock"><h4>Hollow Hound</h4><div class="sb-sub">Medium fiend, neutral evil</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 6 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 14<br><b>Hit Points</b> 39 (6d8 + 12)<br><b>Speed</b> 40 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>15</div><div><b>DEX</b><br>14</div><div><b>CON</b><br>14</div><div><b>INT</b><br>6</div><div><b>WIS</b><br>12</div><div><b>CHA</b><br>8</div></div><div class="sb-line"></div><p><b>Skills</b> Perception +5, Stealth +4<br><b>Senses</b> darkvision 60 ft., passive Perception 15<br><b>Damage Resistances/Immunities</b> necrotic</p><p><b>Traits.</b> keen hearing and smell, pack tactics.</p><p><b>Actions.</b> Bite. +5 to hit, reach 5 ft., one target. Hit: 10 (2d6+3) piercing plus 3 (1d6) necrotic.</p></div>`,
+  'umbra-cultist': `<div class="statblock"><h4>Umbra Cultist</h4><div class="sb-sub">Medium humanoid, neutral evil</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 3 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 12<br><b>Hit Points</b> 22 (5d8)<br><b>Speed</b> 30 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>10</div><div><b>DEX</b><br>14</div><div><b>CON</b><br>10</div><div><b>INT</b><br>11</div><div><b>WIS</b><br>12</div><div><b>CHA</b><br>13</div></div><div class="sb-line"></div><p><b>Skills</b> Deception +3, Stealth +4<br><b>Senses</b> passive Perception 11<br><b>Damage Resistances/Immunities</b> none</p><p><b>Traits.</b> shadow devotion.</p><p><b>Actions.</b> Dagger. +4 to hit, reach 5 ft. or range 20/60, Hit: 4 (1d4+2) piercing. Shadow Bolt. +5 to hit, range 60 ft., Hit: 10 (3d6) necrotic.</p></div>`,
+  'red-sun-soldier': `<div class="statblock"><h4>Red Sun Legionnaire</h4><div class="sb-sub">Medium humanoid, lawful evil</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 3 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 16 (chain mail, shield)<br><b>Hit Points</b> 27 (5d8 + 5)<br><b>Speed</b> 30 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>15</div><div><b>DEX</b><br>12</div><div><b>CON</b><br>12</div><div><b>INT</b><br>10</div><div><b>WIS</b><br>11</div><div><b>CHA</b><br>10</div></div><div class="sb-line"></div><p><b>Skills</b> Athletics +4, Intimidation +2<br><b>Senses</b> passive Perception 10<br><b>Damage Resistances/Immunities</b> none</p><p><b>Traits.</b> formation fighter.</p><p><b>Actions.</b> Longsword. +4 to hit, reach 5 ft., Hit: 6 (1d8+2) slashing, or 7 (1d10+2) two-handed. Javelin. +4 to hit, range 30/120, Hit: 5 (1d6+2) piercing.</p></div>`,
+  'spore-bat': `<div class="statblock"><h4>Spore Bat</h4><div class="sb-sub">Tiny beast, unaligned</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 1 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 12<br><b>Hit Points</b> 3 (1d4 + 1)<br><b>Speed</b> 5 ft., fly 30 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>2</div><div><b>DEX</b><br>15</div><div><b>CON</b><br>12</div><div><b>INT</b><br>2</div><div><b>WIS</b><br>12</div><div><b>CHA</b><br>4</div></div><div class="sb-line"></div><p><b>Skills</b> Perception +3<br><b>Senses</b> blindsight 60 ft., passive Perception 13<br><b>Damage Resistances/Immunities</b> none</p><p><b>Traits.</b> echolocation, keen hearing.</p><p><b>Actions.</b> Bite. +4 to hit, reach 5 ft., Hit: 1 piercing. Spore Burst 1/day: 5-ft radius DC 11 Con save or poisoned until end of next turn.</p></div>`,
+  'ridgeback-elk': `<div class="statblock"><h4>Ridgeback Elk</h4><div class="sb-sub">Large beast, unaligned</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 4 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 13<br><b>Hit Points</b> 42 (5d10 + 15)<br><b>Speed</b> 50 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>18</div><div><b>DEX</b><br>14</div><div><b>CON</b><br>16</div><div><b>INT</b><br>2</div><div><b>WIS</b><br>12</div><div><b>CHA</b><br>7</div></div><div class="sb-line"></div><p><b>Skills</b> Perception +3<br><b>Senses</b> passive Perception 13<br><b>Damage Resistances/Immunities</b> none</p><p><b>Traits.</b> charge.</p><p><b>Actions.</b> Ram. +6 to hit, reach 5 ft., Hit: 11 (2d6+4) bludgeoning. Hooves. +6 to hit against prone target, Hit: 13 (2d8+4) bludgeoning.</p></div>`,
+  'deep-crawler': `<div class="statblock"><h4>Deep Crawler</h4><div class="sb-sub">Large aberration, unaligned</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 7 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 15<br><b>Hit Points</b> 76 (8d10 + 32)<br><b>Speed</b> 30 ft., climb 30 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>18</div><div><b>DEX</b><br>12</div><div><b>CON</b><br>18</div><div><b>INT</b><br>3</div><div><b>WIS</b><br>14</div><div><b>CHA</b><br>5</div></div><div class="sb-line"></div><p><b>Skills</b> Perception +6, Stealth +5<br><b>Senses</b> blindsight 90 ft., passive Perception 16<br><b>Damage Resistances/Immunities</b> acid</p><p><b>Traits.</b> aether sense, spider climb.</p><p><b>Actions.</b> Bite. +7 to hit, reach 5 ft., Hit: 15 (2d10+4) piercing plus 7 (2d6) acid.</p></div>`,
+  'mire-crocodile': `<div class="statblock"><h4>Mire Crocodile</h4><div class="sb-sub">Huge beast, unaligned</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 8 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 14<br><b>Hit Points</b> 85 (9d12 + 27)<br><b>Speed</b> 30 ft., swim 50 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>21</div><div><b>DEX</b><br>9</div><div><b>CON</b><br>17</div><div><b>INT</b><br>2</div><div><b>WIS</b><br>10</div><div><b>CHA</b><br>7</div></div><div class="sb-line"></div><p><b>Skills</b> Stealth +5<br><b>Senses</b> passive Perception 10<br><b>Damage Resistances/Immunities</b> none</p><p><b>Traits.</b> hold breath, swamp camouflage.</p><p><b>Actions.</b> Bite. +8 to hit, reach 5 ft., Hit: 21 (3d10+5) piercing and target is grappled DC 16. Tail. +8 to hit, reach 10 ft., Hit: 14 (2d8+5) bludgeoning.</p></div>`,
+  'ashen-revenant': `<div class="statblock"><h4>Ashen Revenant</h4><div class="sb-sub">Medium undead, neutral evil</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 7 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 13<br><b>Hit Points</b> 68 (8d8 + 32)<br><b>Speed</b> 30 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>18</div><div><b>DEX</b><br>14</div><div><b>CON</b><br>18</div><div><b>INT</b><br>10</div><div><b>WIS</b><br>12</div><div><b>CHA</b><br>14</div></div><div class="sb-line"></div><p><b>Skills</b> Perception +4<br><b>Senses</b> darkvision 60 ft., passive Perception 14<br><b>Damage Resistances/Immunities</b> necrotic, poison; resistant fire</p><p><b>Traits.</b> regeneration, vengeful tracker.</p><p><b>Actions.</b> Fist. +7 to hit, reach 5 ft., Hit: 13 (2d8+4) bludgeoning plus 7 (2d6) necrotic.</p></div>`,
+  'bone-collector': `<div class="statblock"><h4>Bone Collector</h4><div class="sb-sub">Medium undead, chaotic evil</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 5 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 15 (bone armor)<br><b>Hit Points</b> 60 (8d8 + 24)<br><b>Speed</b> 30 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>16</div><div><b>DEX</b><br>14</div><div><b>CON</b><br>16</div><div><b>INT</b><br>8</div><div><b>WIS</b><br>12</div><div><b>CHA</b><br>8</div></div><div class="sb-line"></div><p><b>Skills</b> Perception +3, Stealth +4<br><b>Senses</b> darkvision 60 ft., passive Perception 13<br><b>Damage Resistances/Immunities</b> poison; immune poisoned</p><p><b>Traits.</b> bone harvest.</p><p><b>Actions.</b> Bone Blade. +5 to hit, reach 5 ft., Hit: 9 (1d10+3) slashing. Bone Shards Recharge 5-6: 15-ft cone, DC 13 Dex save, 14 (4d6) piercing half on success.</p></div>`,
+  'grief-shade': `<div class="statblock"><h4>Grief Shade</h4><div class="sb-sub">Small undead, neutral evil</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 4 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 13<br><b>Hit Points</b> 27 (6d6 + 6)<br><b>Speed</b> 0 ft., fly 30 ft. (hover)</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>6</div><div><b>DEX</b><br>16</div><div><b>CON</b><br>12</div><div><b>INT</b><br>10</div><div><b>WIS</b><br>14</div><div><b>CHA</b><br>15</div></div><div class="sb-line"></div><p><b>Skills</b> Insight +4, Stealth +5<br><b>Senses</b> darkvision 60 ft., passive Perception 12<br><b>Damage Resistances/Immunities</b> necrotic; vulnerable radiant</p><p><b>Traits.</b> incorporeal movement, sorrow aura.</p><p><b>Actions.</b> Despair Touch. +5 to hit, reach 5 ft., Hit: 10 (2d6+3) psychic. Target DC 13 Wis save or frightened until end of next turn.</p></div>`,
+  'fungal-wyrm': `<div class="statblock"><h4>Fungal Wyrm</h4><div class="sb-sub">Huge plant, unaligned</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 9 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 15<br><b>Hit Points</b> 126 (12d12 + 48)<br><b>Speed</b> 30 ft., burrow 20 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>21</div><div><b>DEX</b><br>8</div><div><b>CON</b><br>19</div><div><b>INT</b><br>3</div><div><b>WIS</b><br>12</div><div><b>CHA</b><br>6</div></div><div class="sb-line"></div><p><b>Skills</b> Perception +4<br><b>Senses</b> tremorsense 60 ft., passive Perception 14<br><b>Damage Resistances/Immunities</b> poison</p><p><b>Traits.</b> spore cloud, tunneler.</p><p><b>Actions.</b> Bite. +8 to hit, reach 10 ft., Hit: 27 (4d10+5) piercing. Spore Belch Recharge 5-6: 30-ft cone, DC 15 Con save, 28 (8d6) poison half on success.</p></div>`,
+  'tidal-revenant': `<div class="statblock"><h4>Tidal Revenant</h4><div class="sb-sub">Medium undead, neutral evil</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 7 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 14<br><b>Hit Points</b> 52 (8d8 + 16)<br><b>Speed</b> 30 ft., swim 40 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>16</div><div><b>DEX</b><br>14</div><div><b>CON</b><br>14</div><div><b>INT</b><br>8</div><div><b>WIS</b><br>12</div><div><b>CHA</b><br>13</div></div><div class="sb-line"></div><p><b>Skills</b> Perception +3<br><b>Senses</b> darkvision 60 ft., passive Perception 13<br><b>Damage Resistances/Immunities</b> cold, necrotic; immune poisoned</p><p><b>Traits.</b> amphibious, watery rebirth.</p><p><b>Actions.</b> Drowned Slam. +5 to hit, reach 5 ft., Hit: 10 (2d6+3) bludgeoning plus 7 (2d6) cold.</p></div>`,
+  'echo-mimic': `<div class="statblock"><h4>Echo Mimic</h4><div class="sb-sub">Medium aberration, neutral evil</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 6 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 13<br><b>Hit Points</b> 58 (9d8 + 18)<br><b>Speed</b> 30 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>14</div><div><b>DEX</b><br>16</div><div><b>CON</b><br>14</div><div><b>INT</b><br>12</div><div><b>WIS</b><br>13</div><div><b>CHA</b><br>16</div></div><div class="sb-line"></div><p><b>Skills</b> Deception +6, Stealth +5<br><b>Senses</b> darkvision 60 ft., passive Perception 11<br><b>Damage Resistances/Immunities</b> psychic</p><p><b>Traits.</b> shape voice, false familiarity.</p><p><b>Actions.</b> Psychic Claw. +5 to hit, reach 5 ft., Hit: 12 (2d8+3) psychic. Voice Snare Recharge 5-6: one creature that can hear DC 14 Wis save or charmed for 1 minute.</p></div>`,
+  'thought-leech': `<div class="statblock"><h4>Thought Leech</h4><div class="sb-sub">Small aberration, unaligned</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 2 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 14<br><b>Hit Points</b> 18 (4d6 + 4)<br><b>Speed</b> 20 ft., climb 20 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>6</div><div><b>DEX</b><br>18</div><div><b>CON</b><br>12</div><div><b>INT</b><br>6</div><div><b>WIS</b><br>13</div><div><b>CHA</b><br>8</div></div><div class="sb-line"></div><p><b>Skills</b> Stealth +6<br><b>Senses</b> blindsight 30 ft., passive Perception 11<br><b>Damage Resistances/Immunities</b> psychic</p><p><b>Traits.</b> thought scent.</p><p><b>Actions.</b> Mind Bite. +6 to hit, reach 5 ft., Hit: 9 (2d4+4) psychic and target has disadvantage on next Intelligence, Wisdom, or Charisma check before end of next turn.</p></div>`,
+  'spicerunner-enforcer': `<div class="statblock"><h4>Spicerunner Enforcer</h4><div class="sb-sub">Medium humanoid, neutral evil</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 3 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 14 (leather, shield)<br><b>Hit Points</b> 33 (6d8 + 6)<br><b>Speed</b> 30 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>14</div><div><b>DEX</b><br>14</div><div><b>CON</b><br>12</div><div><b>INT</b><br>10</div><div><b>WIS</b><br>11</div><div><b>CHA</b><br>12</div></div><div class="sb-line"></div><p><b>Skills</b> Intimidation +3, Sleight of Hand +4<br><b>Senses</b> passive Perception 10<br><b>Damage Resistances/Immunities</b> none</p><p><b>Traits.</b> dirty fighting.</p><p><b>Actions.</b> Shortsword. +4 to hit, reach 5 ft., Hit: 5 (1d6+2) piercing. Heavy Crossbow. +4 to hit, range 100/400, Hit: 7 (1d10+2) piercing.</p></div>`,
+  'wandering-prophet': `<div class="statblock"><h4>Wandering Prophet</h4><div class="sb-sub">Medium humanoid, any alignment</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 2 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 11<br><b>Hit Points</b> 18 (4d8)<br><b>Speed</b> 30 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>9</div><div><b>DEX</b><br>12</div><div><b>CON</b><br>10</div><div><b>INT</b><br>13</div><div><b>WIS</b><br>16</div><div><b>CHA</b><br>14</div></div><div class="sb-line"></div><p><b>Skills</b> Insight +5, Religion +3, Persuasion +4<br><b>Senses</b> passive Perception 13<br><b>Damage Resistances/Immunities</b> none</p><p><b>Traits.</b> divine omen 1/day.</p><p><b>Actions.</b> Staff. +1 to hit, reach 5 ft., Hit: 2 (1d6-1) bludgeoning. Divine Omen 1/day: one creature within 60 ft. gains advantage or disadvantage on its next d20 roll (prophet chooses).</p></div>`
+};
+
 let activeFilter = 'all';
+let activeLevelFilter = 'all';
 
 function renderCreatures() {
   const q = (document.getElementById('bSearch').value || '').toLowerCase();
@@ -656,11 +712,18 @@ function renderCreatures() {
   
   const filtered = CREATURES.filter(c => {
     const matchFilter = activeFilter === 'all' || c.type === activeFilter;
+    const lv = Number(c.level || 0);
+    const matchLevel = activeLevelFilter === 'all' ||
+      (activeLevelFilter === '1-4' && lv >= 1 && lv <= 4) ||
+      (activeLevelFilter === '5-8' && lv >= 5 && lv <= 8) ||
+      (activeLevelFilter === '9-12' && lv >= 9 && lv <= 12) ||
+      (activeLevelFilter === '13+' && lv >= 13);
     const matchSearch = !q || c.name.toLowerCase().includes(q) || 
                         c.type.toLowerCase().includes(q) ||
+                        String(c.level || '').includes(q) ||
                         c.habitat.toLowerCase().includes(q) ||
                         c.desc.toLowerCase().includes(q);
-    return matchFilter && matchSearch;
+    return matchFilter && matchLevel && matchSearch;
   });
   
   countEl.textContent = filtered.length === CREATURES.length ? 
@@ -677,9 +740,11 @@ function renderCreatures() {
       <div class="creature-icon-wrap">${c.icon}</div>
       <div class="creature-body">
         <div class="creature-name">${c.name}</div>
+        <div class="creature-level">Level ${c.level || '?'}</div>
         <div class="creature-tags">
           <span class="ctag ${c.type}">${c.type}</span>
           <span class="ctag ${c.threat}">${c.threat}</span>
+          <span class="ctag" style="color:var(--gold-light);border-color:rgba(200,149,42,0.25);">Monster Lv ${c.level || '?'} </span>
           <span class="ctag" style="color:var(--text-dim);border-color:rgba(200,149,42,0.15);">${c.size}</span>
         </div>
         <div class="creature-desc">${c.desc}</div>
@@ -689,7 +754,14 @@ function renderCreatures() {
 
 function setFilter(type, el) {
   activeFilter = type;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.type-filter').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderCreatures();
+}
+
+function setLevelFilter(level, el) {
+  activeLevelFilter = level;
+  document.querySelectorAll('.level-filter').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   renderCreatures();
 }
@@ -702,10 +774,11 @@ function openCreature(id) {
   document.getElementById('modal-tags').innerHTML = 
     `<span class="ctag ${c.type}">${c.type}</span>
      <span class="ctag ${c.threat}">${c.threat} threat</span>
+     <span class="ctag" style="color:var(--gold-light);border-color:rgba(200,149,42,0.25);">Level ${c.level || '?'} </span>
      <span class="ctag" style="color:var(--text-dim);border-color:rgba(200,149,42,0.15);">${c.size}</span>`;
   document.getElementById('modal-body').innerHTML = 
     `<p style="font-family:'Cinzel',serif;font-size:0.52rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:12px;">📍 ${c.habitat}</p>` + 
-    (c.body || '<p>' + c.desc + '</p>');
+    (c.body || '<p>' + c.desc + '</p>') + (DND_STAT_BLOCKS[c.id] || '');
   document.getElementById('creatureModal').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
