@@ -304,23 +304,13 @@ body.light-mode #quick-nav {
   <div class="modal-box">
     <button onclick="closeModal()" style="position:absolute;top:12px;right:12px;background:none;border:1px solid rgba(200,149,42,0.2);color:var(--text-dim);width:30px;height:30px;cursor:pointer;">✕</button>
     <div class="modal-title">Submit Community Art</div>
-    <div class="modal-sub">Share your Dorlorial fan art. Drop an image, tap to pick from gallery, or paste a URL.</div>
+    <div class="modal-sub">Share your Dorlorial fan art. Upload it to Discord first, copy the direct image link, then paste it below.</div>
     <input class="minput" id="m-name" placeholder="Your name...">
     <input class="minput" id="m-title" placeholder="Title of your art...">
     <textarea class="minput" id="m-desc" placeholder="Description (optional)..." rows="2" style="resize:none;"></textarea>
-
-    <!-- DROP ZONE -->
-    <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()" ondragover="dzDrag(event,true)" ondragleave="dzDrag(event,false)" ondrop="dzDrop(event)">
-      <div id="dz-content">
-        <div class="drop-zone-text">📷 Tap to choose photo</div>
-        <div class="drop-zone-sub">or drag &amp; drop an image here</div>
-      </div>
-    </div>
-    <input type="file" id="file-input" accept="image/*" onchange="fileChosen(this)">
-
-    <div class="or-divider">— paste an image URL (recommended) —</div>
-    <input class="minput" id="m-url" placeholder="https://i.imgur.com/... or Discord image link" style="margin-bottom:4px;">
-    <div style="font-family:'EB Garamond',serif;font-style:italic;font-size:0.78rem;color:var(--text-dim);margin-bottom:12px;">Upload to <a href="https://imgur.com" target="_blank" style="color:var(--gold-dark);">Imgur</a> or share via Discord to get a URL. Direct URLs load faster and more reliably.</div>
+<div class="or-divider">— Discord / direct image URL —</div>
+    <input class="minput" id="m-url" placeholder="Paste direct Discord image link here..." style="margin-bottom:4px;">
+    <div style="font-family:'EB Garamond',serif;font-style:italic;font-size:0.78rem;color:var(--text-dim);margin-bottom:12px;">Upload your image in Discord, open the image, copy image link/address, then paste it here. Do not paste the Discord message link.</div>
 
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
       <button class="sbtn" onclick="submitArt()">Submit</button>
@@ -490,43 +480,106 @@ function processFile(file){
 
 function closeModal(){
   document.getElementById('art-modal').classList.remove('open');
-  imgData=null;
-  document.getElementById('dz-content').innerHTML='<div class="drop-zone-text">📷 Tap to choose photo</div><div class="drop-zone-sub">or drag &amp; drop an image here</div>';
-  ['m-name','m-title','m-desc','m-url'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('m-ok').style.display='none';
-  document.getElementById('m-err').style.display='none';
+  ['m-name','m-title','m-desc','m-url'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.value='';
+  });
+  var ok=document.getElementById('m-ok');
+  var err=document.getElementById('m-err');
+  if(ok) ok.style.display='none';
+  if(err) err.style.display='none';
 }
+
+
+function cleanImageUrl(url){
+  return String(url || '').trim().replace(/^<|>$/g,'');
+}
+
+function isProbablyImageUrl(url){
+  if(!/^https?:\/\//i.test(url)) return false;
+  if(/^data:/i.test(url)) return false;
+  return (
+    /\.(png|jpe?g|gif|webp)(\?.*)?$/i.test(url) ||
+    /cdn\.discordapp\.com/i.test(url) ||
+    /media\.discordapp\.net/i.test(url) ||
+    /discordapp\.net/i.test(url) ||
+    /imgur\.com/i.test(url) ||
+    /cloudinary\.com/i.test(url) ||
+    /raw\.githubusercontent\.com/i.test(url) ||
+    /github\.com\/.*\?raw=1/i.test(url)
+  );
+}
+
+// File uploads are intentionally disabled so Supabase only stores text + image URLs.
+function fileChosen(){ return false; }
+function processFile(){ return false; }
 
 function submitArt(){
   var name=document.getElementById('m-name').value.trim();
   var title=document.getElementById('m-title').value.trim();
-  var url=document.getElementById('m-url').value.trim();
+  var url=cleanImageUrl(document.getElementById('m-url').value);
   var desc=document.getElementById('m-desc').value.trim();
   var err=document.getElementById('m-err');
   var ok=document.getElementById('m-ok');
-  err.style.display='none';ok.style.display='none';
+  var btn=document.querySelector('#art-modal .sbtn');
 
-  // Always prefer URL over file upload — base64 causes load failures
-  var imageUrl=(url||imgData||'').trim();
-  if(!name||!title){err.textContent='Please fill in your name and a title.';err.style.display='inline';return;}
-  if(!imageUrl){err.textContent='Please paste an image URL or choose a file.';err.style.display='inline';return;}
+  err.style.display='none';
+  ok.style.display='none';
 
-  // Warn if they used a file upload instead of a URL — base64 is too large
-  if(imageUrl.startsWith('data:')){
-    err.textContent='File uploads can cause loading issues. Please upload your image to Imgur or Discord and paste the URL instead.';
+  if(!name || !title){
+    err.textContent='Please fill in your name and a title.';
     err.style.display='inline';
     return;
   }
 
-  postfetch('art_submissions',{username:name,title:title,image_url:imageUrl,description:desc,status:'pending',entry_link:'art',entry_name:title})
-    .then(function(r){
-      if(r.ok||r.status===201){
-        ok.style.display='inline';
-        setTimeout(function(){closeModal();loadArt();},1500);
-      } else {
-        r.text().then(function(t){err.textContent='Error: '+t.substring(0,80);err.style.display='inline';});
-      }
-    }).catch(function(e){err.textContent='Could not submit. Check your connection.';err.style.display='inline';});
+  if(!url){
+    err.textContent='Paste the direct Discord image URL first.';
+    err.style.display='inline';
+    return;
+  }
+
+  if(!isProbablyImageUrl(url)){
+    err.textContent='That does not look like a direct image URL. In Discord, open the image and copy the image link/address, not the message link.';
+    err.style.display='inline';
+    return;
+  }
+
+  if(btn){
+    btn.disabled=true;
+    btn.textContent='Submitting...';
+  }
+
+  postfetch('art_submissions',{
+    username:name,
+    title:title,
+    image_url:url,
+    description:desc,
+    status:'pending',
+    entry_link:'art',
+    entry_name:title
+  })
+  .then(function(r){
+    if(r.ok || r.status===201){
+      ok.textContent='✓ Submitted! It will appear after DM Vault approval.';
+      ok.style.display='inline';
+      setTimeout(function(){closeModal();loadArt();},1600);
+    } else {
+      r.text().then(function(t){
+        err.textContent='Supabase rejected it. Check art_submissions INSERT policy. Error: '+t.substring(0,120);
+        err.style.display='inline';
+      });
+    }
+  })
+  .catch(function(){
+    err.textContent='Could not submit. Check Supabase connection or table policies.';
+    err.style.display='inline';
+  })
+  .finally(function(){
+    if(btn){
+      btn.disabled=false;
+      btn.textContent='Submit';
+    }
+  });
 }
 
 function openLb(url){document.getElementById('lb-img').src=url;document.getElementById('lb').classList.add('open');}
