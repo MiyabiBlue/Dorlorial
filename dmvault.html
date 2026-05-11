@@ -670,18 +670,18 @@ function switchCommunityTab(tab, el) {
 // ── ART ──
 async function loadAllArt() {
   try {
-    let data = [];
-    try {
-      data = await sbFetch('art_submissions?select=id,username,title,image_url,description,status,created_at&order=created_at.desc');
-    } catch(firstErr) {
-      // Fallback for older tables without created_at
-      data = await sbFetch('art_submissions?select=id,username,title,image_url,description,status');
-    }
-    allArt = Array.isArray(data) ? data : [];
+    const res = await sbFetch('art_submissions?order=created_at.desc');
+    allArt = await res.json();
+    // Update counts
+    const pending = allArt.filter(a => a.status === 'pending').length;
+    const approved = allArt.filter(a => a.status === 'approved').length;
+    const pc = document.getElementById('pending-count');
+    const ac = document.getElementById('approved-count');
+    if (pc) pc.textContent = pending > 0 ? `(${pending})` : '';
+    if (ac) ac.textContent = approved > 0 ? `(${approved})` : '';
     renderArtFiltered();
   } catch(e) {
-    const grid = document.getElementById('art-grid');
-    if (grid) grid.innerHTML = '<div class="empty-state">Could not load art. If comments work, check Supabase policies for art_submissions SELECT and confirm the table has username, title, image_url, description, and status columns.</div>';
+    document.getElementById('art-grid').innerHTML = '<div class="empty-state">Could not load art.</div>';
   }
 }
 
@@ -1473,5 +1473,76 @@ document.querySelectorAll('.qn-item').forEach(item => {
 
 
 </html>
+
+<script>
+/* DM Vault art moderation override */
+(function(){
+  function esc(s){
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  async function fetchArtRows(){
+    try{
+      return await sbFetch('art_submissions?select=id,username,title,image_url,description,status,created_at&order=created_at.desc');
+    }catch(e){
+      return await sbFetch('art_submissions?select=id,username,title,image_url,description,status');
+    }
+  }
+  window.loadAllArt = async function(){
+    try{
+      window.allArt = await fetchArtRows();
+      if(!Array.isArray(window.allArt)) window.allArt = [];
+      window.renderArtFiltered();
+    }catch(e){
+      const grid=document.getElementById('art-grid');
+      if(grid) grid.innerHTML='<div class="empty-state">Could not load art_submissions. Check Supabase SELECT policy.</div>';
+    }
+  };
+  window.renderArtFiltered = function(){
+    const grid=document.getElementById('art-grid');
+    if(!grid) return;
+    const folder = window.currentArtFolder || 'all';
+    const q=(document.getElementById('art-search')?.value || '').toLowerCase();
+    let rows=(window.allArt || []);
+    if(folder !== 'all') rows = rows.filter(a => String(a.status||'') === folder);
+    if(q) rows = rows.filter(a =>
+      String(a.title||'').toLowerCase().includes(q) ||
+      String(a.username||'').toLowerCase().includes(q) ||
+      String(a.description||'').toLowerCase().includes(q)
+    );
+    if(!rows.length){
+      grid.innerHTML='<div class="empty-state">No '+(folder==='all'?'':folder+' ')+'art found.</div>';
+      return;
+    }
+    grid.innerHTML = rows.map(art => {
+      const img = /^https?:\/\//i.test(String(art.image_url||'')) ? String(art.image_url) : '';
+      const isPending = art.status === 'pending';
+      const isApproved = art.status === 'approved';
+      return `
+        <div class="art-dm-card">
+          ${img ? `<img class="art-dm-img" src="${esc(img)}" alt="${esc(art.title)}" onerror="this.style.display='none'">` : `<div class="empty-state" style="padding:20px;">No valid image URL</div>`}
+          <div class="art-dm-info">
+            <div class="art-dm-title">${esc(art.title || 'Untitled')}</div>
+            <div class="art-dm-user">by ${esc(art.username || 'Unknown')} · ${esc(art.status || 'unknown')}</div>
+            ${art.description ? `<div style="font-family:'EB Garamond',serif;font-style:italic;font-size:0.8rem;color:var(--text-dim);margin-bottom:8px;">${esc(art.description)}</div>` : ''}
+            <div class="art-dm-actions">
+              ${isPending ? `<button class="btn-approve" onclick="updateArt('${esc(art.id)}','approved')">✓ Approve</button>` : ''}
+              ${isApproved ? `<button class="btn-secondary" style="font-size:0.42rem;padding:5px 10px;" onclick="updateArt('${esc(art.id)}','pending')">↩ Unpublish</button>` : ''}
+              <button class="btn-delete" onclick="deleteArt('${esc(art.id)}')">🗑 Delete</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  };
+  document.addEventListener('click', function(e){
+    const txt=(e.target && e.target.textContent || '').toLowerCase();
+    if(txt.includes('community') || txt.includes('art')){
+      setTimeout(()=>window.loadAllArt && window.loadAllArt(),250);
+    }
+  });
+  setTimeout(()=>window.loadAllArt && window.loadAllArt(),500);
+})();
+</script>
+
 </body>
 </html>
