@@ -70,20 +70,22 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--ink);font-fami
 
 /* ── PINS ── */
 .pin{
+  z-index:12;
   position:absolute;transform:translate(-50%,-50%);
   cursor:pointer;z-index:10;
 }
 .pin-dot{
-  width:22px;height:22px;border-radius:50%;
-  background:var(--gold);
-  border:2px solid rgba(255,255,255,0.6);
-  box-shadow:0 0 0 3px rgba(200,149,42,0.4),0 0 16px rgba(200,149,42,0.8),0 2px 6px rgba(0,0,0,0.6);
+  width:30px;height:30px;border-radius:50%;
+  background:radial-gradient(circle,#fff4b8 0%,var(--gold-light) 38%,var(--gold) 72%,var(--gold-dark) 100%);
+  border:3px solid rgba(255,255,255,0.82);
+  box-shadow:0 0 0 5px rgba(200,149,42,0.48),0 0 22px rgba(232,184,75,0.98),0 3px 9px rgba(0,0,0,0.85);
   transition:all 0.2s;position:relative;z-index:2;
   display:flex;align-items:center;justify-content:center;
 }
 .pin-dot::after{
-  content:'';width:8px;height:8px;border-radius:50%;
-  background:rgba(255,248,200,0.9);
+  content:'';width:10px;height:10px;border-radius:50%;
+  background:rgba(255,255,235,0.98);
+  box-shadow:0 0 8px rgba(255,255,210,0.9);
 }
 .pin:hover .pin-dot{
   background:var(--gold-light);
@@ -103,15 +105,16 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--ink);font-fami
   font-family:'Cinzel',serif;font-size:0.58rem;font-weight:600;letter-spacing:0.1em;
   text-transform:uppercase;color:#fff;
   white-space:nowrap;
-  background:rgba(6,4,2,0.75);
-  padding:2px 6px;
-  border:1px solid rgba(200,149,42,0.4);
+  background:rgba(6,4,2,0.9);
+  padding:4px 8px;
+  border:1px solid rgba(232,184,75,0.65);
+  box-shadow:0 0 10px rgba(0,0,0,0.75);
   text-shadow:0 1px 3px rgba(0,0,0,1);
   pointer-events:none;
 }
 @keyframes pulse{
-  0%{width:22px;height:22px;opacity:0.7;}
-  100%{width:56px;height:56px;opacity:0;}
+  0%{width:30px;height:30px;opacity:0.78;}
+  100%{width:76px;height:76px;opacity:0;}
 }
 
 /* ── SIDE PANEL ── */
@@ -446,7 +449,118 @@ body.light-mode #quick-nav {
 
 
 
+
+/* ── CAMPAIGN ROUTE OVERLAY ── */
+#campaign-route-svg{
+  position:absolute;
+  left:0;top:0;
+  width:100%;height:100%;
+  pointer-events:none;
+  z-index:1;
+  opacity:0;
+  transition:opacity 0.3s ease;
+}
+#campaign-route-svg.show{opacity:1;}
+#campaign-route-svg:not(.show){display:none;}
+.campaign-route-line{
+  fill:none;
+  stroke:var(--gold-light);
+  stroke-width:6;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-dasharray:18 12;
+  filter:drop-shadow(0 0 8px rgba(232,184,75,0.95)) drop-shadow(0 0 18px rgba(200,149,42,0.7));
+  animation:routeDash 1.8s linear infinite;
+}
+.campaign-route-glow{
+  fill:none;
+  stroke:rgba(232,184,75,0.25);
+  stroke-width:18;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  filter:blur(1px);
+}
+.campaign-node{
+  fill:var(--gold-pale);
+  stroke:#fff4b8;
+  stroke-width:3;
+  filter:drop-shadow(0 0 12px rgba(232,184,75,1));
+}
+.campaign-node.current{fill:#6bb7ff;stroke:#d9f1ff;}
+.campaign-node-label{
+  font-family:'Cinzel',serif;
+  font-size:22px;
+  letter-spacing:3px;
+  fill:#fff4c7;
+  paint-order:stroke;
+  stroke:#060402;
+  stroke-width:5px;
+  text-transform:uppercase;
+}
+@keyframes routeDash{to{stroke-dashoffset:-30;}}
+.campaign-toggle-active{
+  background:rgba(200,149,42,0.22)!important;
+  border-color:var(--gold)!important;
+  color:var(--gold-pale)!important;
+}
+
+
+/* ── SAFE ZOOM-AWARE PIN SIZE ── */
+.pin{
+  transition: transform 0.08s linear;
+}
+
+
+/* ── SAFE CAMPAIGN PATH OVERLAY ── */
+#safe-campaign-path{
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  pointer-events:none !important;
+  z-index:9;
+  display:none;
+}
+#safe-campaign-path.show{
+  display:block;
+}
+.safe-route-line{
+  position:absolute;
+  height:5px;
+  background:linear-gradient(90deg, rgba(232,184,75,.25), var(--gold-light), rgba(232,184,75,.25));
+  box-shadow:0 0 12px rgba(232,184,75,.9),0 0 24px rgba(200,149,42,.55);
+  border-radius:99px;
+  transform-origin:left center;
+}
+.safe-route-point{
+  position:absolute;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:var(--gold-pale);
+  border:3px solid #fff4b8;
+  box-shadow:0 0 15px rgba(232,184,75,1);
+  transform:translate(-50%,-50%);
+}
+.safe-route-point.current{
+  background:#6bb7ff;
+  border-color:#d9f1ff;
+  box-shadow:0 0 16px rgba(107,183,255,1);
+}
+.safe-route-label{
+  position:absolute;
+  transform:translate(14px,-28px);
+  font-family:'Cinzel',serif;
+  font-size:20px;
+  letter-spacing:3px;
+  color:#fff4c7;
+  text-shadow:0 2px 5px #000,0 0 8px #000;
+  white-space:nowrap;
+}
+
 </style>
+<style id="disable-old-route-svg">#campaign-route-svg{display:none!important;pointer-events:none!important;}</style>
 </head>
 <body>
 
@@ -460,6 +574,7 @@ body.light-mode #quick-nav {
     <button class="zoom-btn" id="zoomIn" title="Zoom In">+</button>
     <button class="zoom-btn" id="zoomOut" title="Zoom Out">−</button>
     <button class="zoom-btn" id="zoomReset" title="Reset" style="font-size:0.7rem;letter-spacing:0.05em;">⌂</button>
+    <button class="zoom-btn" id="campaignPathBtn" title="Show Campaign Path" style="font-size:0.72rem;letter-spacing:0.03em;width:auto;padding:0 10px;">PATH</button>
   </div>
 </div>
 
@@ -493,7 +608,7 @@ body.light-mode #quick-nav {
 // ═══════════════════════════════════════════════════════════════
 const REGIONS = [
   {
-    id: 'erentil', name: 'Erentil', x: 9.5, y: 11,
+    id: 'erentil', name: 'Erentil', x: 13, y: 11,
     subtitle: 'The Western Reaches',
     categories: {
       kingdom:  { name: 'Kingdom', icon: '👑', entries: [
@@ -538,7 +653,7 @@ const REGIONS = [
     }
   },
   {
-    id: 'lorva', name: 'Lorva', x: 74, y: 11,
+    id: 'lorva', name: 'Lorva', x: 76, y: 9,
     subtitle: 'Land of Giants',
     categories: {
       kingdom:  { name: 'Kingdom', icon: '👑', entries: [
@@ -582,7 +697,7 @@ const REGIONS = [
     }
   },
   {
-    id: 'fungaria', name: 'Fungaria', x: 33, y: 34,
+    id: 'fungaria', name: 'Fungaria', x: 35, y: 34,
     subtitle: 'Mushroom Kingdom',
     categories: {
       kingdom:  { name: 'Kingdom', icon: '👑', entries: [
@@ -607,7 +722,7 @@ const REGIONS = [
     }
   },
   {
-    id: 'hvallatr', name: 'Hvallatr', x: 79, y: 40,
+    id: 'hvallatr', name: 'Hvallatr', x: 64, y: 40,
     subtitle: 'The Northern Empire',
     categories: {
       kingdom:  { name: 'Kingdom', icon: '👑', entries: [
@@ -717,7 +832,7 @@ const REGIONS = [
     }
   },
   {
-    id: 'kadaka', name: 'Kadaka', x: 64, y: 49,
+    id: 'kadaka', name: 'Kadaka', x: 76, y: 49,
     subtitle: 'Eastern Lands',
     categories: {
       kingdom:  { name: 'Kingdom', icon: '👑', entries: [
@@ -750,7 +865,7 @@ const REGIONS = [
     }
   },
   {
-    id: 'reyur', name: 'Reyur', x: 81, y: 58,
+    id: 'reyur', name: 'Reyur', x: 81, y: 62,
     subtitle: 'Swampy Waters',
     categories: {
       kingdom:  { name: 'Kingdom', icon: '👑', entries: [
@@ -774,7 +889,7 @@ const REGIONS = [
     }
   },
   {
-    id: 'westlo', name: 'Westlo', x: 51, y: 64,
+    id: 'westlo', name: 'Westlo', x: 51, y: 70,
     subtitle: 'Tropical Lands',
     categories: {
       kingdom:  { name: 'Kingdom', icon: '👑', entries: [
@@ -797,7 +912,7 @@ const REGIONS = [
     }
   },
   {
-    id: 'settnak', name: 'Settnak', x: 37, y: 74,
+    id: 'settnak', name: 'Settnak', x: 41.5, y: 74,
     subtitle: 'The Ash Kingdoms',
     categories: {
       kingdom:  { name: 'Kingdom', icon: '👑', entries: [
@@ -865,7 +980,7 @@ const REGIONS = [
     }
   },
   {
-    id: 'ionsgate', name: 'Ionsgate', x: 63, y: 72,
+    id: 'ionsgate', name: 'Ionsgate', x: 63, y: 75,
     subtitle: 'Central Kingdom',
     categories: {
       kingdom:  { name: 'Kingdom', icon: '👑', entries: [
@@ -901,7 +1016,7 @@ const REGIONS = [
     }
   },
   {
-    id: 'huetmot', name: 'Huetmot', x: 88, y: 73,
+    id: 'huetmot', name: 'Huetmot', x: 90, y: 76,
     subtitle: 'Elven Empire',
     categories: {
       kingdom:  { name: 'Kingdom', icon: '👑', entries: [
@@ -969,8 +1084,8 @@ function fitMap() {
   applyTransform();
 }
 
-mapImg.onload = () => { fitMap(); renderPins(); };
-if (mapImg.complete) { fitMap(); renderPins(); }
+mapImg.onload = () => { fitMap(); renderPins(); updateMapPinScaleSafe(); };
+if (mapImg.complete) { fitMap(); renderPins(); updateMapPinScaleSafe(); }
 
 // Mouse drag
 container.addEventListener('mousedown', e => {
@@ -1053,7 +1168,8 @@ container.addEventListener('touchmove', e => {
 // Zoom buttons
 document.getElementById('zoomIn').addEventListener('click', () => zoomBy(1.25));
 document.getElementById('zoomOut').addEventListener('click', () => zoomBy(0.8));
-document.getElementById('zoomReset').addEventListener('click', fitMap);
+document.getElementById('zoomReset').addEventListener('click', () => { fitMap(); renderCampaignRoute(); });
+document.getElementById('campaignPathBtn').addEventListener('click', toggleCampaignPath);
 
 function zoomBy(factor) {
   const cw = container.clientWidth, ch = container.clientHeight;
@@ -1084,6 +1200,83 @@ function renderPins() {
     stage.appendChild(pin);
   });
 }
+
+
+// ═══════════════════════════════════════════════════════════════
+// CAMPAIGN PATH OVERLAY
+// Current campaign path: Sunbright → Dusk Harbor → Fungi Wall → Oakford → Aetherwyn
+// Edit CAMPAIGN_PATH below later as the party travels.
+// Coordinates are percent positions on the map image.
+// ═══════════════════════════════════════════════════════════════
+let campaignPathVisible = false;
+const CAMPAIGN_PATH = [
+  { name: 'Sunbright', x: 43.8, y: 52.0, type: 'start' },
+  { name: 'Oakford',   x: 16.0, y: 57.0, type: 'current' }
+];
+
+function renderCampaignRoute() {
+  const iw = mapImg.naturalWidth, ih = mapImg.naturalHeight;
+  if (!iw || !ih) return;
+
+  let svg = document.getElementById('campaign-route-svg');
+  if (!svg) {
+    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('id', 'campaign-route-svg');
+    stage.insertBefore(svg, stage.firstChild);
+    svg.style.pointerEvents='none';
+  }
+
+  svg.setAttribute('viewBox', `0 0 ${iw} ${ih}`);
+  svg.setAttribute('width', iw);
+  svg.setAttribute('height', ih);
+  svg.classList.toggle('show', campaignPathVisible);
+  svg.style.display = campaignPathVisible ? 'block' : 'none';
+
+  const pts = CAMPAIGN_PATH.map(p => ({
+    ...p,
+    px: p.x / 100 * iw,
+    py: p.y / 100 * ih
+  }));
+
+  const start = pts[0];
+  const end = pts[pts.length - 1];
+
+  // Curved sea route. Add more points later if you want a multi-stop campaign route.
+  const c1x = start.px - iw * 0.06;
+  const c1y = start.py + ih * 0.08;
+  const c2x = end.px + iw * 0.13;
+  const c2y = end.py + ih * 0.04;
+  const d = `M ${start.px} ${start.py} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${end.px} ${end.py}`;
+
+  svg.innerHTML = `
+    <path class="campaign-route-glow" d="${d}"></path>
+    <path class="campaign-route-line" d="${d}"></path>
+    ${pts.map(p => `
+      <circle class="campaign-node ${p.type === 'current' ? 'current' : ''}" cx="${p.px}" cy="${p.py}" r="11"></circle>
+      <text class="campaign-node-label" x="${p.px + 16}" y="${p.py - 16}">${p.name}</text>
+    `).join('')}
+  `;
+}
+
+window.__routeInitialRenderFixed = true;
+setTimeout(function(){ try { renderCampaignRoute(); } catch(e){} }, 0);
+
+function toggleCampaignPath() {
+  campaignPathVisible = !campaignPathVisible;
+  const btn = document.getElementById('campaignPathBtn');
+  const svg = document.getElementById('campaign-route-svg');
+
+  if (btn) {
+    btn.classList.toggle('campaign-toggle-active', campaignPathVisible);
+  }
+
+  if (svg) {
+    svg.style.display = campaignPathVisible ? 'block' : 'none';
+  }
+
+  renderCampaignRoute();
+}
+
 
 // ═══════════════════════════════════════════════════════════════
 // PANEL
@@ -1171,7 +1364,7 @@ function showEntries(region, cat) {
 }
 
 
-window.addEventListener('resize', () => { fitMap(); renderPins(); });
+window.addEventListener('resize', () => { fitMap(); renderPins(); renderCampaignRoute(); });
 
 function navigate(url) {
   const overlay = document.getElementById('overlay');
@@ -1268,6 +1461,16 @@ document.querySelectorAll('.qn-item').forEach(item => {
 
 
 
+
+function updateMapPinScaleSafe(){
+  try{
+    const s = Math.max(0.55, Math.min(1.2, 1 / Math.sqrt(scale || 1)));
+    document.querySelectorAll('.pin').forEach(function(pin){
+      pin.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+    });
+  }catch(e){}
+}
+
 </script>
 
 <!-- ══ GLOBAL TOOLBAR ══ -->
@@ -1322,5 +1525,123 @@ document.querySelectorAll('.qn-item').forEach(item => {
 
 
 </html>
+
+<script id="map-final-safe-controls">
+window.addEventListener('load', function(){
+  try {
+    var pathBtn = document.getElementById('campaignPathBtn');
+    if (pathBtn && !pathBtn.__boundFinal) {
+      pathBtn.__boundFinal = true;
+      pathBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        if (typeof toggleCampaignPath === 'function') toggleCampaignPath();
+      });
+    }
+  } catch(e) {}
+});
+</script>
+
+
+<script id="safe-campaign-path-final">
+(function(){
+  let pathVisible = false;
+
+  const pathPoints = [
+    { name:'Sunbright', x:43.8, y:52.0, type:'start' },
+    { name:'Dusk Harbor', x:31.5, y:48.5, type:'stop' },
+    { name:'Fungi Wall', x:27.5, y:44.0, type:'stop' },
+    { name:'Oakford', x:16.0, y:57.0, type:'stop' },
+    { name:'Aetherwyn', x:15.0, y:60.5, type:'current' }
+  ];
+
+  function ensureLayer(){
+    const stageEl = document.getElementById('map-stage');
+    if(!stageEl) return null;
+    let layer = document.getElementById('safe-campaign-path');
+    if(!layer){
+      layer = document.createElement('div');
+      layer.id = 'safe-campaign-path';
+      stageEl.insertBefore(layer, stageEl.firstChild);
+    }
+    return layer;
+  }
+
+  function drawPath(){
+    const img = document.getElementById('map-img');
+    const layer = ensureLayer();
+    if(!img || !layer) return;
+
+    const w = img.naturalWidth || img.width;
+    const h = img.naturalHeight || img.height;
+    if(!w || !h) return;
+
+    layer.style.width = w + 'px';
+    layer.style.height = h + 'px';
+    layer.classList.toggle('show', pathVisible);
+    layer.innerHTML = '';
+
+    const pts = pathPoints.map(function(p){
+      return {
+        name:p.name,
+        type:p.type,
+        px:p.x/100*w,
+        py:p.y/100*h
+      };
+    });
+
+    for(let i=0;i<pts.length-1;i++){
+      const a=pts[i], b=pts[i+1];
+      const dx=b.px-a.px, dy=b.py-a.py;
+      const len=Math.sqrt(dx*dx+dy*dy);
+      const ang=Math.atan2(dy,dx)*180/Math.PI;
+
+      const line=document.createElement('div');
+      line.className='safe-route-line';
+      line.style.left=a.px+'px';
+      line.style.top=a.py+'px';
+      line.style.width=len+'px';
+      line.style.transform='rotate('+ang+'deg)';
+      layer.appendChild(line);
+    }
+
+    pts.forEach(function(p){
+      const dot=document.createElement('div');
+      dot.className='safe-route-point' + (p.type==='current' ? ' current' : '');
+      dot.style.left=p.px+'px';
+      dot.style.top=p.py+'px';
+
+      const lab=document.createElement('div');
+      lab.className='safe-route-label';
+      lab.textContent=p.name;
+      dot.appendChild(lab);
+      layer.appendChild(dot);
+    });
+  }
+
+  window.safeToggleCampaignPath = function(){
+    pathVisible = !pathVisible;
+    const btn = document.getElementById('campaignPathBtn');
+    if(btn) btn.classList.toggle('campaign-toggle-active', pathVisible);
+    drawPath();
+  };
+
+  window.addEventListener('load', function(){
+    const btn = document.getElementById('campaignPathBtn');
+    if(btn){
+      btn.onclick = function(e){
+        e.preventDefault();
+        window.safeToggleCampaignPath();
+        return false;
+      };
+    }
+    setTimeout(drawPath, 100);
+  });
+
+  window.addEventListener('resize', function(){
+    setTimeout(drawPath, 50);
+  });
+})();
+</script>
+
 </body>
 </html>
