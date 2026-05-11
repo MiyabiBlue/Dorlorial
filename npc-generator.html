@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NPC Generator — Dorlorial</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#C8952A;--gold-light:#E8B84B;--gold-pale:#F5D98A;--gold-dark:#8A6010;--ink:#060402;--ink-soft:#0e0a04;--text:#d4b483;--text-dim:#7a6040;--green:#4be87a;--red:#e84b4b;--blue:#6bb7ff}
+body{min-height:100vh;background:radial-gradient(circle at top,#151006 0%,#060402 55%,#020100 100%);color:var(--text);font-family:'EB Garamond',serif;overflow-x:hidden}
+#embers{position:fixed;inset:0;z-index:0;pointer-events:none}
+header{position:relative;z-index:2;text-align:center;padding:48px 18px 28px;border-bottom:1px solid rgba(200,149,42,.18);background:linear-gradient(180deg,rgba(14,10,4,.95),transparent)}
+.back-link{position:absolute;left:22px;top:20px;text-decoration:none;color:var(--gold-dark);font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.28em;text-transform:uppercase}
+.back-link:hover{color:var(--gold)}
+.eyebrow{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.48em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:8px}
+h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.55rem,5vw,3rem);background:linear-gradient(180deg,var(--gold-pale),var(--gold) 55%,var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+.subtitle{color:var(--text-dim);font-style:italic;font-size:.98rem}
+main{position:relative;z-index:2;max-width:1120px;margin:0 auto;padding:34px 18px 80px}
+.panel{background:linear-gradient(145deg,#0e0a04,#090602);border:1px solid rgba(200,149,42,.24);box-shadow:0 20px 60px rgba(0,0,0,.4);position:relative}
+.panel::before{content:'';position:absolute;left:0;top:0;width:38px;height:38px;border-top:1px solid var(--gold);border-left:1px solid var(--gold)}
+.panel::after{content:'';position:absolute;right:0;bottom:0;width:38px;height:38px;border-right:1px solid var(--gold);border-bottom:1px solid var(--gold)}
+.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:22px;border-bottom:1px solid rgba(200,149,42,.14)}
+.control label{display:block;font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.26em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:7px}
+select,input{width:100%;background:#060402;color:var(--text);border:1px solid rgba(200,149,42,.25);padding:11px 12px;font-family:'EB Garamond',serif;font-size:.95rem;outline:none}
+select:focus,input:focus{border-color:var(--gold)}
+.buttons{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+.btn{font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);background:rgba(200,149,42,.04);border:1px solid rgba(200,149,42,.35);padding:12px 18px;cursor:pointer;transition:.22s}
+.btn:hover{background:rgba(200,149,42,.1);border-color:var(--gold);color:var(--gold-pale)}
+.output{padding:24px;display:grid;grid-template-columns:1.05fr .95fr;gap:20px}
+.card{background:rgba(200,149,42,.035);border:1px solid rgba(200,149,42,.16);padding:22px}
+.npc-top{display:flex;gap:16px;align-items:flex-start;margin-bottom:18px}
+.portrait{width:76px;height:76px;border-radius:50%;border:2px solid rgba(232,184,75,.65);background:radial-gradient(circle,#30210b,#080502);display:flex;align-items:center;justify-content:center;font-size:2.2rem;box-shadow:0 0 22px rgba(200,149,42,.25);flex-shrink:0}
+.npc-name{font-family:'Cinzel Decorative',serif;font-size:clamp(1.3rem,3vw,2rem);color:var(--gold-light);line-height:1.05;margin-bottom:6px}
+.npc-sub{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-dark);line-height:1.7}
+.tagrow{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 16px}
+.tag{font-family:'Cinzel',serif;font-size:.46rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-pale);background:rgba(200,149,42,.09);border:1px solid rgba(200,149,42,.22);padding:5px 8px}
+.section{margin-top:16px}
+.section-title{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.26em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:7px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';height:1px;flex:1;background:rgba(200,149,42,.12)}
+.text{line-height:1.68;color:var(--text);font-size:1rem}
+.text.dim{color:var(--text-dim);font-style:italic}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mini{padding:12px;background:rgba(0,0,0,.13);border:1px solid rgba(200,149,42,.1)}
+.mini-label{font-family:'Cinzel',serif;font-size:.45rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:4px}
+.mini-val{font-size:.96rem;line-height:1.45}
+.copybox{width:100%;min-height:290px;background:#050301;border:1px solid rgba(200,149,42,.18);color:var(--text);padding:16px;font-family:Consolas,monospace;font-size:.82rem;line-height:1.5;resize:vertical}
+.saved{margin-top:18px}
+.saved-list{display:flex;flex-direction:column;gap:8px;max-height:260px;overflow:auto}
+.saved-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border:1px solid rgba(200,149,42,.14);background:rgba(200,149,42,.035)}
+.saved-name{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-light)}
+.small-btn{font-family:'Cinzel',serif;font-size:.43rem;letter-spacing:.18em;text-transform:uppercase;background:transparent;border:1px solid rgba(200,149,42,.25);color:var(--gold-dark);padding:6px 8px;cursor:pointer}
+.small-btn:hover{color:var(--gold);border-color:var(--gold)}
+@media(max-width:860px){.controls{grid-template-columns:1fr 1fr}.output{grid-template-columns:1fr}.back-link{position:static;display:inline-block;margin-bottom:18px}}
+@media(max-width:560px){.controls{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.npc-top{flex-direction:column;align-items:center;text-align:center}.tagrow{justify-content:center}}
+</style>
+</head>
+<body>
+<canvas id="embers"></canvas>
+<header>
+  <a href="hub.html" class="back-link">← Hub</a>
+  <div class="eyebrow">Dorlorial DM Tool</div>
+  <h1>NPC Generator</h1>
+  <div class="subtitle">Generate region-specific NPCs with factions, secrets, quests, and roleplay hooks.</div>
+</header>
+
+<main>
+  <section class="panel">
+    <div class="controls">
+      <div class="control">
+        <label>Region</label>
+        <select id="region">
+          <option value="any">Any Region</option>
+          <option>Kodral</option><option>Ionsgate</option><option>Hvallatr</option><option>Larinia</option><option>Kadaka</option>
+          <option>Reyur</option><option>Huetmot</option><option>Skadiris</option><option>Settnak</option><option>Fireguard</option>
+          <option>Oakford</option><option>Fungaria</option><option>Erentil</option><option>Ravenshroud</option><option>Verglaze</option>
+          <option>Lorva</option><option>Westlo</option><option>Forest</option><option>City</option><option>Ocean</option>
+          <option>Volcano</option><option>Mountains</option><option>Plains</option><option>Caves</option><option>Deserts</option>
+          <option>Canyons</option><option>Villages</option>
+        </select>
+      </div>
+      <div class="control">
+        <label>NPC Role</label>
+        <select id="role">
+          <option value="any">Any Role</option>
+          <option>Quest Giver</option><option>Ally</option><option>Villain</option><option>Merchant</option><option>Faction Agent</option>
+          <option>Guide</option><option>Scholar</option><option>Guard</option><option>Criminal</option><option>Monster Hunter</option>
+          <option>Healer</option><option>Rival</option><option>Commoner</option><option>Religious Figure</option>
+        </select>
+      </div>
+      <div class="control">
+        <label>Tone</label>
+        <select id="tone">
+          <option value="any">Any Tone</option>
+          <option>Friendly</option><option>Suspicious</option><option>Comic Relief</option><option>Creepy</option><option>Tragic</option>
+          <option>Noble</option><option>Dangerous</option><option>Mysterious</option>
+        </select>
+      </div>
+      <div class="buttons">
+        <button class="btn" onclick="generateNPC()">Generate</button>
+        <button class="btn" onclick="saveNPC()">Save</button>
+        <button class="btn" onclick="copyNPC()">Copy</button>
+      </div>
+    </div>
+
+    <div class="output">
+      <div class="card" id="npcCard"></div>
+      <div class="card">
+        <div class="section-title">Copy / Notes</div>
+        <textarea class="copybox" id="copyBox"></textarea>
+        <div class="saved">
+          <div class="section-title">Saved NPCs</div>
+          <div class="saved-list" id="savedList"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+const DATA = {
+  regions:{
+    Kodral:{icon:"🦁", vibe:"a broad kingdom of holy roads, farmland, politics, trade, and mixed biomes", names:["Alden","Mira","Tomas","Rellin","Ser Jorah","Elowen","Bram","Cassia"], jobs:["royal courier","roadside innkeeper","lion-banner guard","grain merchant","wandering priest","disgraced knight"], hooks:["knows which noble is quietly funding bandits","saw a courier vanish near Sunbright","has a sealed letter marked with a gold lion","is hiding a survivor from a ruined village"]},
+    Ionsgate:{icon:"📘", vibe:"the largest city in the world wrapped around Lumina's Tree of Creativity", names:["Edrin Vale","Nessa Quill","Orro Vane","Tibbin Sparks","Lady Ilyra","Mael Quillwick","Sera Page"], jobs:["inventor","scholar","book thief","Spicerunner broker","Dawnweaver healer","living-art curator"], hooks:["found a door under the roots that was not there yesterday","is being hunted for an unfinished invention","can translate a broken Lumina symbol","owes money to the Spicerunners"]},
+    Hvallatr:{icon:"❄️", vibe:"snowy viking strip of land with mountains and frozen water", names:["Bjorn","Astrid","Hrogar","Siv","Eirik","Yrsa","Kolbein"], jobs:["ice fisher","rune carver","shieldmaiden","longboat captain","frost scout","mead hall owner"], hooks:["heard singing under the ice","lost a sibling to a white wolf pack","owns a map etched onto whale bone","is preparing for a raid they regret"]},
+    Larinia:{icon:"🏕️", vibe:"orc kingdom covered in ruins and war camps", names:["Grakka","Urmak","Shara Bonehand","Kroth","Mauga","Tarnak","Vesha"], jobs:["orc war-chief","ruin scavenger","camp cook","battle drummer","exiled champion","peace negotiator"], hooks:["wants to unite rival camps without bloodshed","found an angelic relic in old ruins","knows where a lost war banner lies","is secretly tired of endless fighting"]},
+    Kadaka:{icon:"🌸", vibe:"Japanese-inspired mountains, blossom trees, sacred places, spirits, and shrines", names:["Moriko","Ren Kazura","Akane","Hiroto","Yumi","Daichi","Sora"], jobs:["kitsune guide","shrine keeper","tea seller","mask maker","wandering samurai","spirit medium"], hooks:["needs help calming an angry shrine spirit","knows a secret path through blossom mountains","carries a cursed oni mask","saw green dragon fire over the peaks"]},
+    Reyur:{icon:"🐊", vibe:"swamps, black muck, sinking roads, and strange lights", names:["Murk Tom","Vela Reed","Old Gant","Nomi Blackwater","Sedge","Rilka","Fen"], jobs:["swamp guide","frog priest","bog witch","muck farmer","ferryman","poison brewer"], hooks:["can lead travelers through the safe muck paths","is being followed by lights in the fog","sold a potion that changed someone badly","knows where a drowned temple breathes"]},
+    Huetmot:{icon:"🌳", vibe:"elven empire of magical trees and intelligent nature", names:["Aelar","Sylvi","Thalanil","Eryndor","Vaelith","Liora","Caelren"], jobs:["elven ranger","tree speaker","Verdant Grove druid","leaf-armored guard","herbalist","ancient historian"], hooks:["believes a sacred tree is lying","needs help rescuing a talking stag","guards a forest law the party may break","knows a hidden root gate"]},
+    Skadiris:{icon:"⛏️", vibe:"canyon continent full of mines and strange creatures", names:["Dargo Flint","Mina Brass","Kerrik","Osta","Jorn","Pella Geargrit"], jobs:["miner","prospector","canyon guide","strange-creature trapper","ore baron","tunnel medic"], hooks:["found metal that screams when heated","lost a crew in a breathing mine","is hiding a creature egg","knows the mine owners are lying"]},
+    Settnak:{icon:"🌋", vibe:"mountain strip with a giant volcano and dwarven strongholds", names:["Borin Ashbeard","Dagna","Kuldren","Marta Ironcap","Thrain","Vokka"], jobs:["dwarf smith","lava surveyor","tunnel guard","gem cutter","forge priest","volcano scout"], hooks:["needs rare ore from a collapsing lava tube","suspects the mountain is waking","crafted a weapon they now fear","knows a hidden dwarven lift"]},
+    Fireguard:{icon:"🔥", vibe:"volcanic wasteland where the land burns and survival is constant", names:["Ashra","Cinder Pell","Varkos","Nyla Ember","Torren","Kael"], jobs:["ash walker","fire cult deserter","heat-shield merchant","salamander hunter","burn-scarred prophet","charcoal farmer"], hooks:["saw Ashborn cultists moving at night","has a map through the safe lava fields","needs medicine for burns that will not heal","believes the fire is speaking"]},
+    Oakford:{icon:"💎", vibe:"massive dark forests glowing faint blue, magical roots, Aetherwyn, and Crystolas lore", names:["Luma Rootwise","Orren Bluebark","Tessa Vale","Bramble","Edrin Moss","Nyra"], jobs:["root scout","crystal scholar","lost pilgrim","aether miner","tree whisperer","Dawnweaver healer"], hooks:["remembers a path no one else can see","found a blue crystal pulsing like a heart","knows the way down to Aetherwyn","woke up with someone else’s memory"]},
+    Fungaria:{icon:"🍄", vibe:"humid mushroom land filled with spores, fungal towers, and strange alchemy", names:["Milo Sporecap","Fenna","Groll Mush","Tippa","Oozwin","Marn"], jobs:["mushroom farmer","spore alchemist","fungal druid","myconid translator","humidity merchant","rot healer"], hooks:["needs help stopping a spreading purple spore","can brew potions from glowing caps","heard voices from the Fungi Wall","may secretly be controlled by spores"]},
+    Erentil:{icon:"⚙️", vibe:"wartorn steampunk land of robots, airships, smoke, and broken factories", names:["Viktor Brass","Elna Cog","Captain Rusk","Mara Steam","Pindle","Seraph Gear"], jobs:["airship pilot","robot mechanic","war medic","factory saboteur","clockwork soldier","black-market engineer"], hooks:["needs parts from a battlefield automaton","is hiding a sentient robot","knows who shot down an airship","has orders they refuse to follow"]},
+    Ravenshroud:{icon:"🕯️", vibe:"creepy horror land of forests, swamps, fog, and cursed villages", names:["Hollow Mae","Father Crow","Evin No-Name","Marta Wick","Sable","Old Renn"], jobs:["grave keeper","candle priest","fog hunter","mourning widow","curse breaker","silent child"], hooks:["knows why the village has no mirrors","saw a loved one return wrong","keeps a list of names the fog stole","needs help before the bells ring at midnight"]},
+    Verglaze:{icon:"🧊", vibe:"a frozen valley where everything freezes instantly", names:["Ivar Frostbit","Nessa Coldhand","Rurik","Elska","Hale","Venn"], jobs:["frost survivor","ice cartographer","winter hunter","heatstone merchant","frozen shrine keeper","avalanche scout"], hooks:["has one heatstone left and three people need it","found footprints frozen into the air","heard a mountain breathe","knows where bodies are preserved under glass ice"]},
+    Lorva:{icon:"🦖", vibe:"massive canyons filled with enormous creatures and monster hunters", names:["Brakka Horn","Tovin Scalehook","Mara Titanblood","Jex","Ulra","Stone-Eye Pell"], jobs:["monster hunter","kaiju tracker","bone trader","canyon medic","harvest crew boss","bait runner"], hooks:["needs help harvesting a creature before rivals arrive","knows a titan migration route","lost a hunter inside a monster ribcage","is lying about how big the creature is"]},
+    Westlo:{icon:"🏴‍☠️", vibe:"pirate land full of tropical biomes, bright ports, danger, and smuggling", names:["Captain Lysa","Red Mako","Tavi Rum","Jorra Salt","Bellamy","Nix Pearl"], jobs:["pirate captain","dock smuggler","tavern singer","pearl diver","council spy","shipwright"], hooks:["knows where a treasure ship sank","is hunted by their old crew","smuggled something that whispers","has a map tattooed on their back"]},
+    Forest:{icon:"🌲", vibe:"classic wilderness, trails, hunters, beasts, old ruins", names:["Rook","Mira Fern","Galen","Bess","Oren","Hilda"], jobs:["hunter","woodsman","herbalist","lost traveler","old ranger","trapper"], hooks:["saw unnatural tracks","needs help finding a missing child","found a ruined shrine","knows a shortcut no map shows"]},
+    City:{icon:"🏙️", vibe:"crowds, guards, criminals, nobles, markets, gossip", names:["Tomas","Nella","Crispin","Vera","Joss","Mira"], jobs:["guard","merchant","thief","noble clerk","street performer","innkeeper"], hooks:["knows which guard takes bribes","heard a noble’s secret","saw a murder from a rooftop","needs protection from a gang"]},
+    Ocean:{icon:"🌊", vibe:"ships, storms, sea monsters, sailors, islands", names:["Marlo Tide","Sella Wave","Captain Oris","Nim","Barnacle Ben","Tara"], jobs:["sailor","navigator","fisher","ship cook","storm priest","wreck diver"], hooks:["knows a reef that moves","lost cargo to something below","can read storm signs","heard singing from a wreck"]},
+    Volcano:{icon:"🌋", vibe:"lava, ash, fire creatures, burning ruins", names:["Cindra","Varr","Ash Pell","Kora","Rusk"], jobs:["lava guide","ash miner","fire priest","heat merchant","burn healer"], hooks:["needs help crossing a lava field","saw cultists in the ash","has a fireproof map","heard screams inside the volcano"]},
+    Mountains:{icon:"⛰️", vibe:"high passes, cliffs, avalanches, giants, monasteries", names:["Hale","Borin","Sera Peak","Karn","Mella"], jobs:["mountain guide","goat herder","monk","watchman","stone mason"], hooks:["knows a pass before the storm hits","saw giants moving stones","guards a cliff shrine","needs rescue rope"]},
+    Plains:{icon:"🌾", vibe:"open roads, farms, nomads, storms, riders", names:["Pell","Anna","Roric","Jun","Marta"], jobs:["farmer","rider","shepherd","road guard","traveling cook"], hooks:["saw riders vanish in tall grass","needs help before the storm","found a buried sword","knows a bandit trail"]},
+    Caves:{icon:"🕳️", vibe:"dark tunnels, miners, lost relics, echoing danger", names:["Garn","Mika","Old Deep Tom","Rella","Bosk"], jobs:["miner","spelunker","torch seller","cave priest","mushroom picker"], hooks:["heard voices below","lost a crew underground","found a locked door","saw glowing teeth"]},
+    Deserts:{icon:"🏜️", vibe:"sand, ruins, mirages, caravans, ancient tombs", names:["Sahir","Nima","Khet","Rasha","Old Vale"], jobs:["caravan guard","water seller","tomb robber","sand priest","camel driver"], hooks:["knows a false oasis","saw ruins rise from sand","needs water badly","has a cursed relic"]},
+    Canyons:{icon:"🪨", vibe:"mines, cliffs, echoes, bridges, ambush points", names:["Della Stone","Korr","Mina","Jasper","Ula"], jobs:["miner","bridge keeper","canyon scout","ore merchant","cliff hunter"], hooks:["knows a bridge is rigged","found weird ore","heard something under the canyon","needs escort past raiders"]},
+    Villages:{icon:"🏘️", vibe:"small town problems, secrets, festivals, suspicious locals", names:["Mayor Pell","Granny Mav","Oren Mill","Lysa","Tob"], jobs:["mayor","miller","midwife","blacksmith","shepherd"], hooks:["the village well whispers","festival masks are missing","the mayor is scared","someone returned from the dead"]}
+  },
+  factions:["Spicerunners","The Dragon’s Maw","Order of Shadows","Dawnweaver Sanctuaries","Masterwork Coalition","Hollow Ones","Ashborn","Children of Chaos","Lumina’s Scholars","Broken Star","Circle of the Verdant Grove","Warriors of Solaris","Shadows of Nyxus","Unseen Hand"],
+  traits:["talks too fast when nervous","never gives a straight answer","keeps touching a hidden locket","laughs at the wrong moments","speaks in old sayings","is painfully polite","stares too long without blinking","has a habit of flipping a coin","always smells faintly of smoke","writes notes on their sleeve"],
+  wants:["to find someone who disappeared","to pay off a dangerous debt","to prove they are not a coward","to protect a family secret","to recover a stolen relic","to escape their faction","to get revenge without looking guilty","to become famous","to keep a promise to the dead","to hide what they really are"],
+  secrets:["is secretly working for a faction","has already met the villain","is cursed but hiding the symptoms","sold information to the wrong person","is not using their real name","knows where a body is buried","saw a god’s symbol in a dream","has a stolen magic item","betrayed someone who trusted them","is being watched by something invisible"],
+  quirks:["collects buttons from every town","names every weapon they see","refuses to step on cracks","prays before lying","hums when scared","keeps snacks in every pocket","calls everyone by the wrong title","apologizes to doors after slamming them","cannot resist gossip","draws tiny maps while talking"],
+  appearances:["weathered face and sharp eyes","ink-stained fingers and expensive boots","scar across one cheek","bright clothes patched many times","silver streak through dark hair","one artificial hand","muddy cloak with hidden fine jewelry","tattoo of a forgotten symbol","nervous smile and watchful eyes","old armor worn under common clothes"]
+};
+
+const ROLES = {
+  "Quest Giver":["needs the party to retrieve something dangerous","offers work but leaves out one major detail","begs the party to investigate a local mystery"],
+  "Ally":["wants to travel with the party for one leg of the journey","can offer shelter, healing, or information","will risk something important if treated kindly"],
+  "Villain":["is charming until crossed","plans to use the party as disposable tools","has a personal reason for doing terrible things"],
+  "Merchant":["sells useful goods but wants a favor instead of coin","has one strange item they refuse to explain","knows every rumor worth buying"],
+  "Faction Agent":["tests whether the party is useful","is recruiting quietly","is cleaning up a faction mistake"],
+  "Guide":["knows the safest path and the worst stories","charges extra for dangerous routes","can read weather, tracks, or local signs"],
+  "Scholar":["knows lore nobody asked for","needs field protection","translated something they now regret"],
+  "Guard":["is underpaid and suspicious","knows who entered town last night","can be bribed, persuaded, or impressed"],
+  "Criminal":["smiles like they already won","needs help before their own gang kills them","has stolen something too hot to sell"],
+  "Monster Hunter":["knows how the local beast hunts","is wounded but proud","needs bait, backup, or both"],
+  "Healer":["can patch wounds but asks uncomfortable questions","ran out of one critical herb","recognizes a supernatural sickness"],
+  "Rival":["wants the same prize as the party","respects strength more than manners","may become friend or enemy depending on choices"],
+  "Commoner":["knows what nobles and heroes overlook","is scared but observant","has a simple problem that hints at a bigger threat"],
+  "Religious Figure":["interprets omens in everything","guards a shrine or holy secret","believes the party was sent for a reason"]
+};
+
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+function val(id){return document.getElementById(id).value}
+function chooseRegion(){
+  const r=val('region');
+  if(r !== 'any') return r;
+  const keys=Object.keys(DATA.regions);
+  return pick(keys);
+}
+function chooseRole(){
+  const r=val('role');
+  if(r !== 'any') return r;
+  return pick(Object.keys(ROLES));
+}
+function chooseTone(){
+  const t=val('tone');
+  if(t !== 'any') return t;
+  return pick(["Friendly","Suspicious","Comic Relief","Creepy","Tragic","Noble","Dangerous","Mysterious"]);
+}
+function buildNPC(){
+  const regionName=chooseRegion();
+  const region=DATA.regions[regionName];
+  const role=chooseRole();
+  const tone=chooseTone();
+  const faction=pick(DATA.factions);
+  const name=pick(region.names);
+  const job=pick(region.jobs);
+  const roleHook=pick(ROLES[role]);
+  const trait=pick(DATA.traits);
+  const want=pick(DATA.wants);
+  const secret=pick(DATA.secrets);
+  const quirk=pick(DATA.quirks);
+  const app=pick(DATA.appearances);
+  const hook=pick(region.hooks);
+
+  let alignment = tone==="Friendly" ? "Likely Ally" :
+                  tone==="Dangerous" ? "Likely Threat" :
+                  tone==="Creepy" ? "Unsettling Unknown" :
+                  tone==="Suspicious" ? "Potential Rival" :
+                  role==="Villain" ? "Enemy" : "Complicated Neutral";
+
+  let firstLine = `${name} is a ${tone.toLowerCase()} ${job} from ${regionName}, shaped by ${region.vibe}.`;
+  let rp = `${name} ${trait}, ${quirk}, and wants ${want}.`;
+  let quest = `${hook}. As a ${role.toLowerCase()}, this NPC ${roleHook}.`;
+  let factionLine = `${name} has ties to ${faction}, though whether that connection is public, hidden, or unwanted is up to the DM.`;
+  let secretLine = `${name} ${secret}.`;
+
+  return {regionName,region,role,tone,faction,name,job,alignment,app,firstLine,rp,quest,factionLine,secretLine,hook,want,secret,trait,quirk};
+}
+
+let current=null;
+let saved=[];
+
+function render(npc){
+  current=npc;
+  document.getElementById('npcCard').innerHTML=`
+    <div class="npc-top">
+      <div class="portrait">${npc.region.icon}</div>
+      <div>
+        <div class="npc-name">${npc.name}</div>
+        <div class="npc-sub">${npc.job} • ${npc.regionName} • ${npc.role}</div>
+      </div>
+    </div>
+    <div class="tagrow">
+      <span class="tag">${npc.tone}</span>
+      <span class="tag">${npc.alignment}</span>
+      <span class="tag">${npc.faction}</span>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Quick Read</div>
+      <div class="text">${npc.firstLine}</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Roleplay</div>
+      <div class="text">${npc.rp}</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Quest Hook</div>
+      <div class="text">${npc.quest}</div>
+    </div>
+
+    <div class="grid2 section">
+      <div class="mini">
+        <div class="mini-label">Appearance</div>
+        <div class="mini-val">${npc.app}</div>
+      </div>
+      <div class="mini">
+        <div class="mini-label">Secret</div>
+        <div class="mini-val">${npc.secretLine}</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Faction Tie</div>
+      <div class="text dim">${npc.factionLine}</div>
+    </div>
+  `;
+
+  const copy=`${npc.name}
+${npc.job} • ${npc.regionName} • ${npc.role}
+Tone: ${npc.tone}
+Faction Tie: ${npc.faction}
+Status: ${npc.alignment}
+
+Quick Read:
+${npc.firstLine}
+
+Roleplay:
+${npc.rp}
+
+Appearance:
+${npc.app}
+
+Quest Hook:
+${npc.quest}
+
+Secret:
+${npc.secretLine}
+
+Faction Note:
+${npc.factionLine}
+`;
+  document.getElementById('copyBox').value=copy;
+}
+
+function generateNPC(){render(buildNPC())}
+function saveNPC(){
+  if(!current) return;
+  saved.unshift(current);
+  saved=saved.slice(0,12);
+  renderSaved();
+}
+function renderSaved(){
+  const box=document.getElementById('savedList');
+  if(!saved.length){box.innerHTML='<div class="empty-state">No saved NPCs yet.</div>';return}
+  box.innerHTML=saved.map((n,i)=>`
+    <div class="saved-item">
+      <div>
+        <div class="saved-name">${n.name}</div>
+        <div class="text dim" style="font-size:.82rem">${n.regionName} • ${n.role}</div>
+      </div>
+      <button class="small-btn" onclick="render(saved[${i}])">Load</button>
+    </div>
+  `).join('');
+}
+function copyNPC(){
+  const box=document.getElementById('copyBox');
+  box.select();
+  document.execCommand('copy');
+}
+
+(function(){
+  const c=document.getElementById('embers'),ctx=c.getContext('2d');
+  let w,h,parts=[];
+  function resize(){w=c.width=innerWidth;h=c.height=innerHeight;parts=Array.from({length:45},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2+0.5,s:Math.random()*0.6+0.15,o:Math.random()*0.5+0.12}))}
+  function draw(){ctx.clearRect(0,0,w,h);parts.forEach(p=>{p.y-=p.s;if(p.y<0){p.y=h;p.x=Math.random()*w}ctx.beginPath();ctx.fillStyle=`rgba(200,149,42,${p.o})`;ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill()});requestAnimationFrame(draw)}
+  addEventListener('resize',resize);resize();draw();
+})();
+
+generateNPC();
+renderSaved();
+</script>
+</body>
+</html>
