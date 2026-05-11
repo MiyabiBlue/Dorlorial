@@ -670,18 +670,18 @@ function switchCommunityTab(tab, el) {
 // ── ART ──
 async function loadAllArt() {
   try {
-    const res = await sbFetch('art_submissions?order=created_at.desc');
-    allArt = await res.json();
-    // Update counts
-    const pending = allArt.filter(a => a.status === 'pending').length;
-    const approved = allArt.filter(a => a.status === 'approved').length;
-    const pc = document.getElementById('pending-count');
-    const ac = document.getElementById('approved-count');
-    if (pc) pc.textContent = pending > 0 ? `(${pending})` : '';
-    if (ac) ac.textContent = approved > 0 ? `(${approved})` : '';
+    let data = [];
+    try {
+      data = await sbFetch('art_submissions?select=id,username,title,image_url,description,status,created_at&order=created_at.desc');
+    } catch(firstErr) {
+      // Fallback for older tables without created_at
+      data = await sbFetch('art_submissions?select=id,username,title,image_url,description,status');
+    }
+    allArt = Array.isArray(data) ? data : [];
     renderArtFiltered();
   } catch(e) {
-    document.getElementById('art-grid').innerHTML = '<div class="empty-state">Could not load art.</div>';
+    const grid = document.getElementById('art-grid');
+    if (grid) grid.innerHTML = '<div class="empty-state">Could not load art. If comments work, check Supabase policies for art_submissions SELECT and confirm the table has username, title, image_url, description, and status columns.</div>';
   }
 }
 

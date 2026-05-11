@@ -549,18 +549,10 @@ function submitArt(){
     btn.textContent='Submitting...';
   }
 
-  postfetch('art_submissions',{
-    username:name,
-    title:title,
-    image_url:url,
-    description:desc,
-    status:'pending',
-    entry_link:'art',
-    entry_name:title
-  })
+  postfetch('art_submissions',{username:name,title:title,image_url:url,description:desc,status:'pending'})
   .then(function(r){
     if(r.ok || r.status===201){
-      ok.textContent='✓ Submitted! It will appear after DM Vault approval.';
+      ok.textContent='✓ Submitted to Supabase as pending. Open DM Vault → Community Art → Pending to approve it.';
       ok.style.display='inline';
       setTimeout(function(){closeModal();loadArt();},1600);
     } else {
