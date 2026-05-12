@@ -289,6 +289,293 @@ body.light-mode #quick-nav {
 .statblock p{color:#2a1608!important;line-height:1.45!important;margin-bottom:6px!important;font-size:.94rem!important;}
 @media(max-width:600px){.statblock .sb-grid{grid-template-columns:repeat(3,1fr);}}
 
+
+/* ═══ BESTIARY UPGRADE: IMAGES, RARITY, BIOMES, CR, WEAKNESSES ═══ */
+.filter-select{
+  background:#0a0702;
+  border:1px solid rgba(200,149,42,0.25);
+  color:var(--text);
+  font-family:'Cinzel',serif;
+  font-size:0.52rem;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  padding:10px 12px;
+  outline:none;
+  min-width:150px;
+}
+.filter-select:focus{border-color:var(--gold);}
+.creature-art{
+  position:relative;
+  height:172px;
+  border-bottom:1px solid rgba(200,149,42,0.12);
+  background:
+    radial-gradient(circle at 50% 28%,rgba(232,184,75,0.20),transparent 32%),
+    linear-gradient(145deg,#140d04,#060402);
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.creature-art.has-img{background:#050301;}
+.creature-art img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  filter:saturate(0.95) contrast(1.04);
+  transition:transform 0.35s ease, filter 0.35s ease;
+}
+.creature-card:hover .creature-art img{transform:scale(1.045);filter:saturate(1.05) contrast(1.08);}
+.creature-art-placeholder{
+  font-size:4.2rem;
+  filter:drop-shadow(0 0 20px rgba(232,184,75,0.35));
+}
+.creature-art::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,transparent 40%,rgba(6,4,2,0.82) 100%);
+  pointer-events:none;
+}
+.boss-banner{
+  position:absolute;
+  top:10px;
+  left:-34px;
+  z-index:4;
+  transform:rotate(-38deg);
+  width:145px;
+  text-align:center;
+  padding:5px 0;
+  background:linear-gradient(90deg,#7b1111,#d23b2c,#7b1111);
+  border-top:1px solid rgba(255,220,160,.5);
+  border-bottom:1px solid rgba(255,220,160,.5);
+  color:#fff4c7;
+  font-family:'Cinzel',serif;
+  font-size:0.45rem;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  box-shadow:0 0 16px rgba(210,59,44,.45);
+}
+.boss-banner.legendary{
+  background:linear-gradient(90deg,#4a124f,#b044d4,#4a124f);
+  box-shadow:0 0 18px rgba(176,68,212,.55);
+}
+.rarity-row,.meta-row,.affinity-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin:8px 0;
+}
+.rarity-chip,.cr-chip,.biome-chip,.affinity-chip{
+  font-family:'Cinzel',serif;
+  font-size:0.42rem;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  padding:4px 7px;
+  border:1px solid rgba(200,149,42,0.18);
+  background:rgba(200,149,42,0.045);
+}
+.rarity-chip.common{color:#b8c7b8;border-color:rgba(184,199,184,.25);}
+.rarity-chip.uncommon{color:#4be87a;border-color:rgba(75,232,122,.28);}
+.rarity-chip.rare{color:#6bb7ff;border-color:rgba(107,183,255,.28);}
+.rarity-chip.epic{color:#c46bff;border-color:rgba(196,107,255,.28);}
+.rarity-chip.legendary{color:#ffdf76;border-color:rgba(255,223,118,.38);box-shadow:0 0 10px rgba(255,223,118,.12);}
+.cr-chip{color:var(--gold-pale);}
+.biome-chip{color:var(--text-dim);}
+.affinity-chip.weak{color:#ff6b6b;border-color:rgba(255,107,107,.28);}
+.affinity-chip.resist{color:#6bb7ff;border-color:rgba(107,183,255,.28);}
+.affinity-chip.immune{color:#c46bff;border-color:rgba(196,107,255,.28);}
+.modal-art{
+  height:250px;
+  margin:-24px -24px 20px;
+  background:linear-gradient(145deg,#140d04,#060402);
+  border-bottom:1px solid rgba(200,149,42,0.16);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  position:relative;
+}
+.modal-art img{width:100%;height:100%;object-fit:cover;}
+.modal-art .creature-art-placeholder{font-size:5.8rem;}
+.modal-art::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(10,7,2,.74));pointer-events:none;}
+.modal-stat-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin:14px 0 18px;
+}
+.modal-stat{
+  border:1px solid rgba(200,149,42,0.14);
+  background:rgba(200,149,42,0.035);
+  padding:10px 12px;
+}
+.modal-stat-label{
+  font-family:'Cinzel',serif;
+  font-size:0.43rem;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--gold-dark);
+  margin-bottom:4px;
+}
+.modal-stat-value{font-size:0.95rem;color:var(--text);}
+.image-note{
+  font-family:'EB Garamond',serif;
+  font-style:italic;
+  color:var(--text-dim);
+  font-size:0.86rem;
+  margin-top:10px;
+}
+body.light-mode .filter-select{background:#e8dcc8!important;color:#2a1a08!important;border-color:rgba(138,96,16,0.25)!important;}
+@media(max-width:680px){
+  .filter-select{width:100%;}
+  .modal-stat-grid{grid-template-columns:1fr;}
+  .creature-art{height:150px;}
+}
+
+
+/* === SAFE REBUILD PATCH: IMAGES + SIZE FILTER + STAT BLOCKS === */
+.creature-art{height:205px!important;}
+.creature-art img{width:100%;height:100%;object-fit:cover;display:block;}
+.modal-art{height:340px!important;}
+.modal-art img{width:100%;height:100%;object-fit:cover;}
+.creature-card.has-boss{box-shadow:0 0 0 1px rgba(200,149,42,.12),0 0 24px rgba(196,107,255,.1);}
+.statblock{margin-top:22px;background:linear-gradient(180deg,#f4e2b7,#e7c98d);color:#2a1608;border:2px solid #7a2e12;border-top:7px solid #7a2e12;padding:16px 18px;font-family:'EB Garamond',serif;box-shadow:0 8px 22px rgba(0,0,0,.35);}
+.statblock h4{font-family:'Cinzel',serif;font-size:1.05rem;letter-spacing:.08em;color:#7a2e12;margin:0 0 2px;text-transform:uppercase;}
+.statblock .sb-sub{font-style:italic;color:#533019;margin-bottom:8px;}
+.statblock .sb-line{border-top:1px solid #b96a34;margin:8px 0;}
+.statblock .sb-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;text-align:center;margin:10px 0;}
+.statblock .sb-grid div{background:rgba(122,46,18,.08);padding:5px 2px;border:1px solid rgba(122,46,18,.12);}
+.statblock b{color:#7a2e12;}
+.statblock p{color:#2a1608!important;line-height:1.45!important;margin-bottom:6px!important;font-size:.95rem!important;}
+.statblock .sb-action-title{font-family:'Cinzel',serif;color:#7a2e12;text-transform:uppercase;letter-spacing:.12em;font-size:.62rem;margin-top:10px;}
+@media(max-width:600px){.statblock .sb-grid{grid-template-columns:repeat(3,1fr);}.modal-art{height:260px!important;}.creature-art{height:170px!important;}}
+
+
+/* ═══ CREATURE IMAGE CROP FIX ═══ */
+.creature-art img{
+  object-position:center center;
+}
+.modal-art img{
+  object-position:center center;
+}
+.creature-art img.creature-img-hollow-one,
+.creature-art img.creature-img-gravewoken,
+.creature-art img.creature-img-aether-golem,
+.creature-art img.creature-img-clockwork-sentinel{
+  object-position:center 18%;
+}
+.modal-art img.creature-img-hollow-one,
+.modal-art img.creature-img-gravewoken,
+.modal-art img.creature-img-aether-golem,
+.modal-art img.creature-img-clockwork-sentinel{
+  object-position:center 12%;
+}
+.creature-art img.creature-img-tide-serpent{
+  object-position:center 38%;
+}
+.creature-art img.creature-img-umbral-shade{
+  object-position:center 24%;
+}
+.modal-art img.creature-img-umbral-shade{
+  object-position:center 18%;
+}
+
+
+/* ═══ LEVEL SYSTEM REMOVED ═══ */
+.creature-level,
+.level-divider,
+.level-filter,
+button[onclick*="level"],
+.filter-btn[onclick*="level"],
+select#levelFilter{
+  display:none!important;
+}
+
+
+/* ═══ NEW BESTIARY IMAGE CROP FIXES ═══ */
+.creature-art img.creature-img-ashborn,
+.creature-art img.creature-img-storm-wraith,
+.creature-art img.creature-img-memory-leech,
+.creature-art img.creature-img-umbra-cultist,
+.creature-art img.creature-img-red-sun-soldier{
+  object-position:center 12%;
+}
+.modal-art img.creature-img-ashborn,
+.modal-art img.creature-img-storm-wraith,
+.modal-art img.creature-img-memory-leech,
+.modal-art img.creature-img-umbra-cultist,
+.modal-art img.creature-img-red-sun-soldier{
+  object-position:center 8%;
+}
+.creature-art img.creature-img-void-tendril{
+  object-position:center 44%;
+}
+.modal-art img.creature-img-void-tendril{
+  object-position:center 35%;
+}
+.creature-art img.creature-img-envy-drake{
+  object-position:center 45%;
+}
+.modal-art img.creature-img-envy-drake{
+  object-position:center 38%;
+}
+.creature-art img.creature-img-glacial-serpent{
+  object-position:center 46%;
+}
+.modal-art img.creature-img-glacial-serpent{
+  object-position:center 36%;
+}
+.creature-art img.creature-img-magma-elemental{
+  object-position:center 42%;
+}
+.modal-art img.creature-img-magma-elemental{
+  object-position:center 36%;
+}
+.creature-art img.creature-img-hollow-hound{
+  object-position:center 52%;
+}
+.modal-art img.creature-img-hollow-hound{
+  object-position:center 45%;
+}
+
+
+/* ═══ NEW CREATURE BATCH IMAGE CROP FIXES ═══ */
+.creature-art img.creature-img-spore-bat,
+.creature-art img.creature-img-ridgeback-elk,
+.creature-art img.creature-img-deep-crawler,
+.creature-art img.creature-img-mire-crocodile,
+.creature-art img.creature-img-fungal-wyrm,
+.creature-art img.creature-img-echo-mimic{
+  object-position:center 48%;
+}
+.modal-art img.creature-img-spore-bat,
+.modal-art img.creature-img-ridgeback-elk,
+.modal-art img.creature-img-deep-crawler,
+.modal-art img.creature-img-mire-crocodile,
+.modal-art img.creature-img-fungal-wyrm,
+.modal-art img.creature-img-echo-mimic{
+  object-position:center 40%;
+}
+.creature-art img.creature-img-ashen-revenant,
+.creature-art img.creature-img-bone-collector,
+.creature-art img.creature-img-grief-shade,
+.creature-art img.creature-img-tidal-revenant,
+.creature-art img.creature-img-thought-leech,
+.creature-art img.creature-img-spicerunner-enforcer,
+.creature-art img.creature-img-wandering-prophet{
+  object-position:center 12%;
+}
+.modal-art img.creature-img-ashen-revenant,
+.modal-art img.creature-img-bone-collector,
+.modal-art img.creature-img-grief-shade,
+.modal-art img.creature-img-tidal-revenant,
+.modal-art img.creature-img-thought-leech,
+.modal-art img.creature-img-spicerunner-enforcer,
+.modal-art img.creature-img-wandering-prophet{
+  object-position:center 8%;
+}
+
 </style>
 </head>
 <body>
@@ -303,6 +590,49 @@ body.light-mode #quick-nav {
 <main>
   <div class="search-filter">
     <input type="text" id="bSearch" placeholder="Search creatures..." oninput="renderCreatures()">
+
+    <select id="crFilter" class="filter-select" onchange="renderCreatures()">
+      <option value="all">All CR</option>
+      <option value="0-1">CR 0–1</option>
+      <option value="2-4">CR 2–4</option>
+      <option value="5-10">CR 5–10</option>
+      <option value="11-16">CR 11–16</option>
+      <option value="17+">CR 17+</option>
+    </select>
+    <select id="rarityFilter" class="filter-select" onchange="renderCreatures()">
+      <option value="all">All Rarity</option>
+      <option value="common">Common</option>
+      <option value="uncommon">Uncommon</option>
+      <option value="rare">Rare</option>
+      <option value="epic">Epic</option>
+      <option value="legendary">Legendary</option>
+    </select>
+    <select id="biomeFilter" class="filter-select" onchange="renderCreatures()">
+      <option value="all">All Biomes</option>
+      <option value="forest">Forest</option>
+      <option value="city">City</option>
+      <option value="ocean">Ocean</option>
+      <option value="volcano">Volcano</option>
+      <option value="mountains">Mountains</option>
+      <option value="swamp">Swamp</option>
+      <option value="frozen">Frozen</option>
+      <option value="caves">Caves</option>
+      <option value="desert">Desert</option>
+      <option value="ruins">Ruins</option>
+      <option value="fungal">Fungal</option>
+      <option value="plains">Plains</option>
+    </select>
+    <select id="sizeFilter" class="filter-select" onchange="renderCreatures()">
+      <option value="all">All Sizes</option>
+      <option value="tiny">Tiny</option>
+      <option value="small">Small</option>
+      <option value="medium">Medium</option>
+      <option value="large">Large</option>
+      <option value="huge">Huge</option>
+      <option value="gargantuan">Gargantuan</option>
+    </select>
+
+
     <button class="filter-btn type-filter active" onclick="setFilter('all',this)">All</button>
     <button class="filter-btn type-filter" onclick="setFilter('beast',this)">Beasts</button>
     <button class="filter-btn type-filter" onclick="setFilter('undead',this)">Undead</button>
@@ -312,12 +642,6 @@ body.light-mode #quick-nav {
     <button class="filter-btn type-filter" onclick="setFilter('elemental',this)">Elementals</button>
     <button class="filter-btn type-filter" onclick="setFilter('aberration',this)">Aberrations</button>
     <button class="filter-btn type-filter" onclick="setFilter('humanoid',this)">Humanoids</button>
-    <div class="level-divider"></div>
-    <button class="filter-btn level-filter active" onclick="setLevelFilter('all',this)">All Levels</button>
-    <button class="filter-btn level-filter" onclick="setLevelFilter('1-4',this)">Lv 1–4</button>
-    <button class="filter-btn level-filter" onclick="setLevelFilter('5-8',this)">Lv 5–8</button>
-    <button class="filter-btn level-filter" onclick="setLevelFilter('9-12',this)">Lv 9–12</button>
-    <button class="filter-btn level-filter" onclick="setLevelFilter('13+',this)">Lv 13+</button>
   </div>
   <div class="creature-count" id="creature-count">All Creatures</div>
   <div class="creature-grid" id="creature-grid"></div>
@@ -440,7 +764,7 @@ const CREATURES = [
   },
   // ══ FIENDS ══
   {
-    id:'ashborn', name:'Ashborn Wraith', icon:'🔥', type:'fiend', threat:'high', level:8,
+    id:'ashborn', name:'Ashborn Wraith', icon:'🔥', type:'fiend', threat:'high',
     habitat:'Settnak, volcanic regions', size:'Medium',
     desc:'A servant of Malachar who has transformed through devotion into something between mortal and elemental fire.',
     body:`<p>The Ashborn are mortal servants of <strong>Malachar</strong> who have undergone the Burning Rite — a ritual of devotion that transforms them over years of practice until they can manifest living flame from within. A fully realised Ashborn Wraith is indistinguishable from a burning humanoid silhouette; a less advanced Ashborn might simply appear as a heavily scarred person who runs abnormally hot.</p>
@@ -449,7 +773,7 @@ const CREATURES = [
 <p>Cold damage and water are highly effective. Standard fire resistance is insufficient — Ashborn fire burns hotter than natural flame. The transformation is reversible only in early stages; a fully-realised Wraith cannot be returned to human form. Destroying them causes a brief but violent explosion of released heat.</p>`
   },
   {
-    id:'void-tendril', name:'Void Tendril', icon:'◈', type:'fiend', threat:'legendary', level:15,
+    id:'void-tendril', name:'Void Tendril', icon:'◈', type:'fiend', threat:'legendary',
     habitat:'Ancient ruins, places of great death', size:'Large',
     desc:'A physical extension of the Void into the mortal plane — it does not think, it does not feel. It only consumes.',
     body:`<p>A Void Tendril is not a creature in any meaningful sense. It is a physical extrusion of the <strong>Void</strong> itself — a place in reality where the boundary between existence and non-existence has been worn thin enough for something to push through. It has no intelligence, no goal, no preferences. It simply expands into whatever space it occupies until something forces it back.</p>
@@ -460,7 +784,7 @@ const CREATURES = [
   },
   // ══ DRAGONS ══
   {
-    id:'envy-drake', name:'Envy Drake', icon:'🐲', type:'dragon', threat:'high', level:7,
+    id:'envy-drake', name:'Envy Drake', icon:'🐲', type:'dragon', threat:'high',
     habitat:'Kadaka, Eastern mountains', size:'Large',
     desc:'A lesser dragon touched by Rhaegal\'s influence — obsessed with collecting what others possess and destroying what it cannot take.',
     body:`<p>Envy Drakes are believed to be dragons that have been subtly influenced by <strong>Rhaegal</strong>, the Dragon God of Envy. They are not as powerful as true dragons but are distinguished by their fixation on acquisition — they are compelled to take what others value, often ignoring obvious treasure in favour of something that clearly matters deeply to a specific person.</p>
@@ -469,7 +793,7 @@ const CREATURES = [
 <p>Envy Drakes can sometimes be distracted by offering something they clearly desire. They are susceptible to magic associated with <strong>Crystolas</strong> — the purity of aetheric energy seems to disrupt their envy-driven focus. They are not as physically powerful as true dragons and can be defeated through sustained combat, but they fight with unusual cunning for their size.</p>`
   },
   {
-    id:'glacial-serpent', name:'Glacial Serpent', icon:'🧊', type:'dragon', threat:'legendary', level:16,
+    id:'glacial-serpent', name:'Glacial Serpent', icon:'🧊', type:'dragon', threat:'legendary',
     habitat:'Verglaze, Frozen Ocean', size:'Gargantuan',
     desc:'An ancient ice dragon that has not moved from the peaks of Verglaze in living memory — and the mountains themselves are colder for its presence.',
     body:`<p>The Glacial Serpent of Verglaze is not confirmed to be a single creature — it may be that multiple sightings over centuries refer to different individuals, or it may be that one truly ancient dragon has simply remained in the peaks of the frozen mountain range for an incomprehensible span of time. Either way, the cold that radiates from the upper peaks of Verglaze is attributed to its presence.</p>
@@ -479,7 +803,7 @@ const CREATURES = [
   },
   // ══ ELEMENTALS ══
   {
-    id:'storm-wraith', name:'Storm Wraith', icon:'⚡', type:'elemental', threat:'high', level:8,
+    id:'storm-wraith', name:'Storm Wraith', icon:'⚡', type:'elemental', threat:'high',
     habitat:'Kadaka, Hvallatr, open seas', size:'Large',
     desc:'An elemental born from lightning strikes — drawn to metal, drawn to height, and incapable of remaining still.',
     body:`<p>Storm Wraiths are elementals that coalesce during severe electrical storms, particularly in <strong>Kadaka</strong> where Raijin's Strike perpetually draws lightning. They appear as humanoid shapes of crackling electricity and move at terrifying speed, unable or unwilling to remain in one place for more than a few seconds.</p>
@@ -488,7 +812,7 @@ const CREATURES = [
 <p>Non-metallic weapons and armour are strongly preferred. Grounding magic — connecting the Wraith to the earth — slows and weakens them significantly. They cannot exist in still air; sufficient wind control magic can contain them. Stone and wood absorb their energy without conducting it dangerously.</p>`
   },
   {
-    id:'magma-elemental', name:'Magma Elemental', icon:'🌋', type:'elemental', threat:'high', level:10,
+    id:'magma-elemental', name:'Magma Elemental', icon:'🌋', type:'elemental', threat:'high',
     habitat:'Fireguard, Settnak, volcanic regions', size:'Huge',
     desc:'Living magma given will — slow but effectively indestructible to conventional weapons, and capable of melting through stone.',
     body:`<p>Magma Elementals are among the more common elemental threats in the volcanic regions of <strong>Fireguard</strong> and <strong>Settnak</strong>. They are not fast — a careful party can simply stay ahead of one — but they are nearly impossible to harm through conventional means, and they melt through stone walls and barriers with patience that suggests they have no concept of urgency.</p>
@@ -498,7 +822,7 @@ const CREATURES = [
   },
   // ══ ABERRATIONS ══
   {
-    id:'memory-leech', name:'Memory Leech', icon:'🧠', type:'aberration', threat:'medium', level:3,
+    id:'memory-leech', name:'Memory Leech', icon:'🧠', type:'aberration', threat:'medium',
     habitat:'Ravenshroud, Dusk Harbor, dark urban areas', size:'Tiny',
     desc:'A small parasitic creature that feeds on memory — its host often doesn\'t notice until significant time has been lost.',
     body:`<p>The Memory Leech is believed to be a natural creature rather than one created by Vexara\'s cult, though the cult has been known to cultivate them. They are small — roughly the size of a human fist — and attach to the base of the skull or behind the ear, where their presence is difficult to notice. They feed on neurological energy, which manifests as the gradual disappearance of memories in the host.</p>
@@ -508,7 +832,7 @@ const CREATURES = [
 <blockquote>"She kept asking what year it was. Not because she didn\'t know — because she couldn\'t trust herself that she did." — Dusk Harbor healer</blockquote>`
   },
   {
-    id:'hollow-hound', name:'Hollow Hound', icon:'🐕', type:'aberration', threat:'high', level:6,
+    id:'hollow-hound', name:'Hollow Hound', icon:'🐕', type:'aberration', threat:'high',
     habitat:'Ravenshroud, Umbryll Abyss vicinity', size:'Large',
     desc:'A creature from the Umbryll Abyss that resembles a dog in the way a shadow resembles the person who casts it.',
     body:`<p>Hollow Hounds are not animals. They are entities from <strong>Duskyre</strong>'s Umbryll Abyss that have taken on a canine shape — presumably because they have spent time near dogs taken into the Abyss and have absorbed something of their form. The resemblance is uncanny from a distance and deeply wrong up close: the proportions shift slightly, the eyes reflect light that isn\'t there, and the sound they make is almost but not quite a bark.</p>
@@ -518,7 +842,7 @@ const CREATURES = [
   },
   // ══ HUMANOIDS ══
   {
-    id:'umbra-cultist', name:'Umbra Cultist', icon:'🌑', type:'humanoid', threat:'medium', level:3,
+    id:'umbra-cultist', name:'Umbra Cultist', icon:'🌑', type:'humanoid', threat:'medium',
     habitat:'Ravenshroud, hidden cells across Dorlorial', size:'Medium',
     desc:'A mortal servant of Duskyre who has traded a portion of their own shadow for powers of concealment and dark magic.',
     body:`<p>Umbra Cultists are ordinary people who have made a deliberate covenant with <strong>Duskyre</strong>. In exchange for shadow-based abilities — enhanced concealment, shadow walking over short distances, and the ability to extinguish light sources at will — they have surrendered a portion of their own shadow permanently. An Umbra Cultist's shadow is always slightly wrong: too short, pointing the wrong direction, occasionally moving independently.</p>
@@ -527,7 +851,7 @@ const CREATURES = [
 <p>Radiant light negates their concealment abilities entirely. In full daylight they lose most of their advantages and fight as ordinary humans. They are trained in avoiding capture and will prioritise escape over combat. The shadow anomaly is the primary way to identify them before they reveal themselves.</p>`
   },
   {
-    id:'red-sun-soldier', name:'Red Sun Legionnaire', icon:'🔴', type:'humanoid', threat:'medium', level:3,
+    id:'red-sun-soldier', name:'Red Sun Legionnaire', icon:'🔴', type:'humanoid', threat:'medium',
     habitat:'Kodral, Sunbright, expanding', size:'Medium',
     desc:'A soldier of Karst\'s Red Sun Legion — disciplined, well-equipped, and absolutely loyal to the cause.',
     body:`<p>The Red Sun Legionnaire is the backbone of <strong>Karst</strong>'s military expansion across Kodral. They are recruited primarily from the gladiatorial culture of <strong>Adroya</strong> — fighters who value strength, discipline, and the idea of belonging to something that wins. They are not fanatical in the manner of cultists; they are professionals who have made a calculated decision that Karst\'s side is the one worth being on.</p>
@@ -702,85 +1026,163 @@ const DND_STAT_BLOCKS = {
   'wandering-prophet': `<div class="statblock"><h4>Wandering Prophet</h4><div class="sb-sub">Medium humanoid, any alignment</div><div class="sb-sub" style="margin-top:4px;color:var(--gold-light);">Level 2 Monster</div><div class="sb-line"></div><p><b>Armor Class</b> 11<br><b>Hit Points</b> 18 (4d8)<br><b>Speed</b> 30 ft.</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>9</div><div><b>DEX</b><br>12</div><div><b>CON</b><br>10</div><div><b>INT</b><br>13</div><div><b>WIS</b><br>16</div><div><b>CHA</b><br>14</div></div><div class="sb-line"></div><p><b>Skills</b> Insight +5, Religion +3, Persuasion +4<br><b>Senses</b> passive Perception 13<br><b>Damage Resistances/Immunities</b> none</p><p><b>Traits.</b> divine omen 1/day.</p><p><b>Actions.</b> Staff. +1 to hit, reach 5 ft., Hit: 2 (1d6-1) bludgeoning. Divine Omen 1/day: one creature within 60 ft. gains advantage or disadvantage on its next d20 roll (prophet chooses).</p></div>`
 };
 
-let activeFilter = 'all';
-let activeLevelFilter = 'all';
 
-function renderCreatures() {
-  const q = (document.getElementById('bSearch').value || '').toLowerCase();
-  const grid = document.getElementById('creature-grid');
-  const countEl = document.getElementById('creature-count');
-  
-  const filtered = CREATURES.filter(c => {
-    const matchFilter = activeFilter === 'all' || c.type === activeFilter;
-    const lv = Number(c.level || 0);
-    const matchLevel = activeLevelFilter === 'all' ||
-      (activeLevelFilter === '1-4' && lv >= 1 && lv <= 4) ||
-      (activeLevelFilter === '5-8' && lv >= 5 && lv <= 8) ||
-      (activeLevelFilter === '9-12' && lv >= 9 && lv <= 12) ||
-      (activeLevelFilter === '13+' && lv >= 13);
-    const matchSearch = !q || c.name.toLowerCase().includes(q) || 
-                        c.type.toLowerCase().includes(q) ||
-                        String(c.level || '').includes(q) ||
-                        c.habitat.toLowerCase().includes(q) ||
-                        c.desc.toLowerCase().includes(q);
-    return matchFilter && matchLevel && matchSearch;
+
+let activeTypeFilter = 'all';
+
+const BESTIARY_OVERRIDES = {
+  'ashwolf': { cr:3, rarity:'uncommon', biomes:['volcano','mountains'], weaknesses:['🧊 Cold','🌊 Water'], resistances:['🔥 Fire'], immunities:[], image:'images/bestiary/ashwolf.jpg' },
+  'crystalback': { cr:2, rarity:'rare', biomes:['forest','mountains'], weaknesses:['🔨 Thunder'], resistances:['🪨 Bludgeoning','🔪 Piercing'], immunities:[], image:'images/bestiary/crystalback.jpg' },
+  'fungal-crawler': { cr:3, rarity:'uncommon', biomes:['fungal','caves','forest'], weaknesses:['🔥 Fire'], resistances:['☠️ Poison'], immunities:[], image:'images/bestiary/fungal-crawler.jpg' },
+  'tide-serpent': { cr:13, rarity:'epic', boss:true, biomes:['ocean'], weaknesses:['⚡ Lightning'], resistances:['🌊 Water','🧊 Cold'], immunities:[], image:'images/bestiary/tide-serpent.jpg' },
+  'thornback': { cr:4, rarity:'uncommon', biomes:['forest','ruins','plains'], weaknesses:['🔥 Fire'], resistances:['🪨 Bludgeoning'], immunities:[], image:'images/bestiary/thornback.jpg' },
+  'hollow-one': { cr:7, rarity:'rare', biomes:['city','ruins','swamp'], weaknesses:['✨ Radiant'], resistances:['🧠 Psychic','☠️ Necrotic'], immunities:['😨 Fear'], image:'images/bestiary/hollow-one.jpg' },
+  'gravewoken': { cr:6, rarity:'rare', biomes:['ruins','swamp','city'], weaknesses:['✨ Radiant'], resistances:['☠️ Necrotic','🧊 Cold'], immunities:['☠️ Poison'], image:'images/bestiary/gravewoken.jpg' },
+  'umbral-shade': { cr:5, rarity:'rare', biomes:['forest','ruins','swamp'], weaknesses:['✨ Radiant'], resistances:['☠️ Necrotic','🧠 Psychic'], immunities:[], image:'images/bestiary/umbral-shade.jpg' },
+  'aether-golem': { cr:10, rarity:'epic', boss:true, biomes:['ruins','city','caves'], weaknesses:['🔨 Thunder'], resistances:['⚔️ Nonmagical','✨ Radiant'], immunities:['☠️ Poison','😴 Sleep'], image:'images/bestiary/aether-golem.jpg' },
+  'clockwork-sentinel': { cr:8, rarity:'rare', boss:true, biomes:['city','ruins'], weaknesses:['⚡ Lightning'], resistances:['⚔️ Nonmagical','🔥 Fire'], immunities:['☠️ Poison','😴 Sleep'], image:'images/bestiary/clockwork-sentinel.jpg' },
+  'glacial-serpent': { cr:18, rarity:'legendary', boss:true, biomes:['frozen','mountains'], weaknesses:['🔥 Fire'], resistances:['🧊 Cold','⚔️ Nonmagical'], immunities:['❄️ Extreme Cold'], image:'images/bestiary/glacial-serpent.jpg' },
+  'magma-elemental': { cr:9, rarity:'rare', boss:true, biomes:['volcano','caves'], weaknesses:['🧊 Cold','🌊 Water'], resistances:['⚔️ Nonmagical'], immunities:['🔥 Fire'], image:'images/bestiary/magma-elemental.jpg' },
+  'memory-leech': { cr:2, rarity:'uncommon', biomes:['city','swamp','ruins'], weaknesses:['🧂 Salt','✨ Radiant'], resistances:['🧠 Psychic'], immunities:[], image:'images/bestiary/memory-leech.jpg' },
+  'spicerunner-enforcer': { cr:5, rarity:'uncommon', biomes:['city'], weaknesses:[], resistances:['☠️ Poison'], immunities:[], image:'images/bestiary/spicerunner-enforcer.png' },
+  'wandering-prophet': { cr:1, rarity:'rare', biomes:['plains','city','villages','ruins'], weaknesses:[], resistances:['✨ Divine Insight'], immunities:[], image:'images/bestiary/wandering-prophet.png' },
+  'ashborn': { cr:8, rarity:'rare', boss:true, biomes:['volcano','ruins'], weaknesses:['🧊 Cold','✨ Radiant'], resistances:['🔥 Fire','☠️ Necrotic'], immunities:['🔥 Fire'], image:'images/bestiary/ashborn.jpg' },
+  'void-tendril': { cr:18, rarity:'legendary', boss:true, biomes:['ruins','caves'], weaknesses:['✨ Radiant'], resistances:['☠️ Necrotic','🧠 Psychic'], immunities:['😨 Fear'], image:'images/bestiary/void-tendril.jpg' },
+  'envy-drake': { cr:8, rarity:'rare', boss:true, biomes:['mountains','ruins'], weaknesses:['✨ Radiant','🧠 Psychic'], resistances:['☠️ Poison'], immunities:[], image:'images/bestiary/envy-drake.jpg' },
+  'storm-wraith': { cr:8, rarity:'rare', boss:true, biomes:['mountains','ocean','ruins'], weaknesses:['🪨 Grounding'], resistances:['⚡ Lightning','🌩️ Thunder'], immunities:[], image:'images/bestiary/storm-wraith.jpg' },
+  'hollow-hound': { cr:6, rarity:'rare', biomes:['swamp','ruins','forest'], weaknesses:['✨ Radiant'], resistances:['☠️ Necrotic','🧠 Psychic'], immunities:['😨 Fear'], image:'images/bestiary/hollow-hound.jpg' },
+  'umbra-cultist': { cr:3, rarity:'uncommon', biomes:['city','ruins','forest'], weaknesses:['✨ Radiant'], resistances:['☠️ Necrotic'], immunities:[], image:'images/bestiary/umbra-cultist.jpg' },
+  'red-sun-soldier': { cr:3, rarity:'uncommon', biomes:['city','plains','ruins'], weaknesses:[], resistances:['🔥 Fire'], immunities:[], image:'images/bestiary/red-sun-soldier.jpg' },
+  'spore-bat': { cr:1, rarity:'common', biomes:['fungal','caves','forest'], weaknesses:['🔥 Fire'], resistances:['☠️ Poison'], immunities:[], image:'images/bestiary/spore-bat.png' },
+  'ridgeback-elk': { cr:2, rarity:'uncommon', biomes:['mountains','forest','frozen'], weaknesses:[], resistances:['🧊 Cold'], immunities:[], image:'images/bestiary/ridgeback-elk.png' },
+  'deep-crawler': { cr:5, rarity:'rare', biomes:['caves','swamp'], weaknesses:['✨ Radiant'], resistances:['🪨 Bludgeoning','☠️ Poison'], immunities:[], image:'images/bestiary/deep-crawler.png' },
+  'mire-crocodile': { cr:4, rarity:'uncommon', biomes:['swamp','ruins'], weaknesses:['🔥 Fire'], resistances:['☠️ Poison'], immunities:[], image:'images/bestiary/mire-crocodile.png' },
+  'ashen-revenant': { cr:7, rarity:'rare', boss:true, biomes:['volcano','ruins'], weaknesses:['✨ Radiant','🧊 Cold'], resistances:['🔥 Fire','☠️ Necrotic'], immunities:['☠️ Poison'], image:'images/bestiary/ashen-revenant.png' },
+  'bone-collector': { cr:6, rarity:'rare', boss:true, biomes:['ruins','swamp','city'], weaknesses:['✨ Radiant'], resistances:['☠️ Necrotic'], immunities:['☠️ Poison'], image:'images/bestiary/bone-collector.png' },
+  'grief-shade': { cr:5, rarity:'rare', biomes:['swamp','ruins','forest'], weaknesses:['✨ Radiant'], resistances:['☠️ Necrotic','🧠 Psychic'], immunities:['😨 Fear'], image:'images/bestiary/grief-shade.png' },
+  'fungal-wyrm': { cr:11, rarity:'epic', boss:true, biomes:['fungal','swamp','forest'], weaknesses:['🔥 Fire'], resistances:['☠️ Poison','🧠 Psychic'], immunities:['☠️ Poison'], image:'images/bestiary/fungal-wyrm.png' },
+  'tidal-revenant': { cr:10, rarity:'epic', boss:true, biomes:['ocean','ruins'], weaknesses:['✨ Radiant','⚡ Lightning'], resistances:['🧊 Cold','☠️ Necrotic'], immunities:['☠️ Poison'], image:'images/bestiary/tidal-revenant.png' },
+  'echo-mimic': { cr:6, rarity:'rare', biomes:['caves','ruins','city'], weaknesses:['✨ Radiant'], resistances:['🧠 Psychic'], immunities:[], image:'images/bestiary/echo-mimic.png' },
+  'thought-leech': { cr:7, rarity:'rare', boss:true, biomes:['caves','ruins','city'], weaknesses:['✨ Radiant'], resistances:['🧠 Psychic','☠️ Necrotic'], immunities:['😨 Fear'], image:'images/bestiary/thought-leech.png' }
+};
+
+const STAT_BLOCKS = {
+  'ashwolf': { ac:14, hp:'58 (9d10 + 9)', speed:'50 ft.', saves:'Dex +5, Con +3', skills:'Perception +4, Stealth +5, Survival +4', senses:'darkvision 60 ft., passive Perception 14', languages:'—', stats:{str:16,dex:17,con:13,int:4,wis:14,cha:8}, traits:[['Pack Tactics','The Ashwolf has advantage on an attack roll against a creature if at least one Ashwolf ally is within 5 feet of the target.'],['Smoldering Hide','A creature that hits the Ashwolf with a melee attack while within 5 feet takes 3 (1d6) fire damage.']], actions:[['Bite','Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 12 (2d8 + 3) piercing damage plus 4 (1d8) fire damage.'],['Ashen Howl (Recharge 5–6)','Each hostile creature within 20 feet that can hear the Ashwolf must succeed on a DC 13 Wisdom saving throw or be frightened until the end of its next turn.']] },
+  'crystalback': { ac:17, hp:'76 (8d12 + 24)', speed:'20 ft., swim 20 ft.', saves:'Con +5, Wis +4', skills:'Perception +4', senses:'passive Perception 14', languages:'—', stats:{str:18,dex:8,con:17,int:3,wis:14,cha:10}, traits:[['Crystal Shell','While the Crystalback is not prone, it has advantage on saving throws against being pushed, knocked prone, or moved against its will.'],['Aetheric Reflection','When the Crystalback succeeds on a saving throw against a spell, the caster takes 3 (1d6) force damage.']], actions:[['Bite','Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) piercing damage.'],['Shell Retreat','Until the start of its next turn, the Crystalback gains +3 AC, its speed becomes 0, and it has advantage on Strength and Constitution saving throws.']] },
+  'fungal-crawler': { ac:13, hp:'45 (7d8 + 14)', speed:'30 ft., climb 30 ft.', saves:'Con +4', skills:'Stealth +5', senses:'darkvision 60 ft., tremorsense 30 ft., passive Perception 11', languages:'—', stats:{str:13,dex:16,con:14,int:3,wis:12,cha:6}, traits:[['Fungal Camouflage','The crawler has advantage on Dexterity (Stealth) checks made in fungal, forest, or cavern terrain.'],['Spore Body','A creature that starts its turn grappling the crawler must succeed on a DC 13 Constitution saving throw or be poisoned until the start of its next turn.']], actions:[['Claw','Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) slashing damage.'],['Mind-Cloud Spores (Recharge 5–6)','Creatures in a 15-foot cone must make a DC 13 Constitution saving throw, taking 10 (3d6) poison damage and losing reactions on a failure.']] },
+  'tide-serpent': { ac:17, hp:'189 (18d12 + 72)', speed:'20 ft., swim 60 ft.', saves:'Dex +8, Con +9, Wis +7', skills:'Perception +7, Stealth +8', senses:'darkvision 120 ft., passive Perception 17', languages:'understands Primordial but cannot speak', stats:{str:23,dex:18,con:19,int:8,wis:16,cha:14}, traits:[['Amphibious','The serpent can breathe air and water.'],['Legendary Resistance (2/Day)','If the Tide Serpent fails a saving throw, it can choose to succeed instead.']], actions:[['Multiattack','The Tide Serpent makes two attacks: one with its bite and one with its tail.'],['Bite','Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 22 (3d10 + 6) piercing damage plus 7 (2d6) cold damage.'],['Tail','Melee Weapon Attack: +10 to hit, reach 15 ft., one target. Hit: 19 (3d8 + 6) bludgeoning damage, and the target must succeed on a DC 17 Strength saving throw or be knocked prone.'],['Crushing Wave (Recharge 5–6)','A 60-foot line of water forces a DC 17 Dexterity save. Failure: 45 (10d8) bludgeoning damage. Success: half damage.']], legendary:[['Surging Move','The serpent moves up to half its speed without provoking opportunity attacks.'],['Tail Sweep','The serpent makes one tail attack.']] },
+  'thornback': { ac:15, hp:'68 (8d10 + 24)', speed:'40 ft.', saves:'Str +6, Con +5', skills:'Perception +3', senses:'passive Perception 13', languages:'—', stats:{str:19,dex:10,con:16,int:3,wis:12,cha:7}, traits:[['Thorned Hide','A creature that grapples the Thornback or hits it with an unarmed strike takes 4 (1d8) piercing damage.'],['Relentless Charge','If the Thornback moves at least 20 feet straight toward a creature and hits it with tusks, the target must succeed on a DC 14 Strength saving throw or be knocked prone.']], actions:[['Tusks','Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 16 (2d10 + 5) piercing damage.'],['Rooting Slam','Melee Weapon Attack: +6 to hit, reach 5 ft., one prone target. Hit: 18 (3d8 + 5) bludgeoning damage.']] },
+  'hollow-one': { ac:15, hp:'92 (11d8 + 44)', speed:'30 ft.', saves:'Wis +5, Cha +6', skills:'Deception +6, Insight +5, Stealth +5', senses:'darkvision 60 ft., passive Perception 12', languages:'Common plus one language it knew in life', stats:{str:14,dex:16,con:18,int:11,wis:14,cha:17}, traits:[['Emotion Eater','When a frightened or charmed creature starts its turn within 30 feet of the Hollow One, the Hollow One regains 5 hit points.'],['Hollowed Mind','The Hollow One has advantage on saving throws against being charmed or frightened.']], actions:[['Withering Touch','Melee Spell Attack: +6 to hit, reach 5 ft., one target. Hit: 18 (4d8) necrotic damage.'],['Memory Tear (Recharge 5–6)','One creature within 60 feet must make a DC 15 Wisdom saving throw. On a failure, it takes 27 (6d8) psychic damage and has disadvantage on its next attack roll or ability check.']] },
+  'gravewoken': { ac:14, hp:'85 (10d8 + 40)', speed:'30 ft.', saves:'Con +7, Wis +4', skills:'Athletics +6, Intimidation +4', senses:'darkvision 60 ft., passive Perception 11', languages:'understands the languages it knew in life', stats:{str:18,dex:10,con:18,int:7,wis:12,cha:10}, traits:[['Undead Fortitude','If damage reduces the Gravewoken to 0 hit points, it can make a Constitution saving throw to drop to 1 hit point instead unless the damage is radiant or from a critical hit.'],['Grave Stench','Living creatures that start their turn within 5 feet must succeed on a DC 14 Constitution saving throw or be poisoned until the start of their next turn.']], actions:[['Grave Claw','Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 15 (2d10 + 4) slashing damage plus 4 (1d8) necrotic damage.'],['Corpse-Wail (Recharge 6)','Each living creature within 20 feet must make a DC 14 Wisdom saving throw or be frightened until the end of its next turn.']] },
+  'umbral-shade': { ac:15, hp:'67 (9d8 + 27)', speed:'0 ft., fly 40 ft. (hover)', saves:'Dex +6, Wis +5', skills:'Stealth +8', senses:'darkvision 120 ft., passive Perception 13', languages:'understands Common and Umbral but rarely speaks', stats:{str:6,dex:18,con:16,int:11,wis:14,cha:15}, traits:[['Incorporeal Movement','The shade can move through creatures and objects as if they were difficult terrain. It takes 5 force damage if it ends its turn inside an object.'],['Sunlight Sensitivity','While in bright light, the shade has disadvantage on attack rolls and sight-based Wisdom (Perception) checks.']], actions:[['Umbral Claw','Melee Spell Attack: +6 to hit, reach 5 ft., one target. Hit: 17 (3d8 + 4) necrotic damage.'],['Douse the Light (Recharge 5–6)','Nonmagical flames within 30 feet are extinguished. Magical light in the area is suppressed until the end of the shade’s next turn.']] },
+  'aether-golem': { ac:18, hp:'152 (16d10 + 64)', speed:'30 ft.', saves:'Con +8, Wis +6', skills:'Athletics +8, Perception +6', senses:'darkvision 120 ft., passive Perception 16', languages:'understands Celestial, Primordial, and the speech of its creator but cannot speak', stats:{str:22,dex:9,con:19,int:6,wis:14,cha:8}, traits:[['Magic Resistance','The golem has advantage on saving throws against spells and other magical effects.'],['Aether Core','Whenever the golem takes force damage, it can regain hit points equal to half the force damage taken instead of taking the damage.']], actions:[['Multiattack','The golem makes two slam attacks.'],['Slam','Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 19 (3d8 + 6) bludgeoning damage plus 7 (2d6) force damage.'],['Aether Pulse (Recharge 5–6)','Creatures within 20 feet must make a DC 16 Constitution saving throw, taking 36 (8d8) force damage on a failure or half on success.']] },
+  'clockwork-sentinel': { ac:19, hp:'110 (13d10 + 39)', speed:'30 ft.', saves:'Str +8, Con +6', skills:'Perception +5', senses:'darkvision 60 ft., passive Perception 15', languages:'understands the commands of its creator', stats:{str:20,dex:12,con:17,int:8,wis:14,cha:7}, traits:[['Immutable Form','The sentinel is immune to any spell or effect that would alter its form.'],['Target Lock','As a bonus action, the sentinel marks one creature it can see within 60 feet. Until the mark ends, the sentinel has advantage on opportunity attacks against that creature.']], actions:[['Multiattack','The sentinel makes two gearblade attacks.'],['Gearblade','Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 16 (2d10 + 5) slashing damage.'],['Chrono-Stun Ray (Recharge 5–6)','Ranged Spell Attack: +7 to hit, range 60 ft., one target. Hit: 22 (4d10) lightning damage, and the target must succeed on a DC 15 Constitution saving throw or be stunned until the end of its next turn.']] },
+  'spore-bat': {ac:13,hp:'22 (5d6 + 5)',speed:'10 ft., fly 40 ft.',saves:'Dex +4',skills:'Perception +3, Stealth +4',senses:'blindsight 60 ft., passive Perception 13',languages:'—',stats:{str:6,dex:16,con:12,int:2,wis:13,cha:6},traits:[['Spore Cloud','A creature that starts its turn within 5 feet of the bat must succeed on a DC 11 Constitution saving throw or be poisoned until the start of its next turn.']],actions:[['Bite','Melee Weapon Attack: +4 to hit, reach 5 ft. Hit: 6 (1d6 + 3) piercing damage plus 3 (1d6) poison damage.']] },
+  'ridgeback-elk': {ac:14,hp:'39 (6d10 + 6)',speed:'50 ft.',saves:'Str +5',skills:'Athletics +5, Perception +4',senses:'passive Perception 14',languages:'—',stats:{str:17,dex:14,con:13,int:3,wis:14,cha:8},traits:[['Mountain Surefooted','The elk has advantage on Strength and Dexterity saving throws made against effects that would knock it prone.']],actions:[['Gore','Melee Weapon Attack: +5 to hit, reach 5 ft. Hit: 10 (2d6 + 3) piercing damage.'],['Ridge Charge','If the elk moves at least 20 feet straight toward a target and hits with Gore, the target must succeed on a DC 13 Strength save or be knocked prone.']] },
+  'deep-crawler': {ac:16,hp:'85 (10d10 + 30)',speed:'30 ft., swim 30 ft., climb 20 ft.',saves:'Con +6',skills:'Stealth +5',senses:'darkvision 90 ft., tremorsense 30 ft., passive Perception 11',languages:'—',stats:{str:18,dex:14,con:17,int:3,wis:12,cha:5},traits:[['Cavern Camouflage','The crawler has advantage on Stealth checks made in caves or dim light.']],actions:[['Multiattack','The crawler makes two claw attacks.'],['Claw','Melee Weapon Attack: +7 to hit, reach 10 ft. Hit: 13 (2d8 + 4) slashing damage.'],['Dragging Bite','Melee Weapon Attack: +7 to hit, reach 5 ft. Hit: 15 (2d10 + 4) piercing damage, and the target is grappled if it is Large or smaller.']] },
+  'mire-crocodile': {ac:15,hp:'68 (8d10 + 24)',speed:'30 ft., swim 40 ft.',saves:'Str +6, Con +5',skills:'Stealth +4',senses:'passive Perception 12',languages:'—',stats:{str:19,dex:12,con:16,int:2,wis:12,cha:5},traits:[['Hold Breath','The crocodile can hold its breath for 30 minutes.'],['Swamp Ambusher','The crocodile has advantage on attack rolls against creatures that have not acted yet in combat.']],actions:[['Bite','Melee Weapon Attack: +6 to hit, reach 5 ft. Hit: 18 (2d12 + 5) piercing damage, and the target is grappled.'],['Death Roll','One creature grappled by the crocodile must make a DC 14 Strength save, taking 22 (4d8 + 4) bludgeoning damage on a failure.']] },
+  'ashen-revenant': {ac:17,hp:'104 (11d8 + 55)',speed:'30 ft.',saves:'Con +8, Wis +5',skills:'Intimidation +6, Perception +5',senses:'darkvision 60 ft., passive Perception 15',languages:'Common, Infernal',stats:{str:18,dex:12,con:20,int:10,wis:14,cha:16},traits:[['Ashen Rebirth','The first time the revenant drops to 0 hit points, it instead drops to 1 hit point and releases ash in a 10-foot radius. Creatures in the ash cloud are blinded until the end of their next turn unless they succeed on a DC 15 Constitution save.']],actions:[['Multiattack','The revenant makes two ashen blade attacks.'],['Ashen Blade','Melee Weapon Attack: +7 to hit, reach 5 ft. Hit: 13 (2d8 + 4) slashing plus 7 (2d6) fire damage.'],['Cinder Command (Recharge 5–6)','One creature within 60 feet must make a DC 15 Wisdom save or be frightened for 1 minute.']] },
+  'bone-collector': {ac:16,hp:'91 (14d8 + 28)',speed:'30 ft.',saves:'Wis +5, Cha +5',skills:'Arcana +4, Perception +5',senses:'darkvision 60 ft., passive Perception 15',languages:'Common, Necril',stats:{str:14,dex:14,con:15,int:13,wis:16,cha:15},traits:[['Harvest Bone','When a creature dies within 30 feet, the collector gains 5 temporary hit points.']],actions:[['Bone Staff','Melee Weapon Attack: +5 to hit, reach 5 ft. Hit: 9 (1d10 + 4) bludgeoning plus 7 (2d6) necrotic damage.'],['Rattle the Dead (Recharge 5–6)','Creatures within 20 feet must make a DC 14 Wisdom save or be frightened until the end of their next turn.']] },
+  'grief-shade': {ac:15,hp:'66 (12d8 + 12)',speed:'0 ft., fly 40 ft. (hover)',saves:'Dex +6, Wis +5',skills:'Stealth +8',senses:'darkvision 120 ft., passive Perception 13',languages:'understands Common but speaks in whispers',stats:{str:6,dex:18,con:12,int:11,wis:15,cha:16},traits:[['Aura of Sorrow','Creatures that start their turn within 10 feet must succeed on a DC 14 Wisdom save or have their speed reduced by 10 feet until the start of their next turn.']],actions:[['Sorrow Touch','Melee Spell Attack: +6 to hit, reach 5 ft. Hit: 18 (4d8) necrotic damage.'],['Memory of Loss (Recharge 5–6)','One creature within 60 feet must make a DC 14 Wisdom save or be incapacitated with grief until the end of its next turn.']] },
+  'fungal-wyrm': {ac:17,hp:'168 (16d12 + 64)',speed:'30 ft., swim 30 ft.',saves:'Con +8, Wis +6',skills:'Perception +6',senses:'darkvision 120 ft., tremorsense 60 ft., passive Perception 16',languages:'understands Sylvan and Primordial',stats:{str:22,dex:10,con:19,int:7,wis:15,cha:12},traits:[['Spore-Crowned Body','A creature that hits the wyrm with a melee attack takes 7 (2d6) poison damage.']],actions:[['Multiattack','The wyrm makes one bite attack and one tail attack.'],['Bite','Melee Weapon Attack: +10 to hit, reach 10 ft. Hit: 22 (3d10 + 6) piercing plus 10 (3d6) poison damage.'],['Spore Breath (Recharge 5–6)','The wyrm exhales spores in a 60-foot cone. Creatures must make a DC 16 Constitution save, taking 42 (12d6) poison damage on a failure, half on success.']] },
+  'tidal-revenant': {ac:18,hp:'150 (12d12 + 72)',speed:'30 ft., swim 50 ft.',saves:'Str +9, Con +10, Wis +6',skills:'Athletics +9, Perception +6',senses:'darkvision 120 ft., passive Perception 16',languages:'Common, Primordial',stats:{str:23,dex:10,con:22,int:9,wis:15,cha:16},traits:[['Sea-Bound Undead','The revenant can breathe air and water and has advantage on saving throws while standing in water.']],actions:[['Multiattack','The revenant makes two trident attacks.'],['Barnacled Trident','Melee Weapon Attack: +9 to hit, reach 10 ft. Hit: 19 (3d8 + 6) piercing plus 9 (2d8) necrotic damage.'],['Drowning Call (Recharge 5–6)','Creatures within 30 feet must make a DC 16 Constitution save or take 27 (6d8) cold damage and be restrained by spectral seaweed until the end of their next turn.']] },
+  'echo-mimic': {ac:15,hp:'78 (12d8 + 24)',speed:'30 ft., climb 30 ft.',saves:'Dex +5, Wis +4',skills:'Deception +6, Stealth +5',senses:'darkvision 60 ft., passive Perception 12',languages:'understands Common but speaks only copied voices',stats:{str:16,dex:16,con:14,int:10,wis:12,cha:16},traits:[['False Echo','The mimic can perfectly imitate a voice it has heard within the last 24 hours.']],actions:[['Mirror Maw','Melee Weapon Attack: +6 to hit, reach 5 ft. Hit: 16 (2d10 + 5) piercing damage.'],['Echo Split (Recharge 5–6)','The mimic creates two illusory duplicates until the start of its next turn. Attack rolls against it have disadvantage while at least one duplicate remains.']] },
+  'thought-leech': {ac:16,hp:'103 (14d8 + 42)',speed:'0 ft., fly 30 ft. (hover)',saves:'Int +6, Wis +6',skills:'Insight +6, Perception +6',senses:'darkvision 120 ft., passive Perception 16',languages:'telepathy 120 ft.',stats:{str:8,dex:14,con:16,int:18,wis:16,cha:15},traits:[['Mind Tether','A creature damaged by the leech’s tendrils cannot hide from it until the end of the leech’s next turn.']],actions:[['Tendril Drain','Ranged Spell Attack: +7 to hit, range 60 ft. Hit: 21 (6d6) psychic damage, and the target cannot take reactions until the start of its next turn.'],['Consume Thought (Recharge 5–6)','One creature within 60 feet must make a DC 15 Intelligence save, taking 31 (7d8) psychic damage on a failure, half on success.']] },
+  'spicerunner-enforcer': {ac:15,hp:'65 (10d8 + 20)',speed:'30 ft.',saves:'Dex +5',skills:'Deception +5, Intimidation +5, Sleight of Hand +5, Stealth +5',senses:'passive Perception 12',languages:'Common, Thieves’ Cant',stats:{str:14,dex:16,con:14,int:12,wis:12,cha:15},traits:[['Guild Coin','The enforcer carries a gold-marked Spicerunner coin. Criminal contacts recognize it as authority, threat, or invitation.'],['Dirty Fighting','Once per turn, the enforcer deals an extra 7 (2d6) damage when it hits a creature that is within 5 feet of one of the enforcer’s allies.']],actions:[['Shortsword','Melee Weapon Attack: +5 to hit, reach 5 ft. Hit: 6 (1d6 + 3) piercing damage plus 7 (2d6) dirty fighting damage if applicable.'],['Hand Crossbow','Ranged Weapon Attack: +5 to hit, range 30/120 ft. Hit: 6 (1d6 + 3) piercing damage.'],['Flash the Coin','One humanoid within 30 feet that can see the coin must make a DC 13 Wisdom save or be frightened or charmed until the end of its next turn, enforcer’s choice.']] },
+  'wandering-prophet': {ac:12,hp:'27 (6d8)',speed:'30 ft.',saves:'Wis +5, Cha +4',skills:'History +4, Insight +5, Religion +4',senses:'passive Perception 13',languages:'Common plus three others',stats:{str:8,dex:12,con:10,int:14,wis:16,cha:14},traits:[['Ominous Knowing','The prophet cannot be surprised while conscious.']],actions:[['Staff','Melee Weapon Attack: +1 to hit, reach 5 ft. Hit: 3 (1d6) bludgeoning damage.'],['Dire Prophecy (Recharge 5–6)','One creature within 60 feet must make a DC 13 Wisdom save or have disadvantage on its next saving throw before the end of its next turn.']] }
+};
+
+function escapeHtml(str){ return String(str ?? '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
+function textIncludesAny(text, words){ const t=(text||'').toLowerCase(); return words.some(w=>t.includes(w)); }
+function inferCR(c){ if(c.cr !== undefined) return c.cr; if(c.threat==='low') return 1; if(c.threat==='medium') return 4; if(c.threat==='high') return 8; if(c.threat==='legendary') return 15; return 2; }
+function inferRarity(c){ if(c.rarity) return c.rarity; if(c.threat==='legendary') return 'legendary'; if(c.threat==='high') return 'rare'; if(c.threat==='medium') return 'uncommon'; return 'common'; }
+function inferBiomes(c){
+  const all=((c.habitat||'')+' '+(c.desc||'')+' '+(c.body||'')).toLowerCase();
+  const b=[];
+  if(textIncludesAny(all,['oakford','forest','woods','tree','ravenshroud'])) b.push('forest');
+  if(textIncludesAny(all,['ionsgate','sunbright','city','urban','spicerunner','kodral'])) b.push('city');
+  if(textIncludesAny(all,['sea','ocean','tide','harbor','coast','water'])) b.push('ocean');
+  if(textIncludesAny(all,['fireguard','settnak','volcanic','volcano','magma','ash','fire'])) b.push('volcano');
+  if(textIncludesAny(all,['hvallatr','mountain','peaks','kadaka','settnak'])) b.push('mountains');
+  if(textIncludesAny(all,['reyur','swamp','muck','bog','dusk harbor'])) b.push('swamp');
+  if(textIncludesAny(all,['verglaze','frozen','ice','glacial','frost','cold'])) b.push('frozen');
+  if(textIncludesAny(all,['cave','cavern','deep','underground'])) b.push('caves');
+  if(textIncludesAny(all,['desert','sand','solik'])) b.push('desert');
+  if(textIncludesAny(all,['ruins','grave','battlefields'])) b.push('ruins');
+  if(textIncludesAny(all,['fungaria','fungal','spore','mushroom'])) b.push('fungal');
+  if(textIncludesAny(all,['road','crossroad','plains','field'])) b.push('plains');
+  return [...new Set(b.length?b:['wilds'])];
+}
+function inferAffinities(c){
+  const all=((c.name||'')+' '+(c.habitat||'')+' '+(c.desc||'')+' '+(c.body||'')).toLowerCase();
+  let weaknesses=[], resistances=[], immunities=[];
+  if(textIncludesAny(all,['ash','magma','fire','volcanic','burning'])){weaknesses.push('🧊 Cold','🌊 Water');resistances.push('🔥 Fire');}
+  if(textIncludesAny(all,['glacial','ice','frozen','frost','cold'])){weaknesses.push('🔥 Fire');resistances.push('🧊 Cold');}
+  if(textIncludesAny(all,['undead','hollow','grave','shade','wraith'])){weaknesses.push('✨ Radiant');resistances.push('☠️ Necrotic');}
+  if(textIncludesAny(all,['spore','fungal','mushroom'])){weaknesses.push('🔥 Fire');resistances.push('☠️ Poison');}
+  if(textIncludesAny(all,['construct','robot','clockwork'])){weaknesses.push('⚡ Lightning');resistances.push('☠️ Poison');immunities.push('😴 Sleep');}
+  return {weaknesses:[...new Set(weaknesses)].slice(0,3),resistances:[...new Set(resistances)].slice(0,3),immunities:[...new Set(immunities)].slice(0,2)};
+}
+function buildDefaultStatBlock(c){
+  const cr=Number(c.cr||1), type=c.type||'beast', size=c.size||'Medium';
+  const isCaster=['undead','fiend','aberration'].includes(type), isConstruct=type==='construct', isBig=['Huge','Gargantuan'].includes(size);
+  const ac=12+Math.min(6,Math.floor(cr/3))+(isConstruct?2:0), hp=18+cr*14+(isBig?30:0);
+  const str=isBig?20:12+Math.min(8,cr), dex=isConstruct?10:12+Math.min(5,Math.floor(cr/2)), con=12+Math.min(8,Math.floor(cr/2)+2), int=isCaster?12:(isConstruct?6:4), wis=11+Math.min(5,Math.floor(cr/3)), cha=isCaster?14:8;
+  const bonus=2+Math.floor((cr+3)/4), hit=bonus+Math.floor((str-10)/2), dmg=Math.max(5,6+cr*2);
+  const damageType=type==='undead'?'necrotic':type==='construct'?'bludgeoning':type==='fiend'?'fire':'slashing';
+  return { ac, hp:`${hp} (estimated)`, speed:isBig?'40 ft.':'30 ft.', saves:`Con +${Math.max(2,bonus+2)}`, skills:`Perception +${Math.max(2,bonus)}`, senses:type==='humanoid'?'passive Perception 12':'darkvision 60 ft., passive Perception 12', languages:type==='humanoid'?'Common':'—', stats:{str,dex,con,int,wis,cha}, traits:[['Dorlorial Creature','This quick stat block is written for tabletop reference and can be adjusted by the DM for party level and story importance.']], actions:[['Strike',`Melee Weapon Attack: +${hit} to hit, reach 5 ft., one target. Hit: ${dmg} ${damageType} damage.`],['Threat Display',`One creature within 30 feet that can see the creature must succeed on a DC ${10+bonus} Wisdom saving throw or have disadvantage on its next attack roll before the end of its next turn.`]] };
+}
+function normalizeCreature(c){
+  const o=BESTIARY_OVERRIDES[c.id]||{};
+  const aff=inferAffinities({...c,...o});
+  c.cr=o.cr ?? inferCR(c); c.rarity=o.rarity || inferRarity(c); c.biomes=o.biomes || c.biomes || inferBiomes(c);
+  c.weaknesses=o.weaknesses || c.weaknesses || aff.weaknesses; c.resistances=o.resistances || c.resistances || aff.resistances; c.immunities=o.immunities || c.immunities || aff.immunities;
+  c.boss=o.boss ?? c.boss ?? (c.threat==='legendary'); c.image=o.image || c.image || ''; c.statblock=STAT_BLOCKS[c.id] || buildDefaultStatBlock(c);
+  return c;
+}
+function abilityMod(score){ const mod=Math.floor((Number(score)-10)/2); return mod>=0?'+'+mod:String(mod); }
+function crMatches(cr,bucket){ cr=Number(cr||0); if(bucket==='all') return true; if(bucket==='0-1') return cr<=1; if(bucket==='2-4') return cr>=2&&cr<=4; if(bucket==='5-10') return cr>=5&&cr<=10; if(bucket==='11-16') return cr>=11&&cr<=16; if(bucket==='17+') return cr>=17; return true; }
+function sizeMatches(size,bucket){ return bucket==='all' || String(size||'').toLowerCase()===bucket; }
+function creatureImageMarkup(c,modal=false){
+  const cls=modal?'modal-art':'creature-art'; const placeholder=`<div class="creature-art-placeholder">${escapeHtml(c.icon||'🐾')}</div>`;
+  const banner=c.boss?`<div class="boss-banner ${(c.rarity==='legendary'||c.threat==='legendary')?'legendary':''}">${(c.rarity==='legendary'||c.threat==='legendary')?'Legendary':'Boss'}</div>`:'';
+  if(c.image) return `<div class="${cls} has-img">${banner}<img src="${escapeHtml(c.image)}" class="creature-img-${escapeHtml(c.id)}" alt="${escapeHtml(c.name)} artwork" loading="lazy" onerror="this.parentElement.classList.remove('has-img');this.remove();"></div>`;
+  return `<div class="${cls}">${banner}${placeholder}</div>`;
+}
+function tagsMarkup(c){ return `<span class="ctag ${escapeHtml(c.type)}">${escapeHtml(c.type)}</span><span class="ctag ${escapeHtml(c.threat)}">${escapeHtml(c.threat)}</span><span class="ctag" style="color:var(--text-dim);border-color:rgba(200,149,42,0.15);">${escapeHtml(c.size)}</span>`; }
+function metaMarkup(c){ return `<div class="rarity-row"><span class="rarity-chip ${escapeHtml(c.rarity)}">✦ ${escapeHtml(c.rarity)}</span><span class="cr-chip">CR ${escapeHtml(c.cr)}</span></div><div class="meta-row">${(c.biomes||[]).slice(0,4).map(b=>`<span class="biome-chip">🌍 ${escapeHtml(b)}</span>`).join('')}</div>`; }
+function affinityMarkup(c){ const parts=[]; (c.weaknesses||[]).forEach(x=>parts.push(`<span class="affinity-chip weak">Weak: ${escapeHtml(x)}</span>`)); (c.resistances||[]).forEach(x=>parts.push(`<span class="affinity-chip resist">Resist: ${escapeHtml(x)}</span>`)); (c.immunities||[]).forEach(x=>parts.push(`<span class="affinity-chip immune">Immune: ${escapeHtml(x)}</span>`)); return parts.length?`<div class="affinity-row">${parts.join('')}</div>`:''; }
+function statBlockMarkup(c){
+  const s=c.statblock||buildDefaultStatBlock(c), st=s.stats||{str:10,dex:10,con:10,int:10,wis:10,cha:10};
+  const traitHtml=(s.traits||[]).map(t=>`<p><b>${escapeHtml(t[0])}.</b> ${escapeHtml(t[1])}</p>`).join('');
+  const actionHtml=(s.actions||[]).map(t=>`<p><b>${escapeHtml(t[0])}.</b> ${escapeHtml(t[1])}</p>`).join('');
+  const legendaryHtml=(s.legendary||[]).length?`<div class="sb-action-title">Legendary Actions</div>${(s.legendary||[]).map(t=>`<p><b>${escapeHtml(t[0])}.</b> ${escapeHtml(t[1])}</p>`).join('')}`:'';
+  return `<div class="statblock"><h4>${escapeHtml(c.name)}</h4><div class="sb-sub">${escapeHtml(c.size||'Medium')} ${escapeHtml(c.type||'creature')}, ${escapeHtml(c.rarity||'common')} threat</div><div class="sb-line"></div><p><b>Armor Class</b> ${escapeHtml(s.ac)}</p><p><b>Hit Points</b> ${escapeHtml(s.hp)}</p><p><b>Speed</b> ${escapeHtml(s.speed)}</p><div class="sb-line"></div><div class="sb-grid"><div><b>STR</b><br>${st.str} (${abilityMod(st.str)})</div><div><b>DEX</b><br>${st.dex} (${abilityMod(st.dex)})</div><div><b>CON</b><br>${st.con} (${abilityMod(st.con)})</div><div><b>INT</b><br>${st.int} (${abilityMod(st.int)})</div><div><b>WIS</b><br>${st.wis} (${abilityMod(st.wis)})</div><div><b>CHA</b><br>${st.cha} (${abilityMod(st.cha)})</div></div><div class="sb-line"></div><p><b>Saving Throws</b> ${escapeHtml(s.saves||'—')}</p><p><b>Skills</b> ${escapeHtml(s.skills||'—')}</p><p><b>Senses</b> ${escapeHtml(s.senses||'passive Perception 10')}</p><p><b>Languages</b> ${escapeHtml(s.languages||'—')}</p><p><b>Challenge</b> CR ${escapeHtml(c.cr||'?')}</p><div class="sb-line"></div>${traitHtml?`<div class="sb-action-title">Traits</div>${traitHtml}`:''}<div class="sb-action-title">Actions</div>${actionHtml}${legendaryHtml}</div>`;
+}
+CREATURES.forEach(normalizeCreature);
+
+function renderCreatures(){
+  const q=(document.getElementById('bSearch')?.value||'').toLowerCase();
+  const crFilter=document.getElementById('crFilter')?.value||'all', rarityFilter=document.getElementById('rarityFilter')?.value||'all', biomeFilter=document.getElementById('biomeFilter')?.value||'all', sizeFilter=document.getElementById('sizeFilter')?.value||'all';
+  const grid=document.getElementById('creature-grid'), countEl=document.getElementById('creature-count');
+  const filtered=CREATURES.filter(c=>{
+    const matchType=activeTypeFilter==='all'||c.type===activeTypeFilter, matchCR=crMatches(c.cr,crFilter), matchRarity=rarityFilter==='all'||c.rarity===rarityFilter, matchBiome=biomeFilter==='all'||(c.biomes||[]).includes(biomeFilter), matchSize=sizeMatches(c.size,sizeFilter);
+    const searchText=[c.name,c.type,c.threat,c.rarity,c.size,c.habitat,c.desc,(c.biomes||[]).join(' '),(c.weaknesses||[]).join(' '),(c.resistances||[]).join(' ')].join(' ').toLowerCase();
+    return matchType && matchCR && matchRarity && matchBiome && matchSize && (!q || searchText.includes(q));
   });
-  
-  countEl.textContent = filtered.length === CREATURES.length ? 
-    'All Creatures — ' + CREATURES.length : 
-    filtered.length + ' of ' + CREATURES.length + ' creatures';
-  
-  if (!filtered.length) {
-    grid.innerHTML = '<div class="empty-state">No creatures match your search.</div>';
-    return;
-  }
-  
-  grid.innerHTML = filtered.map(c => `
-    <div class="creature-card" onclick="openCreature('${c.id}')">
-      <div class="creature-icon-wrap">${c.icon}</div>
-      <div class="creature-body">
-        <div class="creature-name">${c.name}</div>
-        <div class="creature-level">Level ${c.level || '?'}</div>
-        <div class="creature-tags">
-          <span class="ctag ${c.type}">${c.type}</span>
-          <span class="ctag ${c.threat}">${c.threat}</span>
-          <span class="ctag" style="color:var(--gold-light);border-color:rgba(200,149,42,0.25);">Monster Lv ${c.level || '?'} </span>
-          <span class="ctag" style="color:var(--text-dim);border-color:rgba(200,149,42,0.15);">${c.size}</span>
-        </div>
-        <div class="creature-desc">${c.desc}</div>
-      </div>
-    </div>`).join('');
+  if(countEl) countEl.textContent=filtered.length===CREATURES.length?'All Creatures — '+CREATURES.length:filtered.length+' of '+CREATURES.length+' creatures';
+  if(!grid) return;
+  if(!filtered.length){ grid.innerHTML='<div class="empty-state">No creatures match your search.</div>'; return; }
+  grid.innerHTML=filtered.map(c=>`<div class="creature-card ${c.boss?'has-boss':''}" onclick="openCreature('${escapeHtml(c.id)}')">${creatureImageMarkup(c)}<div class="creature-body"><div class="creature-name">${escapeHtml(c.name)}</div>${c.level?``:''}<div class="creature-tags">${tagsMarkup(c)}</div>${metaMarkup(c)}${affinityMarkup(c)}<div class="creature-desc">${escapeHtml(c.desc)}</div></div></div>`).join('');
 }
-
-function setFilter(type, el) {
-  activeFilter = type;
-  document.querySelectorAll('.type-filter').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  renderCreatures();
-}
-
-function setLevelFilter(level, el) {
-  activeLevelFilter = level;
-  document.querySelectorAll('.level-filter').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  renderCreatures();
-}
-
-function openCreature(id) {
-  const c = CREATURES.find(x => x.id === id);
-  if (!c) return;
-  document.getElementById('modal-icon').textContent = c.icon;
-  document.getElementById('modal-name').textContent = c.name;
-  document.getElementById('modal-tags').innerHTML = 
-    `<span class="ctag ${c.type}">${c.type}</span>
-     <span class="ctag ${c.threat}">${c.threat} threat</span>
-     <span class="ctag" style="color:var(--gold-light);border-color:rgba(200,149,42,0.25);">Level ${c.level || '?'} </span>
-     <span class="ctag" style="color:var(--text-dim);border-color:rgba(200,149,42,0.15);">${c.size}</span>`;
-  document.getElementById('modal-body').innerHTML = 
-    `<p style="font-family:'Cinzel',serif;font-size:0.52rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:12px;">📍 ${c.habitat}</p>` + 
-    (c.body || '<p>' + c.desc + '</p>') + (DND_STAT_BLOCKS[c.id] || '');
-  document.getElementById('creatureModal').classList.add('open');
-  document.body.style.overflow = 'hidden';
+function setFilter(type,el){ activeTypeFilter=type; document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); if(el) el.classList.add('active'); renderCreatures(); }
+function openCreature(id){
+  const c=CREATURES.find(x=>x.id===id); if(!c) return;
+  document.getElementById('modal-icon').textContent=c.icon||'🐾';
+  document.getElementById('modal-name').textContent=c.name;
+  document.getElementById('modal-tags').innerHTML=tagsMarkup(c)+`<span class="rarity-chip ${escapeHtml(c.rarity)}">${escapeHtml(c.rarity)}</span><span class="cr-chip">CR ${escapeHtml(c.cr)}</span>`;
+  document.getElementById('modal-body').innerHTML=creatureImageMarkup(c,true)+`<p style="font-family:'Cinzel',serif;font-size:0.52rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:12px;">📍 ${escapeHtml(c.habitat)}</p>`+`<div class="modal-stat-grid"><div class="modal-stat"><div class="modal-stat-label">Rarity</div><div class="modal-stat-value">${escapeHtml(c.rarity)}</div></div><div class="modal-stat"><div class="modal-stat-label">Challenge</div><div class="modal-stat-value">CR ${escapeHtml(c.cr)}</div></div><div class="modal-stat"><div class="modal-stat-label">Biomes</div><div class="modal-stat-value">${(c.biomes||[]).map(escapeHtml).join(', ')}</div></div><div class="modal-stat"><div class="modal-stat-label">Boss Status</div><div class="modal-stat-value">${c.boss?'Boss / Major Threat':'Standard Creature'}</div></div></div>`+affinityMarkup(c)+statBlockMarkup(c)+(c.body||'<p>'+escapeHtml(c.desc)+'</p>');
+  document.getElementById('creatureModal').classList.add('open'); document.body.style.overflow='hidden';
 }
 
 function closeModal() {
