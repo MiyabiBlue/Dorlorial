@@ -284,20 +284,10 @@ body.light-mode #quick-nav {
   .banner-arrow{font-family:'Cinzel',serif;font-size:0.52rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold-dark);flex-shrink:0;transition:color 0.25s;}
   .campaign-banner:hover .banner-arrow{color:var(--gold);}
   body.light-mode .campaign-banner{background:linear-gradient(135deg,#ede8da,#e8e0cc);border-color:rgba(138,96,16,0.3);}}
-</style>
 
-<style id="social-url-only-safety">
-#drop-zone,
-.drop-zone,
-#file-input,
-input[type="file"] {
-  display: none !important;
-}
-#m-url {
-  display: block !important;
-}
+/* modal x fix */
+.modal:not(.open):not(.active):not(.show){display:none;}
 </style>
-
 </head>
 <body>
 <canvas id="embers"></canvas>
@@ -313,19 +303,27 @@ input[type="file"] {
 </div>
 
 <!-- ART SUBMIT MODAL -->
-<div class="modal" id="art-modal" onclick="if(event.target===this)closeModal()">
+<div class="modal" id="art-modal">
   <div class="modal-box">
-    <button onclick="closeModal()" style="position:absolute;top:12px;right:12px;background:none;border:1px solid rgba(200,149,42,0.2);color:var(--text-dim);width:30px;height:30px;cursor:pointer;">✕</button>
+    <button type="button" onclick="closeModal()" style="position:absolute;top:12px;right:12px;background:none;border:1px solid rgba(200,149,42,0.2);color:var(--text-dim);width:30px;height:30px;cursor:pointer;z-index:9999;">✕</button>
     <div class="modal-title">Submit Community Art</div>
-    <div class="modal-sub">Share your Dorlorial fan art by pasting a direct image URL.</div>
+    <div class="modal-sub">Share your Dorlorial fan art. Drop an image, tap to pick from gallery, or paste a URL.</div>
     <input class="minput" id="m-name" placeholder="Your name...">
     <input class="minput" id="m-title" placeholder="Title of your art...">
     <textarea class="minput" id="m-desc" placeholder="Description (optional)..." rows="2" style="resize:none;"></textarea>
 
-    <div class="or-divider">— paste a direct image URL —</div>
-    <div style="font-style:italic;color:var(--text-dim);font-size:0.82rem;margin:-2px 0 8px;">Discord links are okay — the site will automatically try to fix them.</div>
-  <input class="minput" id="m-url" placeholder="Paste Discord CDN / direct image URL here" style="margin-bottom:4px;">
-    <div style="font-family:'EB Garamond',serif;font-style:italic;font-size:0.78rem;color:var(--text-dim);margin-bottom:12px;">Paste a direct image link from Discord or another image host. File uploads are disabled to keep the site lightweight.</div>
+    <!-- DROP ZONE -->
+    <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()" ondragover="dzDrag(event,true)" ondragleave="dzDrag(event,false)" ondrop="dzDrop(event)">
+      <div id="dz-content">
+        <div class="drop-zone-text">📷 Tap to choose photo</div>
+        <div class="drop-zone-sub">or drag &amp; drop an image here</div>
+      </div>
+    </div>
+    <input type="file" id="file-input" accept="image/*" onchange="fileChosen(this)">
+
+    <div class="or-divider">— paste an image URL (recommended) —</div>
+    <input class="minput" id="m-url" placeholder="https://i.imgur.com/... or Discord image link" style="margin-bottom:4px;">
+    <div style="font-family:'EB Garamond',serif;font-style:italic;font-size:0.78rem;color:var(--text-dim);margin-bottom:12px;">Upload to <a href="https://imgur.com" target="_blank" style="color:var(--gold-dark);">Imgur</a> or share via Discord to get a URL. Direct URLs load faster and more reliably.</div>
 
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
       <button class="sbtn" onclick="submitArt()">Submit</button>
@@ -354,13 +352,44 @@ input[type="file"] {
   </div>
 </div>
 
-<div class="lightbox" id="lb" onclick="closeLb()"><button class="lb-x" onclick="closeLb()">✕</button><img id="lb-img" src="" alt=""></div>
+<div class="lightbox" id="lb" onclick="closeLb()"><button onclick="closeSubmitArtModal()" class="lb-x" onclick="closeLb()">✕</button><img id="lb-img" src="" alt=""></div>
 
 <div class="transition-overlay" id="overlay"></div>
 
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 <script>
 const SB='https://rczesfxgzuhixhinyarc.supabase.co',KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjemVzZnhnenVoaXhoaW55YXJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTQyNzAsImV4cCI6MjA5MzA3MDI3MH0.y_1BQLSkhV85sn-mxTHqu5eHfxUEF1wu89sfwJ0hU7A';
 let imgData=null;
+let selectedUploadFile=null;
+
+// ══ FIREBASE COMMUNITY ART SETUP ══
+const firebaseConfig = {
+  apiKey: "AIzaSyAyGfc6-q7jp2sMdF9ag9fyiPiBShaLBA",
+  authDomain: "dorlorial.firebaseapp.com",
+  projectId: "dorlorial",
+  storageBucket: "dorlorial.firebasestorage.app",
+  messagingSenderId: "1068182909392",
+  appId: "1:1068182909392:web:33def3eb0e6c5d72c7c9d5",
+  measurementId: "G-F3ZKBYV05R"
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const FB_DB = firebase.firestore();
+const FB_STORAGE = firebase.storage();
+const FB_ART_COLLECTION = 'socialPosts';
+
+function fbSafe(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function fbSlug(s){return String(s||'art').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,70)||'art';}
+function fbStatus(post){return String(post.status || (post.approved ? 'approved' : 'pending')).toLowerCase();}
+function fbCreated(post){
+  if(post.created_at) return post.created_at;
+  if(post.created) return post.created;
+  if(post.createdAt && post.createdAt.toDate) return post.createdAt.toDate().toISOString();
+  return new Date().toISOString();
+}
+
 
 // Fetch with timeout + automatic retry (up to maxTries attempts)
 function apifetch(path, maxTries) {
@@ -393,62 +422,6 @@ function postfetch(path,body){
   });
 }
 
-
-// Converts Discord CDN image links through a free image proxy.
-// This keeps Discord image URLs easier to use on the website.
-function fixImageUrl(url){
-  url = String(url || '').trim();
-  if(!url) return '';
-
-  // Already proxied
-  if(url.includes('images.weserv.nl')) return url;
-
-  // Discord CDN links often fail outside Discord. This proxy fixes many of them.
-  if(url.includes('cdn.discordapp.com') || url.includes('media.discordapp.net') || url.includes('discord.com/channels/')){
-    var clean = url
-      .replace(/^https?:\/\//i,'')
-      .replace(/^\/+/,'');
-    return 'https://images.weserv.nl/?url=' + encodeURIComponent(clean);
-  }
-
-  return url;
-}
-
-function escAttr(s){
-  return String(s || '')
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;')
-    .replace(/'/g,'&#39;');
-}
-
-function escJsString(s){
-  return String(s || '')
-    .replace(/\\/g,'\\\\')
-    .replace(/'/g,"\\'")
-    .replace(/\n/g,' ');
-}
-
-
-function handleSocialImgError(img, rawUrl){
-  rawUrl = String(rawUrl || '').trim();
-
-  // First try: if proxy failed, try the original Discord/direct link.
-  if(rawUrl && img.dataset.triedRaw !== '1' && img.src !== rawUrl){
-    img.dataset.triedRaw = '1';
-    img.src = rawUrl;
-    return;
-  }
-
-  // Second try: show a styled placeholder instead of ugly broken images/popups.
-  const card = img.closest('.acard');
-  if(card){
-    const title = img.getAttribute('alt') || 'Community Art';
-    img.outerHTML = '<div style="height:180px;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;background:rgba(200,149,42,0.04);border-bottom:1px solid rgba(200,149,42,0.12);color:var(--text-dim);font-style:italic;">Image link expired or Discord blocked it.<br><br>'+escHtml(title)+'</div>';
-  }
-}
-
 function showRetryBtn(containerId, retryFn, message) {
   var el = document.getElementById(containerId);
   if(!el) return;
@@ -478,22 +451,18 @@ async function loadArt(){
       grid.innerHTML='<div class="empty">No approved community art yet.</div>';
       return;
     }
-    grid.innerHTML = rows.map(a => {
-      const rawUrl = String(a.image_url || '').trim();
-      const shownUrl = fixImageUrl(rawUrl);
-      return `
+    grid.innerHTML = rows.map(a => `
       <div class="acard">
-        <img src="${escAttr(shownUrl)}" alt="${escAttr(a.title || 'Art')}" onclick="openLb('${escJsString(shownUrl)}')" onerror="handleSocialImgError(this, '${escJsString(rawUrl)}')">
+        <img src="${String(a.image_url).replace(/"/g,'&quot;')}" alt="${String(a.title||'Art').replace(/"/g,'&quot;')}" onclick="openLb('${String(a.image_url).replace(/'/g,'%27')}')" onerror="this.closest('.acard').style.display='none'">
         <div class="acard-body">
-          <div class="acard-title">${escHtml(a.title || 'Untitled')}</div>
-          <div class="acard-user">by ${escHtml(a.username || 'Unknown')}</div>
-          ${a.description ? `<div class="acard-user" style="margin-top:4px;">${escHtml(a.description)}</div>` : ''}
+          <div class="acard-title">${String(a.title||'Untitled').replace(/</g,'&lt;')}</div>
+          <div class="acard-user">by ${String(a.username||'Unknown').replace(/</g,'&lt;')}</div>
+          ${a.description ? `<div class="acard-user" style="margin-top:4px;">${String(a.description).replace(/</g,'&lt;')}</div>` : ''}
         </div>
       </div>
-    `;
-    }).join('');
+    `).join('');
   }catch(e){
-    grid.innerHTML='<div class="empty">Could not load community art. Refresh the page or check that art submissions are approved.</div>';
+    grid.innerHTML='<div class="empty">Could not load community art. Check Supabase SELECT policy for art_submissions.</div>';
   }
 }
 
@@ -544,6 +513,7 @@ function fileChosen(input){
   if(input.files&&input.files[0])processFile(input.files[0]);
 }
 function processFile(file){
+  selectedUploadFile = file;
   var reader=new FileReader();
   reader.onload=function(e){
     imgData=e.target.result; // base64 data URL
@@ -556,13 +526,15 @@ function processFile(file){
 function closeModal(){
   document.getElementById('art-modal').classList.remove('open');
   imgData=null;
-  var dz=document.getElementById('dz-content'); if(dz){dz.innerHTML='<div class="drop-zone-text">📷 Tap to choose photo</div><div class="drop-zone-sub">or drag &amp; drop an image here</div>';}
+  selectedUploadFile=null;
+  var fi=document.getElementById('file-input'); if(fi) fi.value='';
+  document.getElementById('dz-content').innerHTML='<div class="drop-zone-text">📷 Tap to choose photo</div><div class="drop-zone-sub">or drag &amp; drop an image here</div>';
   ['m-name','m-title','m-desc','m-url'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('m-ok').style.display='none';
   document.getElementById('m-err').style.display='none';
 }
 
-function submitArt(){
+async function submitArt(){
   var name=document.getElementById('m-name').value.trim();
   var title=document.getElementById('m-title').value.trim();
   var url=document.getElementById('m-url').value.trim();
@@ -571,33 +543,87 @@ function submitArt(){
   var ok=document.getElementById('m-ok');
   err.style.display='none';ok.style.display='none';
 
-  var imageUrl=url.trim();
   if(!name||!title){err.textContent='Please fill in your name and a title.';err.style.display='inline';return;}
-  if(!imageUrl){err.textContent='Please paste a Discord image URL or direct image URL.';err.style.display='inline';return;}
-  if(!/^https?:\/\//i.test(imageUrl)){
-    err.textContent='Please paste a full image URL starting with https://';
-    err.style.display='inline';
-    return;
-  }
-  if(imageUrl.startsWith('data:')){
-    err.textContent='File uploads are disabled. Please paste a Discord/direct image URL instead.';
-    err.style.display='inline';
-    return;
-  }
 
-  // Keep the original pasted URL in Supabase. The display function converts Discord links automatically.
-  postfetch('art_submissions',{username:name,title:title,image_url:imageUrl,description:desc,status:'pending',entry_link:'art',entry_name:title})
-    .then(function(r){
-      if(r.ok||r.status===201){
-        ok.style.display='inline';
-        setTimeout(function(){closeModal();loadArt();},1500);
-      } else {
-        r.text().then(function(t){err.textContent='Error: '+t.substring(0,80);err.style.display='inline';});
-      }
-    }).catch(function(e){err.textContent='Could not submit. Check your connection.';err.style.display='inline';});
+  try{
+    ok.textContent='Uploading...';
+    ok.style.display='inline';
+    let imageUrl = '';
+    let storagePath = '';
+
+    if(selectedUploadFile){
+      const ext = (selectedUploadFile.name.split('.').pop() || 'png').toLowerCase().replace(/[^a-z0-9]/g,'') || 'png';
+      storagePath = `social-art/${Date.now()}-${fbSlug(title)}.${ext}`;
+      const imageRef = FB_STORAGE.ref().child(storagePath);
+      await imageRef.put(selectedUploadFile);
+      imageUrl = await imageRef.getDownloadURL();
+    } else {
+      imageUrl = url.trim();
+      if(!imageUrl){err.textContent='Please upload an image or paste an image URL.';err.style.display='inline';ok.style.display='none';return;}
+      if(!/^https?:\/\//i.test(imageUrl)){err.textContent='Please paste a full image URL starting with https://';err.style.display='inline';ok.style.display='none';return;}
+    }
+
+    await FB_DB.collection(FB_ART_COLLECTION).add({
+      username:name,
+      title:title,
+      description:desc,
+      imageUrl:imageUrl,
+      image_url:imageUrl,
+      storagePath:storagePath,
+      status:'pending',
+      approved:false,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      createdMillis: Date.now()
+    });
+
+    ok.textContent='✓ Submitted for approval!';
+    ok.style.display='inline';
+    selectedUploadFile=null;
+    setTimeout(function(){closeModal();loadArt();},1500);
+  }catch(e){
+    console.error(e);
+    ok.style.display='none';
+    err.textContent='Upload failed. Check Firebase Storage/Firestore rules and setup.';
+    err.style.display='inline';
+  }
 }
 
-function openLb(url){document.getElementById('lb-img').src=fixImageUrl(url);document.getElementById('lb').classList.add('open');}
+
+function handleFileSelect(event){
+  const file = event.target.files && event.target.files[0];
+  setSelectedUploadFile(file);
+}
+function setSelectedUploadFile(file){
+  const err=document.getElementById('m-err');
+  if(err) err.style.display='none';
+  if(!file) return;
+  if(!file.type || !file.type.startsWith('image/')){
+    if(err){err.textContent='Please choose an image file.';err.style.display='inline';}
+    return;
+  }
+  selectedUploadFile = file;
+  const content=document.getElementById('drop-content');
+  if(content){
+    const reader = new FileReader();
+    reader.onload = function(e){
+      content.innerHTML = '<img class="preview" src="'+e.target.result+'"><div class="drop-zone-sub">'+fbSafe(file.name)+'</div>';
+    };
+    reader.readAsDataURL(file);
+  }
+}
+function setupDropZone(){
+  const dz=document.getElementById('drop-zone');
+  if(!dz) return;
+  ['dragenter','dragover'].forEach(evt=>dz.addEventListener(evt,function(e){e.preventDefault();dz.classList.add('drag-over');}));
+  ['dragleave','drop'].forEach(evt=>dz.addEventListener(evt,function(e){e.preventDefault();dz.classList.remove('drag-over');}));
+  dz.addEventListener('drop',function(e){
+    const file=e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    setSelectedUploadFile(file);
+  });
+}
+setupDropZone();
+
+function openLb(url){document.getElementById('lb-img').src=url;document.getElementById('lb').classList.add('open');}
 function closeLb(){document.getElementById('lb').classList.remove('open');}
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeLb();closeModal();}});
 document.getElementById('backBtn').addEventListener('click',function(e){
@@ -711,6 +737,48 @@ function spawnEmber(init){var x,y;if(init){x=rand(0,canvas.width);y=rand(0,canva
 var MAX=60;var embers=[];for(var i=0;i<MAX;i++)embers.push(spawnEmber(true));
 function drawEmber(e){var fl=0.6+Math.sin(e.age*e.flicker*80)*0.4;var al=Math.min(e.life,1)*e.bright*fl;var g=ctx.createRadialGradient(e.x,e.y,0,e.x,e.y,e.size*3);g.addColorStop(0,'rgba(255,210,70,'+(al*0.9)+')');g.addColorStop(0.5,'rgba(200,120,15,'+(al*0.35)+')');g.addColorStop(1,'rgba(140,50,0,0)');ctx.beginPath();ctx.arc(e.x,e.y,e.size*3,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();ctx.beginPath();ctx.arc(e.x,e.y,e.size*0.5,0,Math.PI*2);ctx.fillStyle='rgba(255,245,200,'+al+')';ctx.fill();}
 var fr=0;(function loop(){requestAnimationFrame(loop);fr++;ctx.clearRect(0,0,canvas.width,canvas.height);for(var i=embers.length-1;i>=0;i--){var e=embers[i];e.age++;e.life-=e.decay;e.x+=e.drift+Math.sin(e.age*e.wobble+e.wOff)*0.7;e.y-=e.speed;drawEmber(e);if(e.life<=0||e.y<-20||e.x<-20||e.x>canvas.width+20){embers.splice(i,1);embers.push(spawnEmber(false));}}if(fr%45===0&&embers.length<MAX+10){for(var j=0;j<3;j++)embers.push(spawnEmber(false));}})();
+
+// Strong modal close helper for Submit Art window
+function closeSubmitArtModal(){
+  if (typeof closeModal === 'function') {
+    closeModal();
+    return;
+  }
+  const modal = document.getElementById('art-modal');
+  if(modal){
+    modal.classList.remove('open','active','show');
+    modal.style.display = '';
+  }
+  document.body.classList.remove('modal-open','no-scroll');
+}
+
+// Make every modal X button close the Submit Art modal
+document.addEventListener('click', function(e){
+  const closeBtn = e.target.closest('.modal-close,.close-modal,.close-btn,.mclose,.x-btn,[data-close-modal]');
+  if(closeBtn){
+    e.preventDefault();
+    e.stopPropagation();
+    closeSubmitArtModal();
+  }
+});
+
+// Escape closes it too
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') closeSubmitArtModal();
+});
+
+
+// Close Submit Art when clicking outside the menu box
+document.addEventListener('click', function(e){
+  const modal = document.getElementById('art-modal');
+  if(!modal || !modal.classList.contains('open')) return;
+  if(e.target === modal) closeModal();
+});
+
+// Escape key closes Submit Art
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') closeModal();
+});
 </script>
 </body>
 </html>

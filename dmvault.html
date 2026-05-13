@@ -664,87 +664,68 @@ function switchCommunityTab(tab, el) {
   el.classList.add('active');
   document.getElementById('comm-art-panel').style.display = tab === 'art' ? 'block' : 'none';
   document.getElementById('comm-comments-panel').style.display = tab === 'comments' ? 'block' : 'none';
-  if (tab === 'art') loadAllArt();
   if (tab === 'comments' && !allComments.length) loadComments();
 }
 
 // ── ART ──
 async function loadAllArt() {
   try {
-    // Only load URL-based public moderation rows. This avoids old archived/base64 rows causing Supabase 500 errors.
-    let res = await sbFetch('art_submissions?select=id,username,title,image_url,description,status,created_at&status=in.(pending,approved)&order=created_at.desc');
-    if (!res.ok) {
-      res = await sbFetch('art_submissions?select=id,username,title,image_url,description,status&status=in.(pending,approved)');
-    }
+    const res = await sbFetch('art_submissions?order=created_at.desc');
     allArt = await res.json();
-    allArt = Array.isArray(allArt) ? allArt.filter(a =>
-      a.image_url &&
-      String(a.image_url).startsWith('http') &&
-      !String(a.image_url).startsWith('data:')
-    ) : [];
-
-    const pending = allArt.filter(a => String(a.status).trim().toLowerCase() === 'pending').length;
-    const approved = allArt.filter(a => String(a.status).trim().toLowerCase() === 'approved').length;
+    // Update counts
+    const pending = allArt.filter(a => a.status === 'pending').length;
+    const approved = allArt.filter(a => a.status === 'approved').length;
     const pc = document.getElementById('pending-count');
     const ac = document.getElementById('approved-count');
     if (pc) pc.textContent = pending > 0 ? `(${pending})` : '';
     if (ac) ac.textContent = approved > 0 ? `(${approved})` : '';
     renderArtFiltered();
   } catch(e) {
-    document.getElementById('art-grid').innerHTML = '<div class="empty-state">Could not load art. DM Vault is blocked from art_submissions or Supabase returned an error.</div>';
+    document.getElementById('art-grid').innerHTML = '<div class="empty-state">Could not load art.</div>';
   }
 }
 
 function setArtFolder(folder, el) {
   currentArtFolder = folder;
   document.querySelectorAll('#comm-art-panel .filter-btn').forEach(b => b.classList.remove('active'));
-  if (el) el.classList.add('active');
+  el.classList.add('active');
   renderArtFiltered();
 }
 
 function renderArtFiltered() {
   const q = (document.getElementById('art-search')?.value || '').toLowerCase();
-  const current = String(currentArtFolder || 'all').trim().toLowerCase();
-
-  let filtered = current === 'all' ? allArt
-    : allArt.filter(a => String(a.status || '').trim().toLowerCase() === current);
-
+  let filtered = currentArtFolder === 'all' ? allArt
+    : allArt.filter(a => a.status === currentArtFolder);
   if (q) filtered = filtered.filter(a =>
-    String(a.title || '').toLowerCase().includes(q) ||
-    String(a.username || '').toLowerCase().includes(q) ||
-    String(a.description || '').toLowerCase().includes(q)
+    a.title.toLowerCase().includes(q) ||
+    a.username.toLowerCase().includes(q) ||
+    (a.description && a.description.toLowerCase().includes(q))
   );
-
   const grid = document.getElementById('art-grid');
   if (!filtered.length) {
-    grid.innerHTML = `<div class="empty-state">No ${current === 'all' ? '' : current + ' '}URL artwork found.</div>`;
+    grid.innerHTML = `<div class="empty-state">No ${currentArtFolder === 'all' ? '' : currentArtFolder + ' '}art found.</div>`;
     return;
   }
-
-  function esc(s) {
-    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-  }
-
   grid.innerHTML = filtered.map(art => {
-    const status = String(art.status || '').trim().toLowerCase();
-    const isPending = status === 'pending';
-    const isApproved = status === 'approved';
+    const isPending = art.status === 'pending';
+    const isApproved = art.status === 'approved';
     const statusColor = isPending ? 'var(--gold-dark)' : isApproved ? 'var(--green)' : '#e84b4b';
-    const dateText = art.created_at ? new Date(art.created_at).toLocaleDateString() : '';
     return `
-    <div class="art-dm-card" id="artcard-${esc(art.id)}">
-      <img class="art-dm-img" src="${esc(art.image_url)}" alt="${esc(art.title)}" onerror="this.outerHTML='<div class=&quot;empty-state&quot; style=&quot;padding:20px;&quot;>Image URL could not load.</div>'">
+    <div class="art-dm-card" id="artcard-${art.id}">
+      <img class="art-dm-img" src="${art.image_url}" alt="${art.title}" onerror="this.style.display='none'">
       <div class="art-dm-info">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
-          <div class="art-dm-title" style="flex:1;">${esc(art.title || 'Untitled')}</div>
-          <span style="font-family:'Cinzel',serif;font-size:0.38rem;letter-spacing:0.15em;text-transform:uppercase;color:${statusColor};">${esc(status)}</span>
+          <div class="art-dm-title" style="flex:1;">${art.title}</div>
+          <span style="font-family:'Cinzel',serif;font-size:0.38rem;letter-spacing:0.15em;text-transform:uppercase;color:${statusColor};">${art.status}</span>
         </div>
-        <div class="art-dm-user">by ${esc(art.username || 'Unknown')}${dateText ? ' · ' + esc(dateText) : ''}</div>
-        ${art.description ? `<div style="font-family:'EB Garamond',serif;font-style:italic;font-size:0.8rem;color:var(--text-dim);margin-bottom:6px;">${esc(art.description)}</div>` : ''}
+        <div class="art-dm-user">by ${art.username} · ${new Date(art.created_at).toLocaleDateString()}</div>
+        ${art.description ? `<div style="font-family:'EB Garamond',serif;font-style:italic;font-size:0.8rem;color:var(--text-dim);margin-bottom:6px;">${art.description}</div>` : ''}
+        ${art.entry_name ? `<div style="font-size:0.72rem;color:var(--gold-dark);margin-bottom:6px;">📍 ${art.entry_name}</div>` : ''}
         <div class="art-dm-actions">
-          ${isPending ? `<button class="btn-approve" onclick="updateArt('${esc(art.id)}','approved')">✓ Approve</button>` : ''}
-          ${isApproved ? `<button class="btn-secondary" style="font-size:0.42rem;padding:5px 10px;" onclick="updateArt('${esc(art.id)}','pending')">↩ Unpublish</button>` : ''}
-          <button class="btn-delete" onclick="deleteArt('${esc(art.id)}')">🗑</button>
+          ${isPending ? `<button class="btn-approve" onclick="updateArt('${art.id}','approved')">✓ Approve</button>` : ''}
+          ${isApproved ? `<button class="btn-secondary" style="font-size:0.42rem;padding:5px 10px;" onclick="updateArt('${art.id}','pending')">↩ Unpublish</button>` : ''}
+          ${!isPending ? `<button class="btn-approve" style="background:rgba(200,149,42,0.08);border-color:rgba(200,149,42,0.3);color:var(--gold-dark);" onclick="updateArt('${art.id}','pending')">↩</button>` : ''}
+          <button class="btn-delete" onclick="deleteArt('${art.id}')">🗑</button>
         </div>
       </div>
     </div>`;
@@ -1473,7 +1454,7 @@ document.querySelectorAll('.qn-item').forEach(item => {
   <div class="qn-grid">
     <a href="hub.html" class="qn-item"><span class="qn-icon">🏠</span><span class="qn-name">Hub</span></a>
     <a href="map.html" class="qn-item"><span class="qn-icon">🗺️</span><span class="qn-name">Map</span></a>
-    <a href="social2.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Social Hub</span></a>
+    <a href="social.html" class="qn-item"><span class="qn-icon">🎨</span><span class="qn-name">Social Hub</span></a>
     <a href="quizzes.html" class="qn-item"><span class="qn-icon">🎯</span><span class="qn-name">Quizzes</span></a>
     <a href="deities.html" class="qn-item"><span class="qn-icon">✦</span><span class="qn-name">Deities</span></a>
     <a href="factions.html" class="qn-item"><span class="qn-icon">⚔️</span><span class="qn-name">Factions</span></a>
