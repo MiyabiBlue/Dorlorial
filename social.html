@@ -323,7 +323,8 @@ input[type="file"] {
     <textarea class="minput" id="m-desc" placeholder="Description (optional)..." rows="2" style="resize:none;"></textarea>
 
     <div class="or-divider">— paste a direct image URL —</div>
-    <input class="minput" id="m-url" placeholder="Paste Discord CDN / direct image URL here" style="margin-bottom:4px;">
+    <div style="font-style:italic;color:var(--text-dim);font-size:0.82rem;margin:-2px 0 8px;">Discord links are okay — the site will automatically try to fix them.</div>
+  <input class="minput" id="m-url" placeholder="Paste Discord CDN / direct image URL here" style="margin-bottom:4px;">
     <div style="font-family:'EB Garamond',serif;font-style:italic;font-size:0.78rem;color:var(--text-dim);margin-bottom:12px;">Paste a direct image link from Discord or another image host. File uploads are disabled to keep the site lightweight.</div>
 
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
@@ -392,6 +393,62 @@ function postfetch(path,body){
   });
 }
 
+
+// Converts Discord CDN image links through a free image proxy.
+// This keeps Discord image URLs easier to use on the website.
+function fixImageUrl(url){
+  url = String(url || '').trim();
+  if(!url) return '';
+
+  // Already proxied
+  if(url.includes('images.weserv.nl')) return url;
+
+  // Discord CDN links often fail outside Discord. This proxy fixes many of them.
+  if(url.includes('cdn.discordapp.com') || url.includes('media.discordapp.net') || url.includes('discord.com/channels/')){
+    var clean = url
+      .replace(/^https?:\/\//i,'')
+      .replace(/^\/+/,'');
+    return 'https://images.weserv.nl/?url=' + encodeURIComponent(clean);
+  }
+
+  return url;
+}
+
+function escAttr(s){
+  return String(s || '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+function escJsString(s){
+  return String(s || '')
+    .replace(/\\/g,'\\\\')
+    .replace(/'/g,"\\'")
+    .replace(/\n/g,' ');
+}
+
+
+function handleSocialImgError(img, rawUrl){
+  rawUrl = String(rawUrl || '').trim();
+
+  // First try: if proxy failed, try the original Discord/direct link.
+  if(rawUrl && img.dataset.triedRaw !== '1' && img.src !== rawUrl){
+    img.dataset.triedRaw = '1';
+    img.src = rawUrl;
+    return;
+  }
+
+  // Second try: show a styled placeholder instead of ugly broken images/popups.
+  const card = img.closest('.acard');
+  if(card){
+    const title = img.getAttribute('alt') || 'Community Art';
+    img.outerHTML = '<div style="height:180px;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;background:rgba(200,149,42,0.04);border-bottom:1px solid rgba(200,149,42,0.12);color:var(--text-dim);font-style:italic;">Image link expired or Discord blocked it.<br><br>'+escHtml(title)+'</div>';
+  }
+}
+
 function showRetryBtn(containerId, retryFn, message) {
   var el = document.getElementById(containerId);
   if(!el) return;
@@ -421,18 +478,22 @@ async function loadArt(){
       grid.innerHTML='<div class="empty">No approved community art yet.</div>';
       return;
     }
-    grid.innerHTML = rows.map(a => `
+    grid.innerHTML = rows.map(a => {
+      const rawUrl = String(a.image_url || '').trim();
+      const shownUrl = fixImageUrl(rawUrl);
+      return `
       <div class="acard">
-        <img src="${String(a.image_url).replace(/"/g,'&quot;')}" alt="${String(a.title||'Art').replace(/"/g,'&quot;')}" onclick="openLb('${String(a.image_url).replace(/'/g,'%27')}')" onerror="this.closest('.acard').style.display='none'">
+        <img src="${escAttr(shownUrl)}" alt="${escAttr(a.title || 'Art')}" onclick="openLb('${escJsString(shownUrl)}')" onerror="handleSocialImgError(this, '${escJsString(rawUrl)}')">
         <div class="acard-body">
-          <div class="acard-title">${String(a.title||'Untitled').replace(/</g,'&lt;')}</div>
-          <div class="acard-user">by ${String(a.username||'Unknown').replace(/</g,'&lt;')}</div>
-          ${a.description ? `<div class="acard-user" style="margin-top:4px;">${String(a.description).replace(/</g,'&lt;')}</div>` : ''}
+          <div class="acard-title">${escHtml(a.title || 'Untitled')}</div>
+          <div class="acard-user">by ${escHtml(a.username || 'Unknown')}</div>
+          ${a.description ? `<div class="acard-user" style="margin-top:4px;">${escHtml(a.description)}</div>` : ''}
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
   }catch(e){
-    grid.innerHTML='<div class="empty">Could not load community art. Check Supabase SELECT policy for art_submissions.</div>';
+    grid.innerHTML='<div class="empty">Could not load community art. Refresh the page or check that art submissions are approved.</div>';
   }
 }
 
@@ -512,9 +573,9 @@ function submitArt(){
 
   var imageUrl=url.trim();
   if(!name||!title){err.textContent='Please fill in your name and a title.';err.style.display='inline';return;}
-  if(!imageUrl){err.textContent='Please paste a direct image URL.';err.style.display='inline';return;}
+  if(!imageUrl){err.textContent='Please paste a Discord image URL or direct image URL.';err.style.display='inline';return;}
   if(!/^https?:\/\//i.test(imageUrl)){
-    err.textContent='Please paste a full direct image URL starting with https://';
+    err.textContent='Please paste a full image URL starting with https://';
     err.style.display='inline';
     return;
   }
@@ -524,6 +585,7 @@ function submitArt(){
     return;
   }
 
+  // Keep the original pasted URL in Supabase. The display function converts Discord links automatically.
   postfetch('art_submissions',{username:name,title:title,image_url:imageUrl,description:desc,status:'pending',entry_link:'art',entry_name:title})
     .then(function(r){
       if(r.ok||r.status===201){
@@ -535,7 +597,7 @@ function submitArt(){
     }).catch(function(e){err.textContent='Could not submit. Check your connection.';err.style.display='inline';});
 }
 
-function openLb(url){document.getElementById('lb-img').src=url;document.getElementById('lb').classList.add('open');}
+function openLb(url){document.getElementById('lb-img').src=fixImageUrl(url);document.getElementById('lb').classList.add('open');}
 function closeLb(){document.getElementById('lb').classList.remove('open');}
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeLb();closeModal();}});
 document.getElementById('backBtn').addEventListener('click',function(e){
