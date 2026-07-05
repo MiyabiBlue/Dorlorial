@@ -21,8 +21,7 @@ header{position:relative;z-index:10;text-align:center;padding:90px 20px 36px;bac
 
 .header-symbol{width:56px;height:auto;margin:0 auto 16px;filter:drop-shadow(0 0 14px rgba(200,149,42,0.45));animation:symbolPulse 4s ease-in-out infinite;display:block;}
 
-@keyframes symbolPulse{0%,100%{filter:drop-shadow(0 0 10px rgba(200,149,42,0.35));}
-}
+@keyframes symbolPulse{0%,100%{filter:drop-shadow(0 0 10px rgba(200,149,42,0.35));transform:scale(1);}50%{filter:drop-shadow(0 0 24px rgba(200,149,42,0.7));transform:scale(1.035);}}
 
 .header-eyebrow{font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:0.5em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:8px;}
 
@@ -96,8 +95,7 @@ main{position:relative;z-index:10;max-width:1240px;margin:0 auto;padding:0 24px 
 
 .badge-updated{color:var(--gold);background:rgba(200,149,42,0.08);border:1px solid rgba(200,149,42,0.28);animation:badgePulse 2s ease-in-out infinite;}
 
-@keyframes badgePulse{0%,100%{opacity:1;}
-}
+@keyframes badgePulse{0%,100%{opacity:1;}50%{opacity:0.45;}}
 
 /* ══ CAROUSEL ══ */
 .carousel-wrap{margin-bottom:16px;display:block;}
@@ -399,19 +397,31 @@ body.light-mode #quick-nav {
   body.light-mode .corner-btn{background:rgba(245,240,232,0.95);border-color:rgba(138,96,16,0.4);color:var(--gold-dark);}
 
   /* ── CAMPAIGN BANNER ── */
-  .campaign-banner{position:relative;z-index:10;background:linear-gradient(135deg,#0e0a02,#0a0600);border:1px solid rgba(200,149,42,0.28);padding:12px 20px;margin-bottom:0;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color 0.3s;}
+  .campaign-banner{text-decoration:none;color:inherit;position:relative;z-index:10;background:linear-gradient(135deg,#0e0a02,#0a0600);border:1px solid rgba(200,149,42,0.28);padding:12px 20px;margin-bottom:0;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color 0.3s;}
   .campaign-banner:hover{border-color:rgba(200,149,42,0.5);}
   .banner-pulse{width:10px;height:10px;background:var(--green,#4be87a);border-radius:50%;flex-shrink:0;animation:bannerPulse 2s ease-in-out infinite;box-shadow:0 0 8px rgba(75,232,122,0.5);}
-  @keyframes bannerPulse{0%,100%{transform:scale(1);opacity:1;}
-}
-@keyframes kffix2{0%{transform:scale(1.3);opacity:0.6;}
+  @keyframes bannerPulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.35);opacity:0.55;}}
+@keyframes kffix2{0%{transform:scale(1.3);opacity:0.6;}100%{transform:scale(1);opacity:0;}}
   .banner-text{flex:1;}
   .banner-eyebrow{font-family:'Cinzel',serif;font-size:0.48rem;letter-spacing:0.3em;text-transform:uppercase;color:#4be87a;margin-bottom:4px;}
   .banner-title{font-family:'Cinzel',serif;font-size:clamp(0.72rem,2vw,0.9rem);font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold-light);margin-bottom:3px;}
   .banner-sub{font-family:'EB Garamond',serif;font-style:italic;font-size:clamp(0.82rem,2vw,0.95rem);color:var(--text-dim);}
   .banner-arrow{font-family:'Cinzel',serif;font-size:0.52rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold-dark);flex-shrink:0;transition:color 0.25s;}
   .campaign-banner:hover .banner-arrow{color:var(--gold);}
-  body.light-mode .campaign-banner{background:linear-gradient(135deg,#ede8da,#e8e0cc);border-color:rgba(138,96,16,0.3);}}</style>
+  body.light-mode .campaign-banner{background:linear-gradient(135deg,#ede8da,#e8e0cc);border-color:rgba(138,96,16,0.3);}}
+/* Book / news carousel promo cards */
+.carousel-slide.promo-slide{background-size:cover;background-position:center;}
+.carousel-promo-card{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(circle at center,rgba(200,149,42,0.14),rgba(6,4,2,0.75) 48%,rgba(6,4,2,0.96));}
+.carousel-promo-inner{display:flex;align-items:center;gap:24px;max-width:760px;width:100%;padding:24px;border:1px solid rgba(200,149,42,0.35);background:rgba(6,4,2,0.76);box-shadow:0 0 40px rgba(0,0,0,0.6);}
+.carousel-promo-cover{width:150px;max-width:34vw;height:220px;object-fit:cover;border:1px solid rgba(200,149,42,0.45);box-shadow:0 0 24px rgba(200,149,42,0.18);background:#0a0702;}
+.carousel-promo-kicker{font-family:'Cinzel',serif;font-size:0.5rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:8px;}
+.carousel-promo-title{font-family:'Cinzel Decorative',serif;font-size:clamp(1.15rem,3vw,2rem);line-height:1.05;color:var(--gold-light);margin-bottom:8px;}
+.carousel-promo-text{font-family:'EB Garamond',serif;font-style:italic;font-size:1rem;color:var(--text);line-height:1.45;margin-bottom:16px;}
+.carousel-promo-btn{display:inline-block;font-family:'Cinzel',serif;font-size:0.56rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(200,149,42,0.45);padding:11px 15px;text-decoration:none;background:rgba(200,149,42,0.08);}
+.carousel-promo-btn:hover{background:rgba(200,149,42,0.16);border-color:var(--gold-light);color:var(--gold-pale);}
+@media(max-width:640px){.carousel-promo-inner{gap:14px;padding:16px;}.carousel-promo-cover{width:92px;height:138px}.carousel-promo-text{font-size:0.86rem}.carousel-promo-btn{font-size:0.48rem;letter-spacing:0.18em;padding:9px 10px;}}
+
+</style>
 </head>
 <body>
   <canvas id="embers"></canvas>
@@ -450,15 +460,15 @@ body.light-mode #quick-nav {
 
 
   <!-- CAMPAIGN BANNER -->
-  <div class="campaign-banner" onclick="navigate('campaigns.html')" id="campaign-banner">
+  <a class="campaign-banner" href="campaigns.html#echoes" onclick="event.preventDefault(); navigate('campaigns.html#echoes')" id="campaign-banner">
     <div class="banner-pulse"></div>
     <div class="banner-text">
-      <div class="banner-eyebrow">⚔ Active · Session 8 · Year 7241</div>
+      <div class="banner-eyebrow">⚔ Active · Session 9 · Year 7241</div>
       <div class="banner-title">Echoes Without Names</div>
-      <div class="banner-sub">The party recovers forgotten relics inside Crystolas's Vault as each crystal key awakens memories they once left behind.</div>
+      <div class="banner-sub">Freed from his sealed cage, Crystolas turns back an eldritch horror to save the party — and answers the one question each of them has been carrying.</div>
     </div>
     <div class="banner-arrow">Sessions →</div>
-  </div>
+  </a>
 
   <!-- ══ COMMUNITY ART CAROUSEL ══ -->
   <div class="carousel-wrap" id="art-carousel-wrap">
@@ -470,18 +480,9 @@ body.light-mode #quick-nav {
       </div>
       <button class="carousel-nav" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);z-index:5;" onclick="event.stopPropagation();carouselPrev()">‹</button>
       <button class="carousel-nav" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);z-index:5;" onclick="event.stopPropagation();carouselNext()">›</button>
-      <div class="carousel-overlay"></div>
-      <div class="carousel-info">
-        <div>
-          <div class="carousel-title-text" id="carousel-title"></div>
-          <div class="carousel-artist-text" id="carousel-artist"></div>
-        </div>
-        <div class="carousel-right">
-          <div class="carousel-counter-text" id="carousel-counter"></div>
-        </div>
-      </div>
     </div>
   </div>
+
 
 
   <!-- ══ HERO ROW ══ -->
@@ -569,7 +570,7 @@ body.light-mode #quick-nav {
 
 
   <!-- ══ DM VAULT STRIP ══ -->
-  <div id="vaultBtn" style="margin-top:40px;display:flex;align-items:center;gap:16px;padding:16px 24px;background:rgba(200,149,42,0.05);border:1px solid rgba(200,149,42,0.25);cursor:pointer;transition:all 0.3s;border-radius:0;" 
+  <div id="vaultBtn" onclick="openVaultSafe()" style="margin-top:40px;display:flex;align-items:center;gap:16px;padding:16px 24px;background:rgba(200,149,42,0.05);border:1px solid rgba(200,149,42,0.25);cursor:pointer;transition:all 0.3s;border-radius:0;" 
     onmouseover="this.style.background='rgba(200,149,42,0.1)';this.style.borderColor='rgba(200,149,42,0.5)'" 
     onmouseout="this.style.background='rgba(200,149,42,0.05)';this.style.borderColor='rgba(200,149,42,0.25)'">
     <span style="font-size:1.2rem;">🔒</span>
@@ -604,8 +605,12 @@ const VAULT_PASSWORD = 'Twilight';
 // ══ NAVIGATION ══
 function navigate(url) {
   const overlay = document.getElementById('overlay');
-  overlay.classList.add('active');
-  setTimeout(() => { window.location.href = url; }, 800);
+  if (overlay) {
+    overlay.classList.add('active');
+    setTimeout(() => { window.location.href = url; }, 650);
+  } else {
+    window.location.href = url;
+  }
 }
 
 // Add transitions to all hero cards and nav cards
@@ -617,11 +622,18 @@ document.querySelectorAll('.hero-card[href], .nav-card[href]').forEach(card => {
 });
 
 // ══ VAULT ══
-document.getElementById('vaultBtn').addEventListener('click', () => {
-  document.getElementById('vaultModal').classList.add('open');
-  setTimeout(() => document.getElementById('vaultPassword').focus(), 100);
-});
-document.getElementById('vaultModal').addEventListener('click', e => {
+
+function openVaultSafe(){
+  const modal = document.getElementById('vaultModal');
+  const pw = document.getElementById('vaultPassword');
+  if(modal){ modal.classList.add('open'); }
+  if(pw){ setTimeout(()=>pw.focus(),100); }
+}
+
+const vaultBtnEl = document.getElementById('vaultBtn');
+if (vaultBtnEl) vaultBtnEl.addEventListener('click', openVaultSafe);
+const vaultModalEl = document.getElementById('vaultModal');
+if (vaultModalEl) vaultModalEl.addEventListener('click', e => {
   if (e.target === e.currentTarget) closeVault();
 });
 function closeVault() {
@@ -733,7 +745,7 @@ SEARCH_INDEX=[
   // CAMPAIGNS
   {title:'Bestiary',type:'Page',page:'bestiary.html',desc:'All creatures and monsters of Dorlorial'},
   {title:'Deity Quiz',type:'Page',page:'quiz.html',desc:'Which deity of Dorlorial are you?'},
-  {title:'Echoes Without Names',type:'Campaign',page:'campaigns.html',desc:'Active campaign — Session 8: Memories Forged in Crystal'},
+  {title:'Echoes Without Names',type:'Campaign',page:'campaigns.html',desc:'Active campaign — Session 9: The Cage of Crystolas'},
   {title:'The Ascended Rage',type:'Campaign',page:'campaigns.html',desc:'Completed 2-year campaign'},
 ];
 
@@ -758,7 +770,7 @@ const G_SEARCH_INDEX = [
   {title:'Vethkarn',desc:'The Endless Frost, God of Stasis and Grief. Symbol: Shattered Hourglass.',type:'Deity',url:'deities.html'},
   {title:'Glorath',desc:'The Hungering Maw.',type:'Deity',url:'deities.html'},
   {title:'Ska-Waas',desc:'The Golden Frog, Lord of Fortune.',type:'Deity',url:'deities.html'},
-  {title:'Echoes Without Names',desc:'Active campaign — Session 8. The party recovers crystal keys, forgotten relics, and memories they once left behind inside Crystolas's Vault.',type:'Campaign',url:'campaigns.html'},
+  {title:'Echoes Without Names',desc:'Active campaign — Session 9. Freed from his sealed cage, Crystolas turns back an eldritch horror to save the party inside Aetherwyn.',type:'Campaign',url:'campaigns.html'},
   {title:'Aetherwyn',desc:'The Deep City — destination for the first crystal.',type:'Location',url:'locations.html'},
   {title:'Sunbright',desc:'Capital city taken by Karst and the Red Sun.',type:'Location',url:'locations.html'},
   {title:'Dusk Harbor',desc:'The fog port where the party crashed and Vash was taken.',type:'Location',url:'locations.html'},
@@ -785,7 +797,7 @@ function doSearch(query) {
   }
   box.style.display='block';
   box.innerHTML=results.map(r=>`
-    <a href="${r.page}" style="display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-bottom:1px solid rgba(200,149,42,0.1);text-decoration:none;" 
+    <a href="${r.page || r.url}" style="display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-bottom:1px solid rgba(200,149,42,0.1);text-decoration:none;" 
       onmouseover="this.style.background='rgba(200,149,42,0.07)'" onmouseout="this.style.background='transparent'">
       <span style="font-family:Cinzel,serif;font-size:0.4rem;letter-spacing:0.18em;text-transform:uppercase;color:#8A6010;background:rgba(200,149,42,0.06);border:1px solid rgba(200,149,42,0.15);padding:2px 6px;flex-shrink:0;margin-top:3px;white-space:nowrap;">${r.type}</span>
       <div>
@@ -813,11 +825,63 @@ document.getElementById('quizzesCornerBtn').addEventListener('click',function(e)
 
 // ══ ART CAROUSEL ══
 
+const DORLORIAL_PROMO_SLIDES = [
+  {
+    kind:'promo-book',
+    title:'Tales of Dorlorial: The Last Angel',
+    username:'Hunter Radney',
+    image_url:'Untitled_design.png',
+    link:'https://www.amazon.com/Tales-Dorlorial-Angel-Hunter-Radney/dp/B0H4YS5KY6/',
+    button:'Available Now on Amazon',
+    text:'The first Dorlorial novel is now available. Step into the fall of Mythlune and the legend that began it all.'
+  },
+  {
+    kind:'promo-coming',
+    title:'Something New Is Coming',
+    username:'Dorlorial',
+    image_url:'dorlorial-coming-soon-symbol.png',
+    link:'campaigns.html',
+    button:'Keep an Eye Open',
+    text:'A new shadow is moving through the world. Watch the hub for the next Dorlorial reveal.'
+  }
+];
+function dorlorialEscape(v){return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function dorlorialSlideHTML(art,i,total){
+  const safeTitle=dorlorialEscape(art.title||'Untitled');
+  const safeUser=dorlorialEscape(art.username||'Unknown');
+  const safeImg=String(art.image_url||'').replace(/'/g,'%27');
+  if(art.kind==='promo-book' || art.kind==='promo-coming'){
+    return `<div class="carousel-slide promo-slide ${i===0?'active':''}" style="background-image:url('${safeImg}')">
+      <div class="carousel-promo-card">
+        <div class="carousel-promo-inner">
+          <img class="carousel-promo-cover" src="${safeImg}" alt="${safeTitle}">
+          <div>
+            <div class="carousel-promo-kicker">${art.kind==='promo-book'?'Book Release':'Dorlorial Notice'}</div>
+            <div class="carousel-promo-title">${safeTitle}</div>
+            <div class="carousel-promo-text">${dorlorialEscape(art.text||'')}</div>
+            <a class="carousel-promo-btn" href="${dorlorialEscape(art.link||'#')}" target="${art.kind==='promo-book'?'_blank':'_self'}" rel="noopener" onclick="event.stopPropagation();">${dorlorialEscape(art.button||'Open')}</a>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-info"><div><div class="carousel-title-text">${safeTitle}</div><div class="carousel-artist-text">${safeUser}</div></div><div class="carousel-right"><span class="carousel-counter-text">${i+1} / ${total}</span></div></div>
+    </div>`;
+  }
+  return `<div class="carousel-slide ${i===0?'active':''}" style="background-image:url('${safeImg}')">
+    <div class="carousel-overlay"></div>
+    <div class="carousel-info"><div><div class="carousel-title-text">${safeTitle}</div><div class="carousel-artist-text">by ${safeUser}</div></div><div class="carousel-right"><span class="carousel-counter-text">${i+1} / ${total}</span></div></div>
+  </div>`;
+}
+
+
 const CAR_SUPABASE_URL = 'https://rczesfxgzuhixhinyarc.supabase.co';
 const CAR_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjemVzZnhnenVoaXhoaW55YXJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTQyNzAsImV4cCI6MjA5MzA3MDI3MH0.y_1BQLSkhV85sn-mxTHqu5eHfxUEF1wu89sfwJ0hU7A';
 let carSlides = [], carIndex = 0, carTimer = null;
 
 async function initCarousel() {
+  const carousel = document.getElementById('art-carousel');
+  const placeholder = document.getElementById('carousel-placeholder');
+  let approvedArt = [];
+
   try {
     const res = await fetch(CAR_SUPABASE_URL + '/rest/v1/art_submissions?status=eq.approved&order=created_at.desc&select=id,title,username,image_url,created_at', {
         headers: { 'apikey': CAR_ANON_KEY, 'Authorization': 'Bearer ' + CAR_ANON_KEY, 'Prefer': 'return=representation' },
@@ -826,71 +890,47 @@ async function initCarousel() {
     const raw = await res.json();
 
     // Only use clean, real image URLs. This keeps broken/base64 uploads from killing the carousel.
-    const data = Array.isArray(raw) ? raw.filter(art => {
+    approvedArt = Array.isArray(raw) ? raw.filter(art => {
       const url = (art.image_url || '').trim();
       return url && !url.startsWith('data:') && /^https?:\/\//i.test(url);
     }) : [];
-
-    const carousel = document.getElementById('art-carousel');
-    carousel.querySelectorAll('.carousel-slide').forEach(s => s.remove());
-
-    if (!data.length) {
-      const placeholder = document.getElementById('carousel-placeholder');
-      if (placeholder) {
-        placeholder.style.display = 'block';
-        placeholder.innerHTML = '<div style="font-family:\'Cinzel\',serif;font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-dark);text-align:center;padding:20px;">No approved community art yet — submit on the Social Hub</div>';
-      }
-      document.getElementById('carousel-title').textContent = '';
-      document.getElementById('carousel-artist').textContent = '';
-      document.getElementById('carousel-counter').textContent = '';
-      document.getElementById('art-carousel-wrap').style.display = 'block';
-      return;
-    }
-
-    carSlides = data;
-    data.forEach((art, i) => {
-      const slide = document.createElement('div');
-      slide.className = 'carousel-slide' + (i === 0 ? ' active' : '');
-      slide.style.backgroundImage = `url("${art.image_url}")`;
-      carousel.insertBefore(slide, carousel.querySelector('.carousel-nav'));
-    });
-    carUpdateInfo();
-    const placeholder = document.getElementById('carousel-placeholder');
-    if (placeholder) placeholder.style.display = 'none';
-    document.getElementById('art-carousel-wrap').style.display = 'block';
-    if (carTimer) clearInterval(carTimer);
-    carTimer = setInterval(() => carGoTo(carIndex + 1), 4500);
   } catch(e) {
-    console.log('Carousel:', e);
-    const placeholder = document.getElementById('carousel-placeholder');
-    if (placeholder) {
-      placeholder.style.display = 'block';
-      placeholder.innerHTML = '<div style="font-family:\'Cinzel\',serif;font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-dark);text-align:center;padding:20px;">Community art could not load. Try refreshing.</div>';
-    }
-    document.getElementById('art-carousel-wrap').style.display = 'block';
+    // Community art failed to load, but the promo slides (book + announcements) always show regardless.
+    console.log('Carousel: community art fetch failed, showing promo slides only.', e);
   }
+
+  // Promo slides (book release, announcements) always show, whether or not community art loaded.
+  const displayData = [...DORLORIAL_PROMO_SLIDES, ...approvedArt];
+
+  carousel.querySelectorAll('.carousel-slide').forEach(s => s.remove());
+  carSlides = displayData;
+  carIndex = 0;
+
+  displayData.forEach((art, i) => {
+    const temp = document.createElement('div');
+    temp.innerHTML = dorlorialSlideHTML(art, i, displayData.length);
+    const slide = temp.firstElementChild;
+    carousel.insertBefore(slide, carousel.querySelector('.carousel-nav'));
+  });
+
+  if (placeholder) placeholder.style.display = 'none';
+  document.getElementById('art-carousel-wrap').style.display = 'block';
+  if (carTimer) clearInterval(carTimer);
+  if (carSlides.length > 1) carTimer = setInterval(() => carGoTo(carIndex + 1), 5000);
 }
 
 function carGoTo(idx) {
   if (!carSlides.length) return;
-  const slides = document.querySelectorAll('.carousel-slide');
-  slides[carIndex].classList.remove('active');
+  const slides = document.querySelectorAll('#art-carousel .carousel-slide');
+  if (slides[carIndex]) slides[carIndex].classList.remove('active');
   carIndex = (idx + carSlides.length) % carSlides.length;
-  slides[carIndex].classList.add('active');
-  carUpdateInfo();
+  if (slides[carIndex]) slides[carIndex].classList.add('active');
   if (carTimer) clearInterval(carTimer);
-  carTimer = setInterval(() => carGoTo(carIndex + 1), 4500);
+  if (carSlides.length > 1) carTimer = setInterval(() => carGoTo(carIndex + 1), 5000);
 }
 
 function carouselPrev() { carGoTo(carIndex - 1); }
 function carouselNext() { carGoTo(carIndex + 1); }
-
-function carUpdateInfo() {
-  const art = carSlides[carIndex];
-  document.getElementById('carousel-title').textContent = art.title;
-  document.getElementById('carousel-artist').textContent = 'by ' + art.username;
-  document.getElementById('carousel-counter').textContent = (carIndex + 1) + ' / ' + carSlides.length;
-}
 
 initCarousel();
 
@@ -898,16 +938,14 @@ initCarousel();
 window.addEventListener('pageshow', function(e) {
   if (e.persisted) {
     // Page restored from cache — re-run carousel
-    const wrap = document.getElementById('art-carousel-wrap');
     const carousel = document.getElementById('art-carousel');
-    // Remove old slides (keep nav buttons, overlay, info)
     carousel.querySelectorAll('.carousel-slide').forEach(s => s.remove());
-    document.getElementById('carousel-counter').textContent = '';
     carSlides = []; carIndex = 0;
     if (carTimer) clearInterval(carTimer);
     initCarousel();
   }
 });
+
 
 
 
@@ -1013,6 +1051,15 @@ document.querySelectorAll('.qn-item').forEach(item => {
 
 
 
+
+
+// Extra safety: make toolbar, campaign banner, and vault work even if cached code fails.
+document.addEventListener('DOMContentLoaded', function(){
+  const cb = document.getElementById('campaign-banner');
+  if(cb){ cb.addEventListener('click', function(e){ e.preventDefault(); navigate('campaigns.html'); }); }
+  const vb = document.getElementById('vaultBtn');
+  if(vb){ vb.addEventListener('click', openVaultSafe); }
+});
 </script>
 
 <!-- ══ GLOBAL TOOLBAR ══ -->
@@ -1063,80 +1110,6 @@ document.querySelectorAll('.qn-item').forEach(item => {
   </div></div>
 </div>
 
-
-
-
-
-<script>
-/* Discord URL community-art carousel override */
-(function(){
-  async function loadDiscordCarouselOverride(){
-    const wrap = document.getElementById('art-carousel-wrap');
-    const carousel = document.getElementById('art-carousel');
-    const placeholder = document.getElementById('carousel-placeholder');
-    if(!carousel) return;
-    try{
-      let res = await fetch(CAR_SUPABASE_URL + '/rest/v1/art_submissions?select=id,title,username,image_url,status,created_at&status=eq.approved&order=created_at.desc', {
-        headers:{apikey:CAR_SUPABASE_KEY, Authorization:'Bearer '+CAR_SUPABASE_KEY}
-      });
-      if(!res.ok){
-        res = await fetch(CAR_SUPABASE_URL + '/rest/v1/art_submissions?select=id,title,username,image_url,status&status=eq.approved', {
-          headers:{apikey:CAR_SUPABASE_KEY, Authorization:'Bearer '+CAR_SUPABASE_KEY}
-        });
-      }
-      const data = await res.json();
-      const rows = Array.isArray(data) ? data.filter(a =>
-        a && a.image_url && /^https?:\/\//i.test(String(a.image_url)) && !String(a.image_url).startsWith('data:')
-      ) : [];
-      if(!rows.length){
-        if(placeholder){
-          placeholder.innerHTML='<div style="font-family:\'Cinzel\',serif;font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-dark);text-align:center;padding:20px;">No approved community art yet.</div>';
-        }
-        if(wrap) wrap.style.display='block';
-        return;
-      }
-      carousel.innerHTML = rows.map((art,i)=>`
-        <div class="carousel-slide ${i===0?'active':''}" style="background-image:url('${String(art.image_url).replace(/'/g,'%27')}')">
-          <div class="carousel-overlay"></div>
-          <div class="carousel-info">
-            <div>
-              <div class="carousel-title-text">${String(art.title||'Untitled').replace(/</g,'&lt;')}</div>
-              <div class="carousel-artist-text">by ${String(art.username||'Unknown').replace(/</g,'&lt;')}</div>
-            </div>
-            <div class="carousel-right">
-              <span class="carousel-counter-text">${i+1} / ${rows.length}</span>
-            </div>
-          </div>
-        </div>
-      `).join('');
-      if(wrap) wrap.style.display='block';
-      let idx=0;
-      function show(n){
-        const slides=carousel.querySelectorAll('.carousel-slide');
-        if(!slides.length) return;
-        if(slides[idx]) slides[idx].classList.remove('active');
-        idx=(n+slides.length)%slides.length;
-        if(slides[idx]) slides[idx].classList.add('active');
-      }
-      window.nextSlide=function(){show(idx+1)};
-      window.prevSlide=function(){show(idx-1)};
-      if(window.carInterval) clearInterval(window.carInterval);
-      window.carInterval=setInterval(()=>show(idx+1),5000);
-    }catch(e){
-      if(placeholder){
-        placeholder.innerHTML='<div style="font-family:\'Cinzel\',serif;font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-dark);text-align:center;padding:20px;">Could not load approved community art.</div>';
-      }
-      if(wrap) wrap.style.display='block';
-    }
-  }
-  window.loadCarousel = loadDiscordCarouselOverride;
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', loadDiscordCarouselOverride);
-  } else {
-    loadDiscordCarouselOverride();
-  }
-})();
-</script>
 
 </body>
 </html>
